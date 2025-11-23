@@ -116,7 +116,7 @@ int main() {
 
   it('clears inlay hints when sole client detaches', function()
     exec_lua(function()
-      vim.lsp.get_client_by_id(client_id):stop()
+      vim.lsp.stop_client(client_id)
     end)
     screen:expect({ grid = grid_without_inlay_hints, unchanged = true })
   end)
@@ -139,7 +139,7 @@ int main() {
     end)
 
     exec_lua(function()
-      vim.lsp.get_client_by_id(client_id2):stop()
+      vim.lsp.stop_client(client_id2)
     end)
     screen:expect({ grid = grid_with_inlay_hints, unchanged = true })
   end)
@@ -422,7 +422,7 @@ test text
     exec_lua([[vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })]])
     screen:expect({ grid = grid_with_inlay_hints })
     exec_lua(function()
-      vim.lsp.get_client_by_id(client_id):stop()
+      vim.lsp.stop_client(client_id)
     end)
     screen:expect({ grid = grid_without_inlay_hints, unchanged = true })
   end)

@@ -297,24 +297,13 @@ describe('server -> client', function()
       eq(serverpid, fn.getpid())
       eq('hello', api.nvim_get_current_line())
 
-      -- Method calls work both ways.
+      -- method calls work both ways
       fn.rpcrequest(client_id, 'nvim_set_current_line', 'howdy!')
       eq(id, fn.rpcrequest(client_id, 'nvim_get_chan_info', 0).id)
 
       set_session(client)
       eq(clientpid, fn.getpid())
       eq('howdy!', api.nvim_get_current_line())
-
-      -- Sending notification and then closing channel immediately still works.
-      -- Use a fast API here, as a deferred API call may be aborted by EOF. #13537
-      n.exec_lua(function()
-        vim.rpcnotify(id, 'nvim_input', 'ccbye!<Esc>')
-        vim.fn.chanclose(id)
-      end)
-
-      set_session(server)
-      eq(serverpid, fn.getpid())
-      eq('bye!', api.nvim_get_current_line())
 
       server:close()
       client:close()

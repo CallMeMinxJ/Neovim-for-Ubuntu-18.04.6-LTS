@@ -9,15 +9,6 @@
 ---     vim.print('file exists')
 ---   end
 --- <
----
---- *vim.fs.read()*
---- You can use |readblob()| to get a file's contents without explicitly opening/closing it.
----
---- Example:
----
---- >lua
----   vim.print(vim.fn.readblob('.git/config'))
---- <
 
 local uv = vim.uv
 
@@ -446,12 +437,11 @@ function M.root(source, marker)
   for _, mark in ipairs(markers) do
     local paths = M.find(mark, {
       upward = true,
-      path = M.abspath(path),
+      path = vim.fn.fnamemodify(path, ':p:h'),
     })
 
     if #paths ~= 0 then
-      local dir = vim.fs.dirname(paths[1])
-      return dir and vim.fn.fnamemodify(dir, ':p:h') or nil
+      return vim.fs.dirname(paths[1])
     end
   end
 
@@ -756,8 +746,6 @@ end
 --- @param path string Path
 --- @return string Absolute path
 function M.abspath(path)
-  -- TODO(justinmk): mark f_fnamemodify as API_FAST and use it, ":p:h" should be safe...
-
   vim.validate('path', path, 'string')
 
   -- Expand ~ to user's home directory
@@ -784,10 +772,7 @@ function M.abspath(path)
   -- Convert cwd path separator to `/`
   cwd = cwd:gsub(os_sep, '/')
 
-  if path == '.' then
-    return cwd
-  end
-  -- Prefix is not needed for expanding relative paths, `cwd` already contains it.
+  -- Prefix is not needed for expanding relative paths, as `cwd` already contains it.
   return M.joinpath(cwd, path)
 end
 

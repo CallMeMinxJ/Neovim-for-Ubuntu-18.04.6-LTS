@@ -59,7 +59,7 @@ typedef struct {
 #include "move.c.generated.h"
 
 /// Get the number of screen lines skipped with "wp->w_skipcol".
-static int adjust_plines_for_skipcol(win_T *wp)
+int adjust_plines_for_skipcol(win_T *wp)
 {
   if (wp->w_skipcol == 0) {
     return 0;
@@ -77,8 +77,8 @@ static int adjust_plines_for_skipcol(win_T *wp)
 /// Return how many lines "lnum" will take on the screen, taking into account
 /// whether it is the first line, whether w_skipcol is non-zero and limiting to
 /// the window height.
-int plines_correct_topline(win_T *wp, linenr_T lnum, linenr_T *nextp, bool limit_winheight,
-                           bool *foldedp)
+static int plines_correct_topline(win_T *wp, linenr_T lnum, linenr_T *nextp, bool limit_winheight,
+                                  bool *foldedp)
 {
   int n = plines_win_full(wp, lnum, nextp, foldedp, true, false);
   if (lnum == wp->w_topline) {
@@ -157,7 +157,7 @@ static void redraw_for_cursorcolumn(win_T *wp)
 {
   // If the cursor moves horizontally when 'concealcursor' is active, then the
   // current line needs to be redrawn to calculate the correct cursor position.
-  if (wp == curwin && wp->w_p_cole > 0 && conceal_cursor_line(wp)) {
+  if (wp->w_p_cole > 0 && conceal_cursor_line(wp)) {
     redrawWinline(wp, wp->w_cursor.lnum);
   }
 
@@ -513,8 +513,7 @@ void check_cursor_moved(win_T *wp)
                      |VALID_CHEIGHT|VALID_CROW|VALID_TOPLINE);
 
     // Concealed line visibility toggled.
-    if (wp == curwin && wp->w_valid_cursor.lnum > 0 && wp->w_p_cole >= 2
-        && !conceal_cursor_line(wp)
+    if (wp->w_valid_cursor.lnum > 0 && wp->w_p_cole >= 2 && !conceal_cursor_line(wp)
         && (decor_conceal_line(wp, wp->w_cursor.lnum - 1, true)
             || decor_conceal_line(wp, wp->w_valid_cursor.lnum - 1, true))) {
       changed_window_setting(wp);

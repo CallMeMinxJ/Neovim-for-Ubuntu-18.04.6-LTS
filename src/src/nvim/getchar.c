@@ -1798,16 +1798,6 @@ int vgetc(void)
   // Execute Lua on_key callbacks.
   kvi_push(on_key_buf, NUL);
   if (nlua_execute_on_key(c, on_key_buf.items)) {
-    // Keys following K_COMMAND/K_LUA/K_PASTE_START aren't normally received by
-    // vim.on_key() callbacks, so discard them along with the current key.
-    if (c == K_COMMAND) {
-      xfree(getcmdkeycmd(NUL, NULL, 0, false));
-    } else if (c == K_LUA) {
-      map_execute_lua(false, true);
-    } else if (c == K_PASTE_START) {
-      paste_repeat(0);
-    }
-    // Discard the current key.
     c = K_IGNORE;
   }
   kvi_destroy(on_key_buf);
@@ -3223,10 +3213,9 @@ char *getcmdkeycmd(int promptc, void *cookie, int indent, bool do_concat)
 /// Handle a Lua mapping: get its LuaRef from typeahead and execute it.
 ///
 /// @param may_repeat  save the LuaRef for redoing with "." later
-/// @param discard     discard the keys instead of executing the LuaRef
 ///
 /// @return  false if getting the LuaRef was aborted, true otherwise
-bool map_execute_lua(bool may_repeat, bool discard)
+bool map_execute_lua(bool may_repeat)
 {
   garray_T line_ga;
   int c1 = -1;
@@ -3252,9 +3241,9 @@ bool map_execute_lua(bool may_repeat, bool discard)
 
   no_mapping--;
 
-  if (aborted || discard) {
+  if (aborted) {
     ga_clear(&line_ga);
-    return !aborted;
+    return false;
   }
 
   LuaRef ref = (LuaRef)atoi(line_ga.ga_data);

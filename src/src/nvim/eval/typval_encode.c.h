@@ -255,7 +255,6 @@
 #include "nvim/eval/encode.h"
 #include "nvim/eval/typval.h"
 #include "nvim/eval/typval_encode.h"
-#include "nvim/eval/vars.h"
 #include "nvim/func_attr.h"
 
 /// Dummy variable used because some macros need lvalue

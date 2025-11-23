@@ -10,11 +10,6 @@
 " 2025 Sep 17 by Vim Project tighten the regex to handle remote compressed archives #18318
 " 2025 Sep 18 by Vim Project 'equalalways' not always respected #18358
 " 2025 Oct 01 by Vim Project fix navigate to parent folder #18464
-" 2025 Oct 26 by Vim Project fix parsing of remote user names #18611
-" 2025 Oct 27 by Vim Project align comment after #18611
-" 2025 Nov 01 by Vim Project fix NetrwChgPerm #18674
-" 2025 Nov 13 by Vim Project don't wipe unnamed buffers #18740
-" 2025 Nov 18 by Vim Project use UNC paths when using scp and Windows paths #18764
 " Copyright:  Copyright (C) 2016 Charles E. Campbell {{{1
 "             Permission is hereby granted to use and distribute this code,
 "             with or without modifications, provided that this copyright
@@ -1702,10 +1697,10 @@ function netrw#NetRead(mode,...)
             else
                 let useport= ""
             endif
-            " Using UNC notation in windows to get a unix like path.
+            " 'C' in 'C:\path\to\file' is handled as hostname on windows.
             " This is workaround to avoid mis-handle windows local-path:
             if g:netrw_scp_cmd =~ '^scp' && has("win32")
-                let tmpfile_get = substitute(tr(tmpfile, '\', '/'), '^\(\a\):[/\\]\(.*\)$', '//' .. $COMPUTERNAME .. '/\1$/\2', '')
+                let tmpfile_get = substitute(tr(tmpfile, '\', '/'), '^\(\a\):[/\\]\(.*\)$', '/\1/\2', '')
             else
                 let tmpfile_get = tmpfile
             endif
@@ -4218,12 +4213,11 @@ function s:NetrwChgPerm(islocal,curdir)
     call inputsave()
     let newperm= input("Enter new permission: ")
     call inputrestore()
-    let fullpath = fnamemodify(netrw#fs#PathJoin(a:curdir, expand("<cfile>")), ':p')
-    let chgperm= substitute(g:netrw_chgperm,'\<FILENAME\>',netrw#os#Escape(fullpath),'')
+    let chgperm= substitute(g:netrw_chgperm,'\<FILENAME\>',netrw#os#Escape(expand("<cfile>")),'')
     let chgperm= substitute(chgperm,'\<PERM\>',netrw#os#Escape(newperm),'')
     call system(chgperm)
     if v:shell_error != 0
-        NetrwKeepj call netrw#msg#Notify('WARNING', printf('changing permission on file<%s> seems to have failed', fullpath))
+        NetrwKeepj call netrw#ErrorMsg(1,"changing permission on file<".expand("<cfile>")."> seems to have failed",75)
     endif
     if a:islocal
         NetrwKeepj call s:NetrwRefresh(a:islocal,s:NetrwBrowseChgDir(a:islocal,'./',0))
@@ -4599,7 +4593,7 @@ function s:NetrwServerEdit(islocal,fname)
         endif
 
     else
-        call netrw#msg#Notify('ERROR', 'you need a gui-capable vim and client-server to use <ctrl-r>')
+        call netrw#ErrorMsg(s:ERROR,"you need a gui-capable vim and client-server to use <ctrl-r>",98)
     endif
 
 endfunction
@@ -8321,7 +8315,7 @@ function netrw#LocalBrowseCheck(dirname)
         let ibuf    = 1
         let buflast = bufnr("$")
         while ibuf <= buflast
-            if bufwinnr(ibuf) == -1 && !empty(bufname(ibuf)) && isdirectory(s:NetrwFile(bufname(ibuf)))
+            if bufwinnr(ibuf) == -1 && isdirectory(s:NetrwFile(bufname(ibuf)))
                 exe "sil! keepj keepalt ".ibuf."bw!"
             endif
             let ibuf= ibuf + 1
@@ -9321,8 +9315,8 @@ endfunction
 " s:RemotePathAnalysis: {{{2
 function s:RemotePathAnalysis(dirname)
 
-    "                method   ://    user    @      machine      :port           /path
-    let dirpat  = '^\(\w\{-}\)://\(\([^@]\+\)@\)\=\([^/:#]\+\)\%([:#]\(\d\+\)\)\=/\(.*\)$'
+    "                method   ://    user  @      machine      :port            /path
+    let dirpat  = '^\(\w\{-}\)://\(\(\w\+\)@\)\=\([^/:#]\+\)\%([:#]\(\d\+\)\)\=/\(.*\)$'
     let s:method  = substitute(a:dirname,dirpat,'\1','')
     let s:user    = substitute(a:dirname,dirpat,'\3','')
     let s:machine = substitute(a:dirname,dirpat,'\4','')
@@ -9666,4 +9660,5 @@ let &cpo= s:keepcpo
 unlet s:keepcpo
 
 " }}}
+
 " vim:ts=8 sts=4 sw=4 et fdm=marker

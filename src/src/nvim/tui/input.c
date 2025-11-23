@@ -123,12 +123,12 @@ static PMap(int) kitty_key_map = MAP_INIT;
 
 #include "tui/input.c.generated.h"
 
-void tinput_init(TermInput *input, Loop *loop, TerminfoEntry *ti)
+void tinput_init(TermInput *input, Loop *loop)
 {
-  assert(input->loop == NULL);
   input->loop = loop;
   input->paste = 0;
   input->in_fd = STDIN_FILENO;
+  input->key_encoding = kKeyEncodingLegacy;
   input->ttimeout = (bool)p_ttimeout;
   input->ttimeoutlen = p_ttm;
 
@@ -136,8 +136,14 @@ void tinput_init(TermInput *input, Loop *loop, TerminfoEntry *ti)
     pmap_put(int)(&kitty_key_map, kitty_key_map_entry[i].key, (ptr_t)kitty_key_map_entry[i].name);
   }
 
-  input->tk = termkey_new_abstract(ti, (TERMKEY_FLAG_UTF8 | TERMKEY_FLAG_NOSTART
-                                        | TERMKEY_FLAG_KEEPC0));
+  const char *term = os_getenv_noalloc("TERM");
+
+  if (!term) {
+    term = "";  // termkey_new_abstract assumes non-null (#2745)
+  }
+
+  input->tk = termkey_new_abstract(term, (TERMKEY_FLAG_UTF8 | TERMKEY_FLAG_NOSTART
+                                          | TERMKEY_FLAG_KEEPC0));
   termkey_set_buffer_size(input->tk, INPUT_BUFFER_SIZE);
   termkey_hook_terminfo_getstr(input->tk, input->tk_ti_hook_fn, input);
   termkey_start(input->tk);
@@ -163,7 +169,6 @@ void tinput_destroy(TermInput *input)
   uv_close((uv_handle_t *)&input->bg_query_timer, NULL);
   rstream_may_close(&input->read_stream);
   termkey_destroy(input->tk);
-  input->loop = NULL;
 }
 
 void tinput_start(TermInput *input)

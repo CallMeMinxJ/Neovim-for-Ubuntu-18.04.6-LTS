@@ -261,14 +261,14 @@ local function check_tmux()
     local ok, out = system(cmd)
     local val = vim.fn.substitute(out, [[\v(\s|\r|\n)]], '', 'g')
     if not ok then
-      health.error(('command failed: %s\n%s'):format(vim.inspect(cmd), out))
+      health.error('command failed: ' .. cmd .. '\n' .. out)
       return 'error'
     elseif val == '' then
       cmd = { 'tmux', 'show-option', '-qvgs', option } -- try session scope
       ok, out = system(cmd)
       val = vim.fn.substitute(out, [[\v(\s|\r|\n)]], '', 'g')
       if not ok then
-        health.error(('command failed: %s\n%s'):format(vim.inspect(cmd), out))
+        health.error('command failed: ' .. cmd .. '\n' .. out)
         return 'error'
       end
     end
@@ -316,7 +316,7 @@ local function check_tmux()
   end
 
   if not ok then
-    health.error(('command failed: %s\n%s'):format(vim.inspect(cmd), out))
+    health.error('command failed: ' .. cmd .. '\n' .. out)
   elseif tmux_default_term ~= vim.env.TERM then
     health.info('default-terminal: ' .. tmux_default_term)
     health.error(
@@ -372,7 +372,7 @@ local function check_terminal()
         == ''
     )
   then
-    health.error(('command failed: %s\n%s'):format(vim.inspect(cmd), out))
+    health.error('command failed: ' .. cmd .. '\n' .. out)
   else
     health.info(
       vim.fn.printf(
@@ -417,11 +417,21 @@ local function check_external_tools()
     health.warn('ripgrep not available')
   end
 
-  -- `vim.pack` prefers git 2.36 but tries to work with 2.x.
+  -- `vim.pack` requires `git` executable with version at least 2.36
   if vim.fn.executable('git') == 1 then
     local git = vim.fn.exepath('git')
-    local version = vim.system({ 'git', 'version' }, {}):wait().stdout or ''
-    health.ok(('%s (%s)'):format(vim.trim(version), git))
+    local out = vim.system({ 'git', 'version' }, {}):wait().stdout or ''
+    local version = vim.version.parse(out)
+    if version < vim.version.parse('2.36') then
+      local msg = string.format(
+        'git is available (%s), but needs at least version 2.36 (not %s) to work with `vim.pack`',
+        git,
+        tostring(version)
+      )
+      health.warn(msg)
+    else
+      health.ok(('%s (%s)'):format(vim.trim(out), git))
+    end
   else
     health.warn('git not available (required by `vim.pack`)')
   end

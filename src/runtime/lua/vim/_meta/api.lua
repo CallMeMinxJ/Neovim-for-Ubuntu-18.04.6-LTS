@@ -182,8 +182,8 @@ function vim.api.nvim_buf_add_highlight(buffer, ns_id, hl_group, line, col_start
 --- Else the first notification will be `nvim_buf_changedtick_event`.
 --- Not for Lua callbacks.
 --- @param opts vim.api.keyset.buf_attach Optional parameters.
---- - on_lines: Called on linewise changes. Not called on buffer reload (`:checktime`,
----   `:edit`, …), see `on_reload:`. Return a [lua-truthy] value to detach. Args:
+--- - on_lines: Lua callback invoked on change.
+---   Return a truthy value (not `false` or `nil`) to detach. Args:
 ---   - the string "lines"
 ---   - buffer id
 ---   - b:changedtick
@@ -193,9 +193,10 @@ function vim.api.nvim_buf_add_highlight(buffer, ns_id, hl_group, line, col_start
 ---   - byte count of previous contents
 ---   - deleted_codepoints (if `utf_sizes` is true)
 ---   - deleted_codeunits (if `utf_sizes` is true)
---- - on_bytes: Called on granular changes (compared to on_lines). Not called on buffer
----   reload (`:checktime`, `:edit`, …), see `on_reload:`. Return a [lua-truthy] value
----   to detach. Args:
+--- - on_bytes: Lua callback invoked on change.
+---   This callback receives more granular information about the
+---   change compared to on_lines.
+---   Return a truthy value (not `false` or `nil`) to detach. Args:
 ---   - the string "bytes"
 ---   - buffer id
 ---   - b:changedtick
@@ -211,15 +212,16 @@ function vim.api.nvim_buf_add_highlight(buffer, ns_id, hl_group, line, col_start
 ---   - new end column of the changed text
 ---     (if new end row = 0, offset from start column)
 ---   - new end byte length of the changed text
---- - on_changedtick: Called on [changetick] increment without text change. Args:
+--- - on_changedtick: Lua callback invoked on changedtick
+---   increment without text change. Args:
 ---   - the string "changedtick"
 ---   - buffer id
 ---   - b:changedtick
---- - on_detach: Called on detach. Args:
+--- - on_detach: Lua callback invoked on detach. Args:
 ---   - the string "detach"
 ---   - buffer id
---- - on_reload: Called on whole-buffer load (`:checktime`, `:edit`, …). Clients should
----   typically re-fetch the entire buffer contents. Args:
+--- - on_reload: Lua callback invoked on reload. The entire buffer
+---              content should be considered changed. Args:
 ---   - the string "reload"
 ---   - buffer id
 --- - utf_sizes: include UTF-32 and UTF-16 size of the replaced
@@ -227,7 +229,7 @@ function vim.api.nvim_buf_add_highlight(buffer, ns_id, hl_group, line, col_start
 --- - preview: also attach to command preview (i.e. 'inccommand')
 ---   events.
 --- @return boolean # False if attach failed (invalid parameter, or buffer isn't loaded);
---- otherwise True.
+--- otherwise True. TODO: LUA_API_NO_EVAL
 function vim.api.nvim_buf_attach(buffer, send_buffer, opts) end
 
 --- Call a function with buffer as temporary current buffer.
@@ -1023,13 +1025,16 @@ function vim.api.nvim_create_namespace(name) end
 --- - mods: (string) Command modifiers, if any [<mods>]
 --- - smods: (table) Command modifiers in a structured format. Has the same
 --- structure as the "mods" key of `nvim_parse_cmd()`.
---- @param opts vim.api.keyset.user_command Optional flags
---- - `desc` (string) Command description.
---- - `force` (boolean, default true) Override any previous definition.
---- - `complete` `:command-complete` command or function like `:command-completion-customlist`.
---- - `preview` (function) Preview handler for 'inccommand' `:command-preview`
---- - Set boolean `command-attributes` such as `:command-bang` or `:command-bar` to
----   true (but not `:command-buffer`, use `nvim_buf_create_user_command()` instead).
+--- @param opts vim.api.keyset.user_command Optional `command-attributes`.
+--- - Set boolean attributes such as `:command-bang` or `:command-bar` to true (but
+---   not `:command-buffer`, use `nvim_buf_create_user_command()` instead).
+--- - "complete" `:command-complete` also accepts a Lua function which works like
+---   `:command-completion-customlist`.
+--- - Other parameters:
+---   - desc: (string) Used for listing the command when a Lua function is used for
+---                    {command}.
+---   - force: (boolean, default true) Override any previous definition.
+---   - preview: (function) Preview callback for 'inccommand' `:command-preview`
 function vim.api.nvim_create_user_command(name, command, opts) end
 
 --- Delete an autocommand group by id.
@@ -1735,24 +1740,27 @@ function vim.api.nvim_open_term(buffer, opts) end
 --- could let floats hover outside of the main window like a tooltip, but
 --- this should not be used to specify arbitrary WM screen positions.
 ---
---- Example: window-relative float
+--- Example (Lua): window-relative float
 ---
 --- ```lua
 --- vim.api.nvim_open_win(0, false,
 ---   {relative='win', row=3, col=3, width=12, height=3})
 --- ```
 ---
---- Example: buffer-relative float (travels as buffer is scrolled)
+--- Example (Lua): buffer-relative float (travels as buffer is scrolled)
 ---
 --- ```lua
 --- vim.api.nvim_open_win(0, false,
 ---   {relative='win', width=12, height=3, bufpos={100,10}})
 --- ```
 ---
---- Example: vertical split left of the current window
+--- Example (Lua): vertical split left of the current window
 ---
 --- ```lua
---- vim.api.nvim_open_win(0, false, { split = 'left', win = 0, })
+--- vim.api.nvim_open_win(0, false, {
+---   split = 'left',
+---   win = 0
+--- })
 --- ```
 ---
 --- @param buffer integer Buffer to display, or 0 for current buffer
@@ -1855,8 +1863,8 @@ function vim.api.nvim_open_term(buffer, opts) end
 --- - footer_pos: Footer position. Must be set with `footer` option.
 ---   Value can be one of "left", "center", or "right".
 ---   Default is `"left"`.
---- - noautocmd: Block all autocommands for the duration of the call. Cannot be changed by
----   `nvim_win_set_config()`.
+--- - noautocmd: If true then all autocommands are blocked for the duration of
+---   the call.
 --- - fixed: If true when anchor is NW or SW, the float window
 ---          would be kept fixed even if the window would be truncated.
 --- - hide: If true the floating window will be hidden and the cursor will be invisible when
@@ -2406,10 +2414,11 @@ function vim.api.nvim_win_del_var(window, name) end
 --- @return integer # Buffer id
 function vim.api.nvim_win_get_buf(window) end
 
---- Gets window configuration in the form of a dict which can be passed as the `config` parameter of
---- `nvim_open_win()`.
+--- Gets window configuration.
 ---
---- For non-floating windows, `relative` is empty.
+--- The returned value may be given to `nvim_open_win()`.
+---
+--- `relative` is empty for normal windows.
 ---
 --- @param window integer `window-ID`, or 0 for current window
 --- @return vim.api.keyset.win_config_ret # Map defining the window configuration, see |nvim_open_win()|
@@ -2490,22 +2499,17 @@ function vim.api.nvim_win_is_valid(window) end
 --- @param buffer integer Buffer id
 function vim.api.nvim_win_set_buf(window, buffer) end
 
---- Reconfigures the layout of a window.
+--- Configures window layout. Cannot be used to move the last window in a
+--- tabpage to a different one.
 ---
---- - Absent (`nil`) keys will not be changed.
---- - `row` / `col` / `relative` must be reconfigured together.
---- - Cannot be used to move the last window in a tabpage to a different one.
----
---- Example: to convert a floating window to a "normal" split window, specify the `win` field:
----
---- ```lua
---- vim.api.nvim_win_set_config(0, { split = 'above', win = vim.fn.win_getid(1), })
---- ```
+--- When reconfiguring a window, absent option keys will not be changed.
+--- `row`/`col` and `relative` must be reconfigured together.
 ---
 ---
 --- @see vim.api.nvim_open_win
 --- @param window integer `window-ID`, or 0 for current window
---- @param config vim.api.keyset.win_config Map defining the window configuration, see [nvim_open_win()]
+--- @param config vim.api.keyset.win_config Map defining the window configuration,
+--- see `nvim_open_win()`
 function vim.api.nvim_win_set_config(window, config) end
 
 --- Sets the (1,0)-indexed cursor position in the window. `api-indexing`
