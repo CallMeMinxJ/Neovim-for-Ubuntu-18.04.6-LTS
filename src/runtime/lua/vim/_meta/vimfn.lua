@@ -1055,8 +1055,10 @@ function vim.fn.complete_check() end
 --- Returns a |Dictionary| with information about Insert mode
 --- completion.  See |ins-completion|.
 --- The items are:
----    completed  Return a dictionary containing the entries of
----     the currently selected index item.
+---    mode    Current completion mode name string.
+---     See |complete_info_mode| for the values.
+---    pum_visible  |TRUE| if popup menu is visible.
+---     See |pumvisible()|.
 ---    items  List of all completion candidates.  Each item
 ---     is a dictionary containing the entries "word",
 ---     "abbr", "menu", "kind", "info" and
@@ -1067,18 +1069,13 @@ function vim.fn.complete_check() end
 ---     and "items" are in "what", the returned list
 ---     will still be named "items", but each item
 ---     will have an additional "match" field.
----    mode    Current completion mode name string.
----     See |complete_info_mode| for the values.
----    preinserted_text
----     The actual text that is pre-inserted, see
----     |preinserted()|.
----    pum_visible  |TRUE| if popup menu is visible.
----     See |pumvisible()|.
 ---    selected  Selected item index.  First index is zero.
 ---     Index is -1 if no item is selected (showing
 ---     typed text only, or the last completion after
 ---     no item is selected when using the <Up> or
 ---     <Down> keys)
+---    completed  Return a dictionary containing the entries of
+---     the currently selected index item.
 ---    preview_winid     Info floating preview window id.
 ---    preview_bufnr     Info floating preview buffer id.
 ---
@@ -3530,30 +3527,33 @@ function vim.fn.getmousepos() end
 --- @return integer
 function vim.fn.getpid() end
 
---- Gets a position, where {expr} is one of:
----     .      Cursor position.
----     $      Last line in the current buffer.
+--- Get the position for String {expr}.
+--- The accepted values for {expr} are:
+---     .      The cursor position.
+---     $      The last line in the current buffer.
 ---     'x      Position of mark x (if the mark is not set, 0 is
 ---       returned for all values).
 ---     w0      First line visible in current window (one if the
 ---       display isn't updated, e.g. in silent Ex mode).
 ---     w$      Last line visible in current window (this is one
 ---       less than "w0" if no lines are visible).
----     v      End of the current Visual selection (unlike |'<|
----       |'>| which give the previous, not current, Visual
----       selection), or the cursor position if not in Visual
----       mode.
----
----       To get the current selected region: >vim
----         let region = getregionpos(getpos('v'), getpos('.'))
---- <
----       Explanation: in Visual mode "v" and "." complement each
----       other.  While "." refers to the cursor position, "v"
----       refers to where |v_o| would move the cursor.  So you can
----       use "v" and "." together to get the selected region.
----
---- Note that if a mark in another file is used, the line number
---- applies to that buffer.
+---     v      When not in Visual mode, returns the cursor
+---       position.  In Visual mode, returns the other end
+---       of the Visual area.  A good way to think about
+---       this is that in Visual mode "v" and "." complement
+---       each other.  While "." refers to the cursor
+---       position, "v" refers to where |v_o| would move the
+---       cursor.  As a result, you can use "v" and "."
+---       together to work on all of a selection in
+---       characterwise Visual mode.  If the cursor is at
+---       the end of a characterwise Visual area, "v" refers
+---       to the start of the same Visual area.  And if the
+---       cursor is at the start of a characterwise Visual
+---       area, "v" refers to the end of the same Visual
+---       area.  "v" differs from |'<| and |'>| in that it's
+---       updated right away.
+--- Note that a mark in another file can be used.  The line number
+--- then applies to another buffer.
 ---
 --- The result is a |List| with four numbers:
 ---     [bufnum, lnum, col, off]
@@ -3836,14 +3836,8 @@ function vim.fn.getregion(pos1, pos2, opts) end
 --- the offset of the character's first cell not included in the
 --- selection, otherwise all its cells are included.
 ---
---- To get the current visual selection: >vim
----   let region = getregionpos(getpos('v'), getpos('.'))
---- <
---- The {opts} Dict supports the following items:
----
----   type    See |getregion()|.
----
----   exclusive  See |getregion()|.
+--- Apart from the options supported by |getregion()|, {opts} also
+--- supports the following:
 ---
 ---   eol    If |TRUE|, indicate positions beyond
 ---       the end of a line with "col" values
@@ -10131,7 +10125,7 @@ function vim.fn.synIDattr(synID, what, mode) end
 --- @return integer
 function vim.fn.synIDtrans(synID) end
 
---- The result is a |List| with three items:
+--- The result is a |List| with currently three items:
 --- 1. The first item in the list is 0 if the character at the
 ---    position {lnum} and {col} is not part of a concealable
 ---    region, 1 if it is.  {lnum} is used like with |getline()|.

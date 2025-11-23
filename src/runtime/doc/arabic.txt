@@ -1,4 +1,4 @@
-*l10n-arabic.txt*	Nvim
+*arabic.txt*	Nvim
 
 
 		  VIM REFERENCE MANUAL	  by Nadim Shaikli

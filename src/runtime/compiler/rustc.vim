@@ -2,7 +2,6 @@
 " Compiler:         Rust Compiler
 " Maintainer:       Chris Morgan <me@chrismorgan.info>
 " Latest Revision:  2023-09-11
-" 2025 Nov 15 by Vim project: remove test for Vim patch 7.4.191
 " For bugs, patches and license go to https://github.com/rust-lang/rust.vim
 
 if exists("current_compiler")
@@ -18,7 +17,11 @@ set cpo&vim
 if get(g:, 'rustc_makeprg_no_percent', 0)
     CompilerSet makeprg=rustc
 else
-    CompilerSet makeprg=rustc\ \%:S
+    if has('patch-7.4.191')
+      CompilerSet makeprg=rustc\ \%:S
+    else
+      CompilerSet makeprg=rustc\ \"%\"
+    endif
 endif
 
 " New errorformat (after nightly 2016/08/10)

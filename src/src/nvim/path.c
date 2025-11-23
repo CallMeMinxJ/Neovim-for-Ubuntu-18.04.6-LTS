@@ -1715,13 +1715,13 @@ size_t simplify_filename(char *filename)
 /// Checks for a Windows drive letter ("C:/") at the start of the path.
 ///
 /// @see https://url.spec.whatwg.org/#start-with-a-windows-drive-letter
-bool path_has_drive_letter(const char *p, size_t path_len)
+bool path_has_drive_letter(const char *p)
   FUNC_ATTR_NONNULL_ALL
 {
-  return path_len >= 2
+  return strlen(p) >= 2
          && ASCII_ISALPHA(p[0])
          && (p[1] == ':' || p[1] == '|')
-         && (path_len == 2 || ((p[2] == '/') | (p[2] == '\\') | (p[2] == '?') | (p[2] == '#')));
+         && (strlen(p) == 2 || ((p[2] == '/') | (p[2] == '\\') | (p[2] == '?') | (p[2] == '#')));
 }
 
 // Check if the ":/" of a URL is at the pointer, return URL_SLASH.
@@ -1749,20 +1749,24 @@ int path_with_url(const char *fname)
 {
   const char *p;
 
+  // We accept alphabetic characters and a dash in scheme part.
+  // RFC 3986 allows for more, but it increases the risk of matching
+  // non-URL text.
+
   // first character must be alpha
   if (!ASCII_ISALPHA(*fname)) {
     return 0;
   }
 
-  if (path_has_drive_letter(fname, strlen(fname))) {
+  if (path_has_drive_letter(fname)) {
     return 0;
   }
 
-  // check body: (alpha, digit, '+', '-', '.') following RFC3986
-  for (p = fname + 1; (ASCII_ISALNUM(*p) || (*p == '+') || (*p == '-') || (*p == '.')); p++) {}
+  // check body: alpha or dash
+  for (p = fname + 1; (ASCII_ISALPHA(*p) || (*p == '-')); p++) {}
 
-  // check last char is not '+', '-', or '.'
-  if ((p[-1] == '+') || (p[-1] == '-') || (p[-1] == '.')) {
+  // check last char is not a dash
+  if (p[-1] == '-') {
     return 0;
   }
 

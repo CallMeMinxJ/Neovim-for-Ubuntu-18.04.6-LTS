@@ -217,18 +217,16 @@ or setting |$XDG_DATA_HOME| during startup. Plugin's subdirectory name matches
 plugin's name in specification. It is assumed that all plugins in the
 directory are managed exclusively by `vim.pack`.
 
-Uses Git to manage plugins and requires present `git` executable. Target
-plugins should be Git repositories with versions as named tags following
-semver convention `v<major>.<minor>.<patch>`.
+Uses Git to manage plugins and requires present `git` executable of at least
+version 2.36. Target plugins should be Git repositories with versions as named
+tags following semver convention `v<major>.<minor>.<patch>`.
 
 The latest state of all managed plugins is stored inside a *vim.pack-lockfile*
 located at `$XDG_CONFIG_HOME/nvim/nvim-pack-lock.json`. It is a JSON file that
 is used to persistently track data about plugins. For a more robust config
-treat lockfile like its part: put under version control, etc. In this case all
-plugins from the lockfile will be installed at once and at lockfile's revision
-(instead of inferring from `version`). Should not be edited by hand. Corrupted
-data for installed plugins is repaired (including after deleting whole file),
-but `version` fields will be missing for not yet added plugins.
+treat lockfile like its part: put under version control, etc. In this case
+initial install prefers revision from the lockfile instead of inferring from
+`version`. Should not be edited by hand or deleted.
 
 Example workflows ~
 
@@ -275,16 +273,12 @@ Basic install and management:
 Switch plugin's version:
 • Update 'init.lua' for plugin to have desired `version`. Let's say, plugin
   named 'plugin1' has changed to `vim.version.range('*')`.
-• |:restart|. The plugin's actual revision on disk is not yet changed. Only
+• |:restart|. The plugin's actual state on disk is not yet changed. Only
   plugin's `version` in |vim.pack-lockfile| is updated.
 • Execute `vim.pack.update({ 'plugin1' })`.
 • Review changes and either confirm or discard them. If discarded, revert any
   changes in 'init.lua' as well or you will be prompted again next time you
   run |vim.pack.update()|.
-
-Switch plugin's source:
-• Update 'init.lua' for plugin to have desired `src`.
-• |:restart|. This will cleanly reinstall plugin from the new source.
 
 Freeze plugin from being updated:
 • Update 'init.lua' for plugin to have `version` set to current revision. Get
@@ -295,18 +289,6 @@ Unfreeze plugin to start receiving updates:
 • Update 'init.lua' for plugin to have `version` set to whichever version you
   want it to be updated.
 • |:restart|.
-
-Revert plugin after an update:
-• Locate plugin's revision at working state. For example:
-  • If there is a previous version of |vim.pack-lockfile| (like from version
-    control history), use it to get plugin's `rev` field.
-  • If there is a log file ("nvim-pack.log" at "log" |stdpath()|), open it and
-    navigate to latest updates (at the bottom). Locate lines about plugin
-    update details and use revision from "State before".
-• Freeze plugin to target revision (set `version` and |:restart|).
-• Run `vim.pack.update({ 'plugin-name' }, { force = true })` to make plugin
-  state on disk follow target revision. |:restart|.
-• When ready to deal with updating plugin, unfreeze it.
 
 Remove plugins from disk:
 • Use |vim.pack.del()| with a list of plugin names to remove. Make sure their
@@ -372,13 +354,10 @@ add({specs}, {opts})                                          *vim.pack.add()*
     Add plugin to current session
     • For each specification check that plugin exists on disk in
       |vim.pack-directory|:
-      • If exists, check if its `src` is the same as input. If not - delete
-        immediately to clean install from the new source. Otherwise do
-        nothing.
+      • If exists, do nothing in this step.
       • If doesn't exist, install it by downloading from `src` into `name`
-        subdirectory (via partial blobless `git clone`) and update revision to
-        match `version` (via `git checkout`). Plugin will not be on disk if
-        any step resulted in an error.
+        subdirectory (via `git clone`) and update state to match `version`
+        (via `git checkout`).
     • For each plugin execute |:packadd| (or customizable `load` function)
       making it reachable by Nvim.
 
@@ -386,7 +365,7 @@ add({specs}, {opts})                                          *vim.pack.add()*
     • Installation is done in parallel, but waits for all to finish before
       continuing next code execution.
     • If plugin is already present on disk, there are no checks about its
-      current revision. The specified `version` can be not the one actually
+      present state. The specified `version` can be not the one actually
       present on disk. Execute |vim.pack.update()| to synchronize.
     • Adding plugin second and more times during single session does nothing:
       only the data from the first adding is registered.
@@ -400,7 +379,7 @@ add({specs}, {opts})                                          *vim.pack.add()*
                    Load `plugin/` files and `ftdetect/` scripts. If `false`,
                    works like `:packadd!`. If function, called with plugin
                    data and is fully responsible for loading plugin. Default
-                   `false` during |init.lua| sourcing and `true` afterwards.
+                   `false` during startup and `true` afterwards.
                  • {confirm}? (`boolean`) Whether to ask user to confirm
                    initial install. Default `true`.
 
@@ -437,7 +416,7 @@ get({names}, {opts})                                          *vim.pack.get()*
 update({names}, {opts})                                    *vim.pack.update()*
     Update plugins
     • Download new changes from source.
-    • Infer update info (current/target revisions, changelog, etc.).
+    • Infer update info (current/target state, changelog, etc.).
     • Depending on `force`:
       • If `false`, show confirmation buffer. It lists data about all set to
         update plugins. Pending changes starting with `>` will be applied

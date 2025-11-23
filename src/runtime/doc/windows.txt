@@ -1,7 +1,7 @@
 *windows.txt*   Nvim
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIM REFERENCE MANUAL    by Bram Moolenaar
 
 
 Editing with multiple windows and buffers.		*windows* *buffers*
@@ -147,7 +147,7 @@ the filler characters.
 CTRL-W s						*CTRL-W_s*
 CTRL-W S						*CTRL-W_S*
 CTRL-W CTRL-S						*CTRL-W_CTRL-S*
-:[N]sp[lit] [++opt] [+cmd]				*:sp* *:split*
+:[N]sp[lit] [++opt] [+cmd] [file]			*:sp* *:split*
 		Split current window in two.  The result is two viewports on
 		the same file.
 
@@ -157,6 +157,10 @@ CTRL-W CTRL-S						*CTRL-W_CTRL-S*
 		'eadirection' isn't "hor", and one of them is higher than the
 		current or the new window).
 
+		If [file] is given it will be edited in the new window.  If it
+		is not loaded in any buffer, it will be read.  Else the new
+		window will use the already loaded buffer.
+
 		Note: CTRL-S does not work on all terminals and might block
 		further input, use CTRL-Q to get going again.
 		Also see |++opt| and |+cmd|.
@@ -164,19 +168,6 @@ CTRL-W CTRL-S						*CTRL-W_CTRL-S*
 		Be careful when splitting a window in an autocommand, it may
 		mess up the window layout if this happens while making other
 		window layout changes.
-
-:[N]sp[lit] [++opt] [+cmd] {file}			*:split_f*
-		Like |:split| but create a new window and start editing file
-		{file} in it.
-		This behaves almost like a ":split" first, and then an ":edit"
-		command, but the alternate file name in the original window is
-		set to {file}.
-		If [+cmd] is given, execute the command when the file has been
-		loaded |+cmd|.
-		Also see |++opt|.
-		Make new window N high (default is to use half the existing
-		height).  Reduces the current window height to create room
-		(and others, if the 'equalalways' option is set).
 
 CTRL-W CTRL-V						*CTRL-W_CTRL-V*
 CTRL-W v						*CTRL-W_v*
@@ -198,9 +189,9 @@ CTRL-W CTRL-N						*CTRL-W_CTRL-N*
 :[N]new [++opt] [+cmd]					*:new*
 		Create a new window and start editing an empty file in it.
 		Make new window N high (default is to use half the existing
-		height).  Reduces the current window height to create room
-		(and others, if the 'equalalways' option is set and
-		'eadirection' isn't "hor").
+		height).  Reduces the current window height to create room (and
+		others, if the 'equalalways' option is set and 'eadirection'
+		isn't "hor").
 		Also see |++opt| and |+cmd|.
 		If 'fileformats' is not empty, the first format given will be
 		used for the new buffer.  If 'fileformats' is empty, the
@@ -215,7 +206,17 @@ CTRL-W CTRL-N						*CTRL-W_CTRL-N*
 		command.
 
 :[N]new [++opt] [+cmd] {file}
-		Like |:split_f|, create a new window and start editing {file}.
+:[N]sp[lit] [++opt] [+cmd] {file}			*:split_f*
+		Create a new window and start editing file {file} in it.  This
+		behaves almost like a ":split" first, and then an ":edit"
+		command, but the alternate file name in the original window is
+		set to {file}.
+		If [+cmd] is given, execute the command when the file has been
+		loaded |+cmd|.
+		Also see |++opt|.
+		Make new window N high (default is to use half the existing
+		height).  Reduces the current window height to create room
+		(and others, if the 'equalalways' option is set).
 
 :[N]vne[w] [++opt] [+cmd] [file]			*:vne* *:vnew*
 		Like |:new|, but split vertically.  If 'equalalways' is set
@@ -507,8 +508,8 @@ CTRL-W R	Rotate windows upwards/leftwards.  The second window becomes
 		current window is in.
 
 CTRL-W x					*CTRL-W_x* *CTRL-W_CTRL-X*
-CTRL-W CTRL-X	Without count: Exchange current window with next one.  If
-		there is no next window, exchange with previous window.
+CTRL-W CTRL-X	Without count: Exchange current window with next one.  If there
+		is no next window, exchange with previous window.
 		With count: Exchange current window with Nth window (first
 		window is 1).  The cursor is put in the other window.
 		When vertical and horizontal window splits are mixed, the
@@ -657,9 +658,9 @@ The information provided by |WinScrolled| is a dictionary for each window that
 has changes, using the window ID as the key, and a total count of the changes
 with the key "all".  Example value for |v:event|: >
 	{
-	   all:  {width: 0, height:  2, leftcol: 0, skipcol: 0, topline: 1, topfill: 0},
+	   all: {width: 0, height: 2, leftcol: 0, skipcol: 0, topline: 1, topfill: 0},
 	   1003: {width: 0, height: -1, leftcol: 0, skipcol: 0, topline: 0, topfill: 0},
-	   1006: {width: 0, height:  1, leftcol: 0, skipcol: 0, topline: 1, topfill: 0},
+	   1006: {width: 0, height: 1, leftcol: 0, skipcol: 0, topline: 1, topfill: 0},
 	}
 
 Note that the "all" entry has the absolute values of the individual windows
@@ -970,13 +971,13 @@ CTRL-W CTRL-Z					*CTRL-W_CTRL-Z* *:pc* *:pclose*
 
 CTRL-W }						*CTRL-W_}*
 		Use identifier under cursor as a tag and perform a :ptag on
-		it.  Make the new Preview window (if required) N high.  If N
-		is not given, 'previewheight' is used.
+		it.  Make the new Preview window (if required) N high.  If N is
+		not given, 'previewheight' is used.
 
 CTRL-W g }						*CTRL-W_g}*
 		Use identifier under cursor as a tag and perform a :ptjump on
-		it.  Make the new Preview window (if required) N high.  If N
-		is not given, 'previewheight' is used.
+		it.  Make the new Preview window (if required) N high.  If N is
+		not given, 'previewheight' is used.
 
 							*:pb* *:pbuffer*
 :[N]pb[uffer][!] [+cmd] [N]
@@ -1115,11 +1116,6 @@ list of buffers. |unlisted-buffer|
 		Each buffer has a unique number.  That number will not change,
 		thus you can always go to a specific buffer with ":buffer N"
 		or "N CTRL-^", where N is the buffer number.
-
-		For the file name these special values are used:
-			"[Prompt]"	|prompt-buffer|
-			"[Scratch]"	'buftype' is "nofile"
-			"[No Name]"	no file name specified
 
 		Indicators (chars in the same column are mutually exclusive):
 		u	an unlisted buffer (only displayed when [!] is used)
@@ -1292,8 +1288,8 @@ list of buffers. |unlisted-buffer|
 		buffer (if there is one).  Similarly, if you are in a normal
 		(non-help) buffer, this takes you to the next normal buffer.
 		This is so that if you have invoked help, it doesn't get in
-		the way when you're browsing code/text buffers.  The next
-		three commands also work like this.
+		the way when you're browsing code/text buffers.  The next three
+		commands also work like this.
 
 								*]b*
 ]b		Mapped to |:bnext|. |default-mappings|

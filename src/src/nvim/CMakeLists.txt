@@ -32,24 +32,20 @@ find_package(Iconv REQUIRED)
 find_package(Libuv 1.28.0 REQUIRED)
 find_package(Lpeg REQUIRED)
 find_package(Treesitter 0.25.0 REQUIRED)
+find_package(Unibilium 2.0 REQUIRED)
 find_package(UTF8proc REQUIRED)
 
 target_link_libraries(main_lib INTERFACE
   iconv
   lpeg
   treesitter
+  unibilium
   utf8proc)
 target_link_libraries(nlua0 PUBLIC lpeg)
 
 if(ENABLE_LIBINTL)
   find_package(Libintl REQUIRED) # Libintl (not Intl) selects our FindLibintl.cmake script. #8464
   target_link_libraries(main_lib INTERFACE libintl)
-endif()
-
-if(ENABLE_UNIBILIUM)
-  find_package(Unibilium 2.0 REQUIRED)
-  target_compile_definitions(nvim_bin PRIVATE HAVE_UNIBILIUM)
-  target_link_libraries(main_lib INTERFACE unibilium)
 endif()
 
 if(ENABLE_WASMTIME)
@@ -72,7 +68,7 @@ else()
   target_include_directories(main_lib SYSTEM BEFORE INTERFACE ${LUAJIT_INCLUDE_DIR})
   target_link_libraries(main_lib INTERFACE ${LUAJIT_LIBRARY})
   target_include_directories(nlua0 SYSTEM BEFORE PUBLIC ${LUAJIT_INCLUDE_DIR})
-  if(WIN32 OR CYGWIN)
+  if(WIN32)
     target_link_libraries(nlua0 PUBLIC ${LUAJIT_LIBRARY})
   endif()
 endif()
@@ -289,8 +285,7 @@ endif()
 # Variables
 #-------------------------------------------------------------------------------
 
-set(EVAL_FUNCS_METADATA ${PROJECT_BINARY_DIR}/eval_funcs_metadata.mpack)
-set(EXPORTED_FUNCS_METADATA ${PROJECT_BINARY_DIR}/exported_funcs_metadata.mpack)
+set(FUNCS_METADATA ${PROJECT_BINARY_DIR}/funcs_metadata.mpack)
 set(UI_METADATA ${PROJECT_BINARY_DIR}/ui_metadata.mpack)
 set(BINARY_LIB_DIR ${PROJECT_BINARY_DIR}/lib/nvim)
 set(GENERATED_DIR ${PROJECT_BINARY_DIR}/src/nvim/auto)
@@ -303,7 +298,6 @@ set(NVIM_RUNTIME_DIR ${PROJECT_SOURCE_DIR}/runtime)
 # GENERATOR_DIR
 set(API_DISPATCH_GENERATOR ${GENERATOR_DIR}/gen_api_dispatch.lua)
 set(API_UI_EVENTS_GENERATOR ${GENERATOR_DIR}/gen_api_ui_events.lua)
-set(API_METADATA_GENERATOR ${GENERATOR_DIR}/gen_api_metadata.lua)
 set(CHAR_BLOB_GENERATOR ${GENERATOR_DIR}/gen_char_blob.lua)
 set(EVENTS_GENERATOR ${GENERATOR_DIR}/gen_events.lua)
 set(EX_CMDS_GENERATOR ${GENERATOR_DIR}/gen_ex_cmds.lua)
@@ -423,7 +417,6 @@ list(SORT NVIM_SOURCES)
 list(SORT NVIM_HEADERS)
 
 list(APPEND UNCRUSTIFY_NVIM_SOURCES ${NVIM_SOURCES} ${NVIM_HEADERS})
-list(APPEND UNCRUSTIFY_NVIM_SOURCES ${PROJECT_SOURCE_DIR}/src/tee/tee.c)
 
 foreach(sfile ${NVIM_SOURCES})
   get_filename_component(f ${sfile} NAME)
@@ -455,7 +448,6 @@ foreach(hfile ${NVIM_HEADERS})
 endforeach()
 
 list(APPEND LINT_NVIM_SOURCES ${NVIM_SOURCES} ${NVIM_HEADERS})
-list(APPEND LINT_NVIM_SOURCES ${PROJECT_SOURCE_DIR}/src/tee/tee.c)
 
 # Log level (NVIM_LOG_DEBUG in log.h)
 if(CI_BUILD)
@@ -572,13 +564,16 @@ set(NVIM_VERSION_LUA ${PROJECT_BINARY_DIR}/nvim_version.lua)
 configure_file(${GENERATOR_DIR}/nvim_version.lua.in ${NVIM_VERSION_LUA})
 
 add_custom_command(
-  OUTPUT ${GENERATED_API_DISPATCH} ${EXPORTED_FUNCS_METADATA}
-  ${EVAL_FUNCS_METADATA} ${LUA_API_C_BINDINGS} ${GENERATED_KEYSETS_DEFS}
+  OUTPUT ${GENERATED_API_DISPATCH} ${GENERATED_API_METADATA}
+  ${FUNCS_METADATA} ${LUA_API_C_BINDINGS} ${GENERATED_KEYSETS_DEFS}
          COMMAND ${LUA_GEN} ${API_DISPATCH_GENERATOR}
                          ${GENERATED_API_DISPATCH}
-                         ${EXPORTED_FUNCS_METADATA} ${EVAL_FUNCS_METADATA}
+                         ${GENERATED_API_METADATA} ${FUNCS_METADATA}
                          ${LUA_API_C_BINDINGS}
                          ${GENERATED_KEYSETS_DEFS}
+                         ${UI_METADATA}
+                         ${NVIM_VERSION_GIT_H} ${NVIM_VERSION_LUA}
+                         ${GENERATOR_DIR}/dump_bin_array.lua
                          ${CMAKE_CURRENT_LIST_DIR}/api/dispatch_deprecated.lua
                          ${API_HEADERS}
 
@@ -589,27 +584,11 @@ add_custom_command(
     ${API_DISPATCH_GENERATOR}
     ${GENERATOR_C_GRAMMAR}
     ${GENERATOR_HASHY}
-    ${CMAKE_CURRENT_LIST_DIR}/api/dispatch_deprecated.lua
-)
-
-add_custom_command(
-  OUTPUT ${GENERATED_API_METADATA}
-        COMMAND ${LUA_GEN} ${API_METADATA_GENERATOR}
-                        ${EXPORTED_FUNCS_METADATA}
-                         ${UI_METADATA}
-                         ${CMAKE_CURRENT_LIST_DIR}/api/ui.h
-                         ${NVIM_VERSION_GIT_H} ${NVIM_VERSION_LUA}
-                         ${GENERATOR_DIR}/dump_bin_array.lua
-                         ${GENERATED_API_METADATA}
-
-  DEPENDS
-    ${LUA_GEN_DEPS}
-    ${API_METADATA_GENERATOR}
     ${GENERATOR_DIR}/dump_bin_array.lua
     ${UI_METADATA}
-    ${EXPORTED_FUNCS_METADATA}
     ${NVIM_VERSION_LUA}
     ${NVIM_VERSION_GIT_H}
+    ${CMAKE_CURRENT_LIST_DIR}/api/dispatch_deprecated.lua
 )
 
 add_custom_command(
@@ -675,8 +654,8 @@ add_custom_command(OUTPUT ${GENERATED_EX_CMDS_ENUM} ${GENERATED_EX_CMDS_DEFS}
 )
 
 add_custom_command(OUTPUT ${GENERATED_FUNCS} ${FUNCS_DATA}
-  COMMAND ${LUA_GEN} ${FUNCS_GENERATOR} ${GENERATED_FUNCS} ${EVAL_FUNCS_METADATA} ${FUNCS_DATA} ${CMAKE_CURRENT_LIST_DIR}/eval.lua
-  DEPENDS ${LUA_GEN_DEPS} ${FUNCS_GENERATOR} ${GENERATOR_HASHY} ${CMAKE_CURRENT_LIST_DIR}/eval.lua ${EVAL_FUNCS_METADATA}
+  COMMAND ${LUA_GEN} ${FUNCS_GENERATOR} ${GENERATED_FUNCS} ${FUNCS_METADATA} ${FUNCS_DATA} ${CMAKE_CURRENT_LIST_DIR}/eval.lua
+  DEPENDS ${LUA_GEN_DEPS} ${FUNCS_GENERATOR} ${GENERATOR_HASHY} ${CMAKE_CURRENT_LIST_DIR}/eval.lua ${FUNCS_METADATA}
 )
 
 add_custom_command(OUTPUT ${GENERATED_EVENTS_ENUM} ${GENERATED_EVENTS_NAMES_MAP}
@@ -711,7 +690,6 @@ list(APPEND NVIM_GENERATED_FOR_SOURCES
   "${GENERATED_OPTIONS}"
   "${GENERATED_OPTIONS_MAP}"
   "${VIM_MODULE_FILE}"
-  "${GENERATED_API_METADATA}"
   "${PROJECT_BINARY_DIR}/cmake.config/auto/pathdef.h"
 )
 
@@ -816,16 +794,6 @@ if(EXISTS ${DEPS_PREFIX}/lib/nvim/parser)
     TARGET nvim_runtime_deps
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E ${COPY_DIRECTORY} ${DEPS_PREFIX}/lib/nvim/parser ${BINARY_LIB_DIR}/parser)
-endif()
-
-if(CYGWIN)
-  if(NOT PREFER_LUA)
-    add_custom_command(
-      TARGET nvim_runtime_deps
-      POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy ${DEPS_PREFIX}/bin/cyglua51.dll ${PROJECT_BINARY_DIR}/bin)
-    install(PROGRAMS ${PROJECT_BINARY_DIR}/bin/cyglua51.dll DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
 endif()
 
 install(DIRECTORY ${BINARY_LIB_DIR}
@@ -992,10 +960,10 @@ add_target(doc-vim
   )
 
 add_target(doc-eval
-  COMMAND ${NVIM_LUA} ${PROJECT_SOURCE_DIR}/src/gen/gen_eval_files.lua ${EVAL_FUNCS_METADATA} ${PROJECT_BINARY_DIR}/runtime/doc/tags
+  COMMAND ${NVIM_LUA} ${PROJECT_SOURCE_DIR}/src/gen/gen_eval_files.lua ${FUNCS_METADATA} ${PROJECT_BINARY_DIR}/runtime/doc/tags
   DEPENDS
     nvim
-    ${EVAL_FUNCS_METADATA}
+    ${FUNCS_METADATA}
     ${PROJECT_SOURCE_DIR}/src/gen/gen_eval_files.lua
     ${PROJECT_SOURCE_DIR}/src/nvim/eval.lua
     ${PROJECT_SOURCE_DIR}/src/nvim/options.lua
@@ -1011,9 +979,3 @@ add_target(lintdoc
   DEPENDS ${DOCFILES}
   CUSTOM_COMMAND_ARGS USES_TERMINAL)
 add_dependencies(lintdoc nvim)
-
-add_target(lintdocurls
-  COMMAND ${NVIM_LUA} scripts/lintdoc.lua true
-  DEPENDS ${DOCFILES}
-  CUSTOM_COMMAND_ARGS USES_TERMINAL)
-add_dependencies(lintdocurls nvim)

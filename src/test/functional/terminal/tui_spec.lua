@@ -33,23 +33,14 @@ local assert_log = t.assert_log
 
 local testlog = 'Xtest-tui-log'
 
--- Using this to have 'notermguicolors' in Nvim instances without starting a timer
--- that causes delay on exit with ASAN/TSAN.
-local env_notermguicolors = { COLORTERM = 'xterm-256color' }
-
 describe('TUI', function()
   it('exit status 1 and error message with server --listen error #34365', function()
     clear()
     local addr_in_use = api.nvim_get_vvar('servername')
     local screen = tt.setup_child_nvim(
       { '--listen', addr_in_use, '-u', 'NONE', '-i', 'NONE' },
-      { extra_rows = 10, cols = 60, env = { NVIM_LOG_FILE = testlog } }
+      { extra_rows = 10, cols = 60 }
     )
-    finally(function()
-      os.remove(testlog)
-    end)
-
-    screen:expect({ any = vim.pesc('[Process exited 1]') })
     -- When the address is very long, the error message may be only partly visible.
     if #addr_in_use <= 600 then
       screen:expect({
@@ -58,63 +49,15 @@ describe('TUI', function()
             is_os('win') and 'nvim.exe' or 'nvim'
           )
         ),
-        unchanged = true,
       })
     end
-
-    assert_log(
-      vim.pesc('Failed to start server: address already in use: ' .. addr_in_use),
-      testlog,
-      100
-    )
-  end)
-
-  it('suspending does not crash or hang', function()
-    clear()
-    local screen = tt.setup_child_nvim({ '--clean' }, { env = env_notermguicolors })
-    local s0 = [[
-      ^                                                  |
-      ~                                                 |*3
-      {2:[No Name]                       0,0-1          All}|
-                                                        |
-      {5:-- TERMINAL --}                                    |
-    ]]
-    screen:expect(s0)
-    feed_data(':')
-    local s1 = [[
-                                                        |
-      ~                                                 |*3
-      {2:[No Name]                       0,0-1          All}|
-      :^                                                 |
-      {5:-- TERMINAL --}                                    |
-    ]]
-    screen:expect(s1)
-    feed_data('suspend\r')
-    if is_os('win') then -- no-op on Windows
-      screen:expect([[
-        ^                                                  |
-        ~                                                 |*3
-        {2:[No Name]                       0,0-1          All}|
-        :suspend                                          |
-        {5:-- TERMINAL --}                                    |
-      ]])
-    else -- resuming works on other platforms
-      screen:expect([[
-        ^                                                  |
-                                                          |*5
-        {5:-- TERMINAL --}                                    |
-      ]])
-      exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-      screen:expect(s0)
-    end
-    feed_data(':')
-    screen:expect(s1)
+    screen:expect({ any = vim.pesc('[Process exited 1]'), unchanged = true })
   end)
 end)
 
 describe('TUI :detach', function()
   it('does not stop server', function()
-    local job_opts = { env = env_notermguicolors }
+    local job_opts = { env = {} }
 
     if is_os('win') then
       -- TODO(justinmk): on Windows,
@@ -167,7 +110,7 @@ describe('TUI :detach', function()
       '--cmd',
       'colorscheme vim',
       '--cmd',
-      nvim_set .. ' laststatus=2 background=dark',
+      nvim_set .. ' notermguicolors laststatus=2 background=dark',
     }, job_opts)
 
     --- FIXME: On Windows spaces at the end of a screen line may have wrong attrs.
@@ -259,8 +202,7 @@ describe('TUI :restart', function()
       nvim_set .. ' notermguicolors laststatus=2 background=dark',
       '--cmd',
       'echo getpid()',
-    }) -- FIXME: why does using env_notermguicolors cause immediate exit on Windows?
-    -- }, { env = env_notermguicolors })
+    })
 
     --- FIXME: On Windows spaces at the end of a screen line may have wrong attrs.
     --- Remove this function when that's fixed.
@@ -377,14 +319,6 @@ describe('TUI :restart', function()
     -- Cancel the operation (abandons restart).
     tt.feed_data('C\013')
     screen:expect({ any = vim.pesc('[No Name]') })
-
-    -- Check :restart respects 'confirm' option.
-    tt.feed_data(':set confirm\013')
-    tt.feed_data(':restart\013')
-    screen:expect({ any = vim.pesc('Save changes to "Untitled"?') })
-    tt.feed_data('C\013')
-    screen:expect({ any = vim.pesc('[No Name]') })
-    tt.feed_data(':set noconfirm\013')
 
     -- Check ":confirm restart <cmd>" on a modified buffer.
     tt.feed_data(':confirm restart echo "Hello"\013')
@@ -543,10 +477,10 @@ describe('TUI', function()
       child_server,
       '--clean',
       '--cmd',
-      nvim_set .. ' laststatus=2 background=dark',
+      nvim_set .. ' notermguicolors laststatus=2 background=dark',
       '--cmd',
       'colorscheme vim',
-    }, { env = env_notermguicolors })
+    })
     screen:expect([[
       ^                                                  |
       {100:~                                                 }|*3
@@ -2185,7 +2119,7 @@ describe('TUI', function()
 
   it('in nvim_list_uis(), sets nvim_set_client_info()', function()
     -- $TERM in :terminal.
-    local exp_term = is_os('bsd') and 'xterm' or 'xterm-256color'
+    local exp_term = is_os('bsd') and 'builtin_xterm' or 'xterm-256color'
     local ui_chan = 1
     local expected = {
       {
@@ -2628,13 +2562,6 @@ describe('TUI', function()
       eq(true, child_exec_lua('return _G.result'))
     end)
   end)
-
-  it('nvim_ui_send works', function()
-    child_session:request('nvim_ui_send', '\027]2;TEST_TITLE\027\\')
-    retry(nil, nil, function()
-      eq('TEST_TITLE', api.nvim_buf_get_var(0, 'term_title'))
-    end)
-  end)
 end)
 
 describe('TUI', function()
@@ -2803,10 +2730,10 @@ describe('TUI', function()
       '--cmd',
       'colorscheme vim',
       '--cmd',
-      'set noruler',
+      'set noruler notermguicolors',
       '--cmd',
       ':nnoremap <C-h> :echomsg "\\<C-h\\>"<CR>',
-    }, { env = env_notermguicolors })
+    })
     screen:expect([[
       ^                                                  |
       {100:~                                                 }|*3
@@ -2829,10 +2756,12 @@ describe('TUI', function()
     local screen = tt.setup_child_nvim({
       '--clean',
       '--cmd',
+      'set notermguicolors',
+      '--cmd',
       'colorscheme vim',
       '--cmd',
       'call setline(1, ["1st line" .. repeat(" ", 153), "2nd line"])',
-    }, { cols = 80, env = env_notermguicolors })
+    }, { cols = 80 })
     screen:expect([[
       ^1st line                                                                        |
                                                                                       |*2
@@ -2928,7 +2857,7 @@ describe('TUI UIEnter/UILeave', function()
       '--cmd',
       'colorscheme vim',
       '--cmd',
-      'set noswapfile noshowcmd noruler',
+      'set noswapfile noshowcmd noruler notermguicolors',
       '--cmd',
       'let g:evs = []',
       '--cmd',
@@ -2937,7 +2866,7 @@ describe('TUI UIEnter/UILeave', function()
       'autocmd UILeave *  :call add(g:evs, "UILeave")',
       '--cmd',
       'autocmd VimEnter * :call add(g:evs, "VimEnter")',
-    }, { env = env_notermguicolors })
+    })
     screen:expect([[
       ^                                                  |
       {100:~                                                 }|*3
@@ -2973,8 +2902,8 @@ describe('TUI FocusGained/FocusLost', function()
       '--cmd',
       'colorscheme vim',
       '--cmd',
-      'set noswapfile noshowcmd noruler background=dark',
-    }, { env = env_notermguicolors })
+      'set noswapfile noshowcmd noruler notermguicolors background=dark',
+    })
 
     screen:expect([[
       ^                                                  |
@@ -3455,14 +3384,14 @@ describe("TUI 'term' option", function()
   end
 
   it('gets builtin term if $TERM is invalid', function()
-    assert_term('foo', 'ansi')
+    assert_term('foo', 'builtin_ansi')
   end)
 
   it('gets system-provided term if $TERM is valid', function()
     if is_os('openbsd') then
       assert_term('xterm', 'xterm')
     elseif is_os('bsd') then -- BSD lacks terminfo, builtin is always used.
-      assert_term('xterm', 'xterm')
+      assert_term('xterm', 'builtin_xterm')
     elseif is_os('mac') then
       local status, _ = pcall(assert_term, 'xterm', 'xterm')
       if not status then
@@ -3475,9 +3404,9 @@ describe("TUI 'term' option", function()
 
   it('builtin terms', function()
     -- These non-standard terminfos are always builtin.
-    assert_term('win32con', 'win32con')
-    assert_term('conemu', 'conemu')
-    assert_term('vtpcon', 'vtpcon')
+    assert_term('win32con', 'builtin_win32con')
+    assert_term('conemu', 'builtin_conemu')
+    assert_term('vtpcon', 'builtin_vtpcon')
   end)
 end)
 
@@ -3901,8 +3830,8 @@ describe('TUI client', function()
     local server_super = n.clear()
     local client_super = n.new_session(true)
     finally(function()
-      client_super:close()
       server_super:close()
+      client_super:close()
     end)
 
     local server_pipe = new_pipename()
@@ -3913,8 +3842,8 @@ describe('TUI client', function()
       '--cmd',
       'colorscheme vim',
       '--cmd',
-      nvim_set .. ' laststatus=2 background=dark',
-    }, { env = env_notermguicolors })
+      nvim_set .. ' notermguicolors laststatus=2 background=dark',
+    })
     screen_server:expect([[
       ^                                                  |
       {100:~                                                 }|*3
@@ -3949,7 +3878,7 @@ describe('TUI client', function()
       '--remote-ui',
       '--server',
       server_pipe,
-    }, { env = env_notermguicolors })
+    })
     screen_client:expect(s0)
 
     return server_super, screen_server, screen_client
@@ -3958,8 +3887,9 @@ describe('TUI client', function()
   it('connects to remote instance (with its own TUI)', function()
     local _, screen_server, screen_client = start_tui_and_remote_client()
 
+    -- XXX: should has("gui_running") be 1 when there is a remote TUI?
     feed_data(':echo "GUI Running: " .. has("gui_running")\013')
-    screen_client:expect({ any = 'GUI Running: 0' })
+    screen_client:expect({ any = 'GUI Running: 1' })
 
     -- grid smaller than containing terminal window is cleared properly
     feed_data(":call setline(1,['a'->repeat(&columns)]->repeat(&lines))\n")
@@ -3972,10 +3902,6 @@ describe('TUI client', function()
     ]]
     screen_client:expect(s1)
     screen_server:expect(s1)
-  end)
-
-  it(':restart works when connecting to remote instance (with its own TUI)', function()
-    local _, screen_server, screen_client = start_tui_and_remote_client()
 
     -- Run :restart on the remote client.
     -- The remote client should start a new server while the original one should exit.
@@ -3992,20 +3918,11 @@ describe('TUI client', function()
     feed_data(':echo "GUI Running: " .. has("gui_running")\013')
     screen_client:expect({ any = 'GUI Running: 0' })
 
-    feed_data(':q!\r')
-    screen_client:expect({ any = vim.pesc('[Process exited 0]') })
+    feed_data(':q!\n')
   end)
 
   local function start_headless_server_and_client()
-    local server = n.new_session(false, {
-      args_rm = { '--cmd' },
-      args = {
-        '--cmd',
-        'colorscheme vim',
-        '--cmd',
-        nvim_set .. ' notermguicolors background=dark',
-      },
-    })
+    local server = n.new_session(false)
     local client_super = n.new_session(true, { env = { NVIM_LOG_FILE = testlog } })
     finally(function()
       client_super:close()
@@ -4017,13 +3934,14 @@ describe('TUI client', function()
     --- @type string
     local server_pipe = api.nvim_get_vvar('servername')
     server:request('nvim_input', 'iHalloj!<Esc>')
+    server:request('nvim_command', 'set notermguicolors')
 
     set_session(client_super)
     local screen_client = tt.setup_child_nvim({
       '--remote-ui',
       '--server',
       server_pipe,
-    }, { env = env_notermguicolors })
+    })
     screen_client:expect([[
       Halloj^!                                           |
       {100:~                                                 }|*4
@@ -4066,18 +3984,9 @@ describe('TUI client', function()
     ]])
     feed_data('\027')
 
+    -- XXX: should has("gui_running") be 1 when there is a remote TUI?
     feed_data(':echo "GUI Running: " .. has("gui_running")\013')
-    screen_client:expect({ any = 'GUI Running: 0' })
-
-    if is_os('mac') then
-      -- this might either be "Unknown system error %-102" or
-      -- "inappropriate ioctl for device" depending on the phase of the moon
-      assert_log('uv_tty_set_mode failed', testlog)
-    end
-  end)
-
-  it(':restart works when connecting to remote instance (--headless)', function()
-    local _, server_pipe, screen_client = start_headless_server_and_client()
+    screen_client:expect({ any = 'GUI Running: 1' })
 
     -- Run :restart on the client.
     -- The client should start a new server while the original server should exit.
@@ -4095,8 +4004,11 @@ describe('TUI client', function()
     feed_data(':echo "GUI Running: " .. has("gui_running")\013')
     screen_client:expect({ any = 'GUI Running: 0' })
 
-    feed_data(':q!\r')
-    screen_client:expect({ any = vim.pesc('[Process exited 0]') })
+    if is_os('mac') then
+      -- this might either be "Unknown system error %-102" or
+      -- "inappropriate ioctl for device" depending on the phase of the moon
+      assert_log('uv_tty_set_mode failed', testlog)
+    end
   end)
 
   it('does not crash or hang with a very long title', function()
@@ -4137,14 +4049,6 @@ describe('TUI client', function()
     end)
   end)
 
-  it('nvim_ui_send works with remote client #36317', function()
-    local server, _, _ = start_headless_server_and_client()
-    server:request('nvim_ui_send', '\027]2;TEST_TITLE\027\\')
-    retry(nil, nil, function()
-      eq('TEST_TITLE', api.nvim_buf_get_var(0, 'term_title'))
-    end)
-  end)
-
   it('throws error when no server exists', function()
     clear()
     local screen = tt.setup_child_nvim({
@@ -4181,70 +4085,5 @@ describe('TUI client', function()
     it('with :cquit', function()
       test_remote_tui_quit(42)
     end)
-  end)
-
-  it('suspend/resume works with multiple clients', function()
-    local server_super, screen_server, screen_client = start_tui_and_remote_client()
-    local server_super_exec_lua = tt.make_lua_executor(server_super)
-
-    local screen_normal = [[
-      Hello, Worl^d                                      |
-      {100:~                                                 }|*3
-      {3:[No Name] [+]                                     }|
-                                                        |
-      {5:-- TERMINAL --}                                    |
-    ]]
-    local screen_suspended = [[
-      ^                                                  |
-                                                        |*5
-      {5:-- TERMINAL --}                                    |
-    ]]
-
-    screen_client:expect({ grid = screen_normal, unchanged = true })
-    screen_server:expect({ grid = screen_normal, unchanged = true })
-
-    -- Suspend both clients.
-    feed_data(':suspend\r')
-    screen_client:expect({ grid = screen_suspended })
-    screen_server:expect({ grid = screen_suspended })
-
-    -- Resume the remote client.
-    exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-    screen_client:expect({ grid = screen_normal })
-    screen_server:expect({ grid = screen_suspended, unchanged = true })
-
-    -- Resume the embedding client.
-    server_super_exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-    screen_server:expect({ grid = screen_normal })
-    screen_client:expect({ grid = screen_normal, unchanged = true })
-
-    -- Suspend both clients again.
-    feed_data(':suspend\r')
-    screen_client:expect({ grid = screen_suspended })
-    screen_server:expect({ grid = screen_suspended })
-
-    -- Resume the remote client.
-    exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-    screen_client:expect({ grid = screen_normal })
-    screen_server:expect({ grid = screen_suspended, unchanged = true })
-
-    -- Suspend the remote client again.
-    feed_data(':suspend\r')
-    screen_client:expect({ grid = screen_suspended })
-    screen_server:expect({ grid = screen_suspended, unchanged = true })
-
-    -- Resume the embedding client.
-    server_super_exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-    screen_server:expect({ grid = screen_normal })
-    screen_client:expect({ grid = screen_suspended, unchanged = true })
-
-    -- Resume the remote client.
-    exec_lua([[vim.uv.kill(vim.fn.jobpid(vim.bo.channel), 'sigcont')]])
-    screen_client:expect({ grid = screen_normal })
-    screen_server:expect({ grid = screen_normal, unchanged = true })
-
-    feed_data(':quit!\r')
-    screen_server:expect({ any = vim.pesc('[Process exited 0]') })
-    screen_client:expect({ any = vim.pesc('[Process exited 0]') })
   end)
 end)

@@ -1,7 +1,7 @@
 *quickfix.txt*  Nvim
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIM REFERENCE MANUAL    by Bram Moolenaar
 
 
 This subject is introduced in section |30.1| of the user manual.
@@ -1303,17 +1303,6 @@ For writing a compiler plugin, see |write-compiler-plugin|.
 
 Use the |compiler-make| plugin to undo the effect of a compiler plugin.
 
-BIOME				      *compiler-biome* *quickfix-biome*
-
-Biome check lints JavaScript, TypeScript, JSX, TSX, JSON, JSONC, HTML, Vue,
-Svelte, Astro, CSS, GraphQL and GritQL files.
-
-Commonly used compiler options can be added to 'makeprg' by setting the
-b/g:biome_makeprg_params variable.  For example (global default is ""): >
-
-  let b:biome_makeprg_params = "--diagnostic-level=error --staged"
-
-
 CPPCHECK			*quickfix-cppcheck* *compiler-cppcheck*
 
 Use g/b:`c_cppcheck_params` to set cppcheck parameters.  The global
@@ -1731,16 +1720,6 @@ from |errorformat-LaTeX| is too complex to keep it working for different
 shells and OSes and also does not allow to use other available TeX options,
 if any.  If your TeX doesn't support "-interaction=nonstopmode", please
 report it with different means to express \nonstopmode from the command line.
-
-TOMBI					*quickfix-toml* *compiler-tombi*
-
-The tombi compiler plugin does not compile.
-
-It runs "tombi lint" and parses diagnostics into the quickfix list.
-
-Color codes are stripped from the linter output to keep |errorformat|
-parsing reliable.  This may require a working "sed" for old versions of the
-tombi linter.
 
 TSC COMPILER						*compiler-tsc*
 

@@ -294,7 +294,7 @@ end
 --- source buffer as its only argument and should return a string.
 --- @field title (string|fun(bufnr:integer):string|nil)?
 
---- Open a window that displays a textual representation of the [undo-tree].
+--- Open a window that displays a textual representation of the undotree.
 ---
 --- While in the window, moving the cursor changes the undo.
 ---

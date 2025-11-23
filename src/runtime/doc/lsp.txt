@@ -73,21 +73,20 @@ listed below, if (1) the language server supports the functionality and (2)
 the options are empty or were set by the builtin runtime (ftplugin) files. The
 options are not restored when the LSP client is stopped or detached.
 
-GLOBAL DEFAULTS         *gra* *gri* *grn* *grr* *grt* *i_CTRL-S* *v_an* *v_in*
-
+GLOBAL DEFAULTS
+                                *gra* *gri* *grn* *grr* *grt* *i_CTRL-S* *v_an* *v_in*
 These GLOBAL keymaps are created unconditionally when Nvim starts:
-- "gra" (Normal and Visual mode) is mapped to |vim.lsp.buf.code_action()|
-- "gri" is mapped to |vim.lsp.buf.implementation()|
-- "grn" is mapped to |vim.lsp.buf.rename()|
-- "grr" is mapped to |vim.lsp.buf.references()|
-- "grt" is mapped to |vim.lsp.buf.type_definition()|
-- "gO" is mapped to |vim.lsp.buf.document_symbol()|
-- CTRL-S (Insert mode) is mapped to |vim.lsp.buf.signature_help()|
-- "an" and "in" (Visual mode) are mapped to outer and inner incremental
+- "gra" is mapped in Normal and Visual mode to |vim.lsp.buf.code_action()|
+- "gri" is mapped in Normal mode to |vim.lsp.buf.implementation()|
+- "grn" is mapped in Normal mode to |vim.lsp.buf.rename()|
+- "grr" is mapped in Normal mode to |vim.lsp.buf.references()|
+- "grt" is mapped in Normal mode to |vim.lsp.buf.type_definition()|
+- "gO" is mapped in Normal mode to |vim.lsp.buf.document_symbol()|
+- CTRL-S is mapped in Insert mode to |vim.lsp.buf.signature_help()|
+- "an" and "in" are mapped in Visual mode to outer and inner incremental
   selections, respectively, using |vim.lsp.buf.selection_range()|
 
 BUFFER-LOCAL DEFAULTS
-
 - 'omnifunc' is set to |vim.lsp.omnifunc()|, use |i_CTRL-X_CTRL-O| to trigger
   completion.
 - 'tagfunc' is set to |vim.lsp.tagfunc()|. This enables features like
@@ -102,7 +101,6 @@ BUFFER-LOCAL DEFAULTS
   - To opt out call `vim.lsp.document_color.enable(false, args.buf)` on |LspAttach|.
 
 DISABLING DEFAULTS                                      *lsp-defaults-disable*
-
 You can remove GLOBAL keymaps at any time using |vim.keymap.del()| or
 |:unmap|. See also |gr-default|.
 
@@ -132,7 +130,7 @@ Use |vim.lsp.config()| to define or modify LSP configurations, and
 |vim.lsp.start()| which allows you to share and merge configs (provided by
 Nvim, plugins, and your local config).
 
-NEW CONFIG                                            *lsp-new-config*
+                                                        *lsp-new-config*
 To create a new config you can either use `vim.lsp.config()` or create
 a `lsp/<config-name>.lua` file.
 
@@ -157,23 +155,17 @@ EXAMPLE: DEFINE A CONFIG AS A FILE ~
    :lua vim.lsp.enable('foo')
 5. Run `:checkhealth vim.lsp`, check "Enabled Configurations". 🌈
 
-HOW CONFIGS ARE MERGED                                  *lsp-config-merge*
+                                                        *lsp-config-merge*
 When an LSP client starts, it resolves its configuration by merging the
 following sources (merge semantics defined by |vim.tbl_deep_extend()| with
 "force" behavior), in order of increasing priority:
 
 1. Configuration defined for the `'*'` name.
-2. The merged configuration of all `lsp/<config>.lua` files in 'runtimepath'
-   for the config named `<config>`.
-3. The merged configuration of all `after/lsp/<config>.lua` files in
-   'runtimepath'.
-   - This behavior of the "after/" directory is a standard Vim feature
-     |after-directory| which allows you to override `lsp/*.lua` configs
-     provided by plugins (such as nvim-lspconfig).
-4. Configurations defined anywhere else.
+2. Configuration from the result of merging all tables returned by
+   `lsp/<config>.lua` files in 'runtimepath' for the config named `<config>`.
+3. Configurations defined anywhere else.
 
 Example: given the following configs... >lua
-
   -- Defined in init.lua
   vim.lsp.config('*', {
     capabilities = {
@@ -185,19 +177,20 @@ Example: given the following configs... >lua
     },
     root_markers = { '.git' },
   })
+
   -- Defined in <rtp>/lsp/clangd.lua
   return {
     cmd = { 'clangd' },
     root_markers = { '.clangd', 'compile_commands.json' },
     filetypes = { 'c', 'cpp' },
   }
+
   -- Defined in init.lua
   vim.lsp.config('clangd', {
     filetypes = { 'c' },
   })
 <
 ...the merged result is: >lua
-
   {
     -- From the clangd configuration in <rtp>/lsp/clangd.lua
     cmd = { 'clangd' },
@@ -220,7 +213,7 @@ Example: given the following configs... >lua
     }
   }
 <
-CONFIGURE ON ATTACH                                     *lsp-attach*
+                                                        *lsp-attach*
 To use LSP features beyond those provided by Nvim (see |lsp-buf|), you can set
 keymaps and options on |Client:on_attach()| or |LspAttach|. Not all language
 servers provide the same capabilities; check `supports_method()` in your
@@ -269,7 +262,7 @@ FAQ                                                     *lsp-faq*
 
 - Q: How to force-reload LSP?
 - A: Stop all clients, then reload the buffer. >vim
-     :lua vim.iter(vim.lsp.get_clients()):each(function(client) client:stop() end)
+     :lua vim.lsp.stop_client(vim.lsp.get_clients())
      :edit
 
 - Q: Why isn't completion working?
@@ -1119,6 +1112,16 @@ formatexpr({opts})                                      *vim.lsp.formatexpr()*
                 • {timeout_ms} (`integer`, default: 500ms) The timeout period
                   for the formatting request..
 
+                                          *vim.lsp.get_buffers_by_client_id()*
+get_buffers_by_client_id({client_id})
+    Returns list of buffers attached to client_id.
+
+    Parameters: ~
+      • {client_id}  (`integer`) client id
+
+    Return: ~
+        (`integer[]`) buffers list of buffer ids
+
 get_client_by_id({client_id})                     *vim.lsp.get_client_by_id()*
     Gets a client by id, or nil if the id is invalid or the client was
     stopped. The returned client may not yet be fully initialized.
@@ -1244,6 +1247,22 @@ status()                                                    *vim.lsp.status()*
 
     Return: ~
         (`string`)
+
+stop_client({client_id}, {force})                      *vim.lsp.stop_client()*
+    Stops a client(s).
+
+    You can also use the `stop()` function on a |vim.lsp.Client| object. To
+    stop all clients: >lua
+        vim.lsp.stop_client(vim.lsp.get_clients())
+<
+
+    By default asks the server to shutdown, unless stop was requested already
+    for this client, then force-shutdown is attempted.
+
+    Parameters: ~
+      • {client_id}  (`integer|integer[]|vim.lsp.Client[]`) id, list of id's,
+                     or list of |vim.lsp.Client| objects
+      • {force}      (`boolean?`) shutdown forcefully
 
 tagfunc({pattern}, {flags})                                *vim.lsp.tagfunc()*
     Provides an interface between the built-in client and 'tagfunc'.
@@ -1648,7 +1667,7 @@ Lua module: vim.lsp.client                                        *lsp-client*
                                 See |Client:notify()|.
       • {cancel_request}        (`fun(self: vim.lsp.Client, id: integer): boolean`)
                                 See |Client:cancel_request()|.
-      • {stop}                  (`fun(self: vim.lsp.Client, force: boolean|integer?)`)
+      • {stop}                  (`fun(self: vim.lsp.Client, force: boolean?)`)
                                 See |Client:stop()|.
       • {is_stopped}            (`fun(self: vim.lsp.Client): boolean`) See
                                 |Client:is_stopped()|.
@@ -1896,14 +1915,8 @@ Client:stop({force})                                           *Client:stop()*
     you request to stop a client which has previously been requested to
     shutdown, it will automatically escalate and force shutdown.
 
-    If `force` is a number, it will be treated as the time in milliseconds to
-    wait before forcing the shutdown.
-
-    Note: Forcing shutdown while a server is busy writing out project or index
-    files can lead to file corruption.
-
     Parameters: ~
-      • {force}  (`boolean|integer?`)
+      • {force}  (`boolean?`)
 
 Client:supports_method({method}, {bufnr})           *Client:supports_method()*
     Checks if a client supports a given method. Always returns true for
@@ -2045,8 +2058,6 @@ enable({enable}, {client_id}, {bufnr}, {opts})
                        `triggerCharacters`.
                      • {convert}? (`fun(item: lsp.CompletionItem): table`)
                        Transforms an LSP CompletionItem to |complete-items|.
-                     • {cmp}? (`fun(a: table, b: table): boolean`) Comparator
-                       for sorting merged completion items from all servers.
 
 get({opts})                                         *vim.lsp.completion.get()*
     Triggers LSP completion once in the current buffer, if LSP completion is

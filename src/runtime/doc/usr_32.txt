@@ -1,8 +1,6 @@
 *usr_32.txt*	Nvim
 
-
-		     VIM USER MANUAL	by Bram Moolenaar
-
+		     VIM USER MANUAL - by Bram Moolenaar
 
 			      The undo tree
 

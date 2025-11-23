@@ -1,6 +1,5 @@
 -- Tests for (protocol-driven) ui2, intended to replace the legacy message grid UI.
 
-local t = require('test.testutil')
 local n = require('test.functional.testnvim')()
 local Screen = require('test.functional.ui.screen')
 
@@ -35,7 +34,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*10
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |
     ]])
@@ -44,7 +43,7 @@ describe('messages2', function()
     screen:expect([[
                                                            |
       {1:~                                                    }|*9
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       fo^o                                                  |
       bar                                                  |
                                           1,3           All|
@@ -54,7 +53,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*5
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |
       baz                                                  |
@@ -83,7 +82,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*8
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |
                                                            |
@@ -115,7 +114,7 @@ describe('messages2', function()
     screen:expect([[
                                                            |
       {1:~                                                    }|*10
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       fo^o                                                  |
       foo                                                  |
     ]])
@@ -195,7 +194,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*4
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |*5
       bar [+8]                                             |
@@ -235,7 +234,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*10
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |
     ]])
@@ -252,7 +251,7 @@ describe('messages2', function()
     screen:expect([[
       ^                                                     |
       {1:~                                                    }|*10
-      {3:                                                     }|
+      {3:─────────────────────────────────────────────────────}|
       foo                                                  |
       bar                                                  |
     ]])
@@ -271,7 +270,7 @@ describe('messages2', function()
     local top = [[
                                                                              |
       {1:~                                                                      }|*4
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       0                                                                      |
       1                                                                      |
       2                                                                      |
@@ -287,7 +286,7 @@ describe('messages2', function()
     screen:expect([[
                                                                              |
       {1:~                                                                      }|*4
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       1 [+1]                                                                 |
       2                                                                      |
       3                                                                      |
@@ -303,7 +302,7 @@ describe('messages2', function()
     screen:expect([[
                                                                              |
       {1:~                                                                      }|*4
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       3 [+3]                                                                 |
       4                                                                      |
       5                                                                      |
@@ -319,7 +318,7 @@ describe('messages2', function()
     screen:expect([[
                                                                              |
       {1:~                                                                      }|*4
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       5 [+5]                                                                 |
       6                                                                      |
       7                                                                      |
@@ -335,7 +334,7 @@ describe('messages2', function()
     screen:expect([[
                                                                              |
       {1:~                                                                      }|*4
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       93 [+93]                                                               |
       94                                                                     |
       95                                                                     |
@@ -350,7 +349,7 @@ describe('messages2', function()
     screen:expect([[
                                                                              |
       {1:~                                                                      }|*3
-      {3:                                                                       }|
+      {3:───────────────────────────────────────────────────────────────────────}|
       93 [+93]                                                               |
       94                                                                     |
       95                                                                     |
@@ -417,54 +416,6 @@ describe('messages2', function()
       ^                                                     |
       {1:~                                                    }|*12
                                                            |
-    ]])
-  end)
-
-  it('FileType is fired after default options are set', function()
-    n.exec([[
-      let g:set = {}
-      au FileType pager set nowrap
-      au OptionSet * let g:set[expand('<amatch>')] = g:set->get(expand('<amatch>'), 0) + 1
-      echom 'foo'->repeat(&columns)
-      messages
-    ]])
-    screen:expect([[
-                                                           |
-      {1:~                                                    }|*9
-      {3:                                                     }|
-      ^foofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofoofo|
-      {1:                                                     }|
-                                                           |
-    ]])
-    t.eq({ filetype = 4 }, n.eval('g:set')) -- still fires for 'filetype'
-  end)
-
-  it('Search highlights only apply to pager', function()
-    screen:add_extra_attr_ids({
-      [100] = { background = Screen.colors.Blue1, foreground = Screen.colors.Red },
-      [101] = { background = Screen.colors.Red1, foreground = Screen.colors.Blue1 },
-    })
-    command('hi MsgArea guifg=Red guibg=Blue')
-    command('hi Search guifg=Blue guibg=Red')
-    command('set hlsearch shortmess+=s')
-    feed('/foo<CR>')
-    screen:expect([[
-      ^                                                     |
-      {1:~                                                    }|*12
-      {9:E486: Pattern not found: foo}{100:                         }|
-    ]])
-    command('set cmdheight=0 | echo "foo"')
-    screen:expect([[
-      ^                                                     |
-      {1:~                                                    }|*12
-      {1:~                                                 }{4:foo}|
-    ]])
-    feed('g<lt>')
-    screen:expect([[
-                                                           |
-      {1:~                                                    }|*11
-      {3:                                                     }|
-      {101:fo^o}{100:                                                  }|
     ]])
   end)
 end)

@@ -1,7 +1,7 @@
 *map.txt*       Nvim
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIM REFERENCE MANUAL    by Bram Moolenaar
 
 
 Key mapping, abbreviations and user-defined commands.
@@ -326,8 +326,9 @@ be seen as a special key.
 
 						*<Cmd>* *:map-cmd*
 The <Cmd> pseudokey begins a "command mapping", which executes the command
-directly without changing modes.  Where you might use ":…<CR>" in the {rhs} of
-a mapping, you can instead use "<Cmd>…<CR>". Example: >
+directly without changing modes.  Where you might use ":...<CR>" in the
+{rhs} of a mapping, you can instead use "<Cmd>...<CR>".
+Example: >
 	noremap x <Cmd>echo mode(1)<CR>
 <
 This is more flexible than `:<C-U>` in Visual and Operator-pending mode, or
@@ -347,7 +348,7 @@ Note:
   |CmdlineEnter| and |CmdlineLeave| events. This helps performance.
 - For the same reason, |keycodes| like <C-R><C-W> are interpreted as plain,
   unmapped keys.
-- The command is not echo'd, no need for <silent>.
+- The command is not echo'ed, no need for <silent>.
 - The {rhs} is not subject to abbreviations nor to other mappings, even if the
   mapping is recursive.
 - In Visual mode you can use `line('v')` and `col('v')` to get one end of the
@@ -356,7 +357,7 @@ Note:
 							*E1255* *E1136*
 <Cmd> commands must terminate, that is, they must be followed by <CR> in the
 {rhs} of the mapping definition.  |Command-line| mode is never entered.  To use
-a literal "<" in the {rhs}, use |<lt>|.
+a literal <CR> in the {rhs}, use |<lt>|.
 
 
 1.3 MAPPING AND MODES					*:map-modes*
@@ -1502,13 +1503,13 @@ Possible attributes are:
 Note that -range=N and -count=N are mutually exclusive - only one should be
 specified.
 
-					*:command-addr*
-It is possible that the special characters in the range like `.`, `$` or `%` which
-by default correspond to the current line, last line and the whole buffer,
-relate to arguments, (loaded) buffers, windows or tab pages.
+                                                  *:command-addr*
+It is possible that the special characters in the range like `.`, `$` or `%`
+which by default correspond to the current line, last line and the whole
+buffer, relate to arguments, (loaded) buffers, windows or tab pages.
 
 Possible values are (second column is the short name used in listing):
-    -addr=lines			Range of lines (the default for -range)
+    -addr=lines			Range of lines (this is the default for -range)
     -addr=arguments	  arg	Range for arguments
     -addr=buffers	  buf	Range for buffers (also not loaded buffers)
     -addr=loaded_buffers  load	Range for loaded buffers
@@ -1516,11 +1517,12 @@ Possible values are (second column is the short name used in listing):
     -addr=tabs		  tab	Range for tab pages
     -addr=quickfix	  qf	Range for quickfix entries
     -addr=other		  ?	Other kind of range; can use ".", "$" and "%"
-				as with "lines" (the default for -count)
+				as with "lines" (this is the default for
+				-count)
 
 
 Incremental preview ~
-					*:command-preview* {nvim-api}
+                                                  *:command-preview* {nvim-api}
 Commands can show an 'inccommand' (as-you-type) preview by defining a preview
 handler (only from Lua, see |nvim_create_user_command()|).
 

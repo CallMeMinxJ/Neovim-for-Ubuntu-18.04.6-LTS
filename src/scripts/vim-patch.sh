@@ -34,7 +34,6 @@ usage() {
   echo "    -L [git-log opts]  List missing Vim patches (for scripts)."
   echo "    -m {vim-revision}  List previous (older) missing Vim patches."
   echo "    -M                 List all merged patch-numbers (at current v:version)."
-  echo "    -n                 List possible N/A Vim patches."
   echo "    -p {vim-revision}  Download and generate a Vim patch. vim-revision"
   echo "                       can be a Vim version (8.1.xxx) or a Git hash."
   echo "    -P {vim-revision}  Download, generate and apply a Vim patch."
@@ -208,7 +207,7 @@ preprocess_patch() {
   2>/dev/null $nvim --cmd 'set dir=/tmp' +'g@^diff --git [ab]/runtime/\<\%('"${na_rt}"'\)\>@exe "norm! d/\\v(^diff)|%$\r"' +w +q "$file"
 
   # Remove unwanted Vim doc files.
-  local na_doc='channel\.txt\|if_cscop\.txt\|netbeans\.txt\|os_\w\+\.txt\|print\.txt\|term\.txt\|testing\.txt\|todo\.txt\|vim9\.txt\|tags\|test_urls\.vim'
+  local na_doc='channel\.txt\|if_cscop\.txt\|netbeans\.txt\|os_\w\+\.txt\|print\.txt\|term\.txt\|testing\.txt\|todo\.txt\|vim9\.txt\|tags'
   2>/dev/null $nvim --cmd 'set dir=/tmp' +'g@^diff --git [ab]/runtime/doc/\<\%('"${na_doc}"'\)\>@exe "norm! d/\\v(^diff)|%$\r"' +w +q "$file"
 
   # Remove "Last change ..." changes in doc files.
@@ -315,16 +314,16 @@ preprocess_patch() {
   LC_ALL=C sed -Ee 's/( [ab]\/runtime\/doc)\/eval\.txt/\1\/vimeval.txt/g' \
     "$file" > "$file".tmp && mv "$file".tmp "$file"
 
-  # Rename <lang>.txt to l10n-<lang>.txt
-  LC_ALL=C sed -Ee 's/( [ab]\/runtime\/doc)\/(arabic|hebrew|russian|vietnamese)\.txt/\1\/l10n-\2.txt/g' \
-    "$file" > "$file".tmp && mv "$file".tmp "$file"
-
   # Rename version*.txt to news.txt
   LC_ALL=C sed -Ee 's/( [ab]\/runtime\/doc)\/version[0-9]+\.txt/\1\/news.txt/g' \
     "$file" > "$file".tmp && mv "$file".tmp "$file"
 
   # Rename sponsor.txt to intro.txt
   LC_ALL=C sed -Ee 's/( [ab]\/runtime\/doc)\/sponsor\.txt/\1\/intro.txt/g' \
+    "$file" > "$file".tmp && mv "$file".tmp "$file"
+
+  # Rename test_urls.vim to check_urls.vim
+  LC_ALL=C sed -Ee 's/( [ab])\/runtime\/doc\/test(_urls\.vim)/\1\/scripts\/check\2/g' \
     "$file" > "$file".tmp && mv "$file".tmp "$file"
 
   # Rename path to check_colors.vim
@@ -883,42 +882,7 @@ review_pr() {
   clean_files
 }
 
-is_na_patch() {
-  local patch=$1
-  local NA_REGEXP="$NVIM_SOURCE_DIR/scripts/vim_na_regexp.txt"
-  local NA_FILELIST="$NVIM_SOURCE_DIR/scripts/vim_na_files.txt"
-
-  local FILES_REMAINING
-  FILES_REMAINING="$(diff <(git -C "${VIM_SOURCE_DIR}" diff-tree --no-commit-id --name-only -r "$patch" | grep -v -f "$NA_REGEXP") "$NA_FILELIST" |
-    grep '^<')" || true
-  test -z "$FILES_REMAINING" && return 0
-  if test "$FILES_REMAINING" == "$(printf "< src/version.c\n")"; then
-    local VERSION_LNUM
-    VERSION_LNUM=$(git -C "${VIM_SOURCE_DIR}" diff-tree --no-commit-id --numstat -r "$patch" -- src/version.c | grep -c '^2\s\+0')
-    test "$VERSION_LNUM" -ne 1 && return 1
-    local VERSION_VNUM
-    VERSION_VNUM="$(git -C "${VIM_SOURCE_DIR}" diff-tree --no-commit-id -U1 -r "$patch" -- src/version.c |
-      grep -Pzc '[ +]\/\*\*\/\n\+\s+[0-9]+,\n[ +]\/\*\*\/\n')" || true
-    test "$VERSION_VNUM" -eq 1 && return 0
-  fi
-  return 1
-}
-
-list_na_patches() {
-  list_missing_vimpatches 0 | while read -r patch; do
-    if is_na_patch "$patch"; then
-      GIT_MSG="$(git -C "${VIM_SOURCE_DIR}" log -1 --oneline "$patch")"
-      if (echo "$patch" | grep -q '^v[0-9]\.[0-9]\.[0-9]') && (echo "${GIT_MSG}" | grep -q ' patch [0-9]\.'); then
-        # shellcheck disable=SC2001
-        echo "vim-patch:$(echo "${GIT_MSG}" | sed 's/^[0-9a-zA-Z]\+ patch //')"
-      else
-        echo "vim-patch:${GIT_MSG}"
-      fi
-    fi
-  done
-}
-
-while getopts "hlLmnMVp:P:g:r:s" opt; do
+while getopts "hlLmMVp:P:g:r:s" opt; do
   case ${opt} in
     h)
       usage
@@ -941,10 +905,6 @@ while getopts "hlLmnMVp:P:g:r:s" opt; do
     m)
       shift  # remove opt
       list_missing_previous_vimpatches_for_patch "$@"
-      exit 0
-      ;;
-    n)
-      list_na_patches
       exit 0
       ;;
     p)

@@ -67,14 +67,14 @@ end
 ---@field private orig_spelloptions string
 --- A map from window ID to highlight states.
 --- This state is kept during rendering across each line update.
----@field private _highlight_states vim.treesitter.highlighter.State[]
+---@field private _highlight_states table<integer, vim.treesitter.highlighter.State[]>
 ---@field private _queries table<string,vim.treesitter.highlighter.Query>
 ---@field  _conceal_line boolean?
 ---@field  _conceal_checked table<integer, boolean>
 ---@field tree vim.treesitter.LanguageTree
 ---@field private redraw_count integer
 --- A map from window ID to whether we are currently parsing that window asynchronously
----@field parsing boolean
+---@field parsing table<integer, boolean>
 local TSHighlighter = {
   active = {},
 }
@@ -144,7 +144,7 @@ function TSHighlighter.new(tree, opts)
   self._conceal_checked = {}
   self._queries = {}
   self._highlight_states = {}
-  self.parsing = false
+  self.parsing = {}
 
   -- Queries for a specific language can be overridden by a custom
   -- string query... if one is not provided it will be looked up by file.
@@ -201,11 +201,12 @@ function TSHighlighter:destroy()
   end
 end
 
+---@param win integer
 ---@param srow integer
 ---@param erow integer exclusive
 ---@private
-function TSHighlighter:prepare_highlight_states(srow, erow)
-  self._highlight_states = {}
+function TSHighlighter:prepare_highlight_states(win, srow, erow)
+  self._highlight_states[win] = {}
 
   self.tree:for_each_tree(function(tstree, tree)
     if not tstree then
@@ -228,7 +229,7 @@ function TSHighlighter:prepare_highlight_states(srow, erow)
 
     -- _highlight_states should be a list so that the highlights are added in the same order as
     -- for_each_tree traversal. This ensures that parents' highlight don't override children's.
-    table.insert(self._highlight_states, {
+    table.insert(self._highlight_states[win], {
       tstree = tstree,
       next_row = 0,
       next_col = 0,
@@ -238,10 +239,11 @@ function TSHighlighter:prepare_highlight_states(srow, erow)
   end)
 end
 
+---@param win integer
 ---@param fn fun(state: vim.treesitter.highlighter.State)
 ---@package
-function TSHighlighter:for_each_highlight_state(fn)
-  for _, state in ipairs(self._highlight_states) do
+function TSHighlighter:for_each_highlight_state(win, fn)
+  for _, state in ipairs(self._highlight_states[win] or {}) do
     fn(state)
   end
 end
@@ -325,6 +327,7 @@ local function get_spell(capture_name)
 end
 
 ---@param self vim.treesitter.highlighter
+---@param win integer
 ---@param buf integer
 ---@param range_start_row integer
 ---@param range_start_col integer
@@ -334,6 +337,7 @@ end
 ---@param on_conceal boolean
 local function on_range_impl(
   self,
+  win,
   buf,
   range_start_row,
   range_start_col,
@@ -358,7 +362,7 @@ local function on_range_impl(
   local skip_until_col = 0
 
   local subtree_counter = 0
-  self:for_each_highlight_state(function(state)
+  self:for_each_highlight_state(win, function(state)
     subtree_counter = subtree_counter + 1
     local root_node = state.tstree:root()
     ---@type { [1]: integer, [2]: integer, [3]: integer, [4]: integer }
@@ -481,25 +485,27 @@ local function on_range_impl(
 end
 
 ---@private
+---@param win integer
 ---@param buf integer
 ---@param br integer
 ---@param bc integer
 ---@param er integer
 ---@param ec integer
-function TSHighlighter._on_range(_, _, buf, br, bc, er, ec, _)
+function TSHighlighter._on_range(_, win, buf, br, bc, er, ec, _)
   local self = TSHighlighter.active[buf]
   if not self then
     return
   end
 
-  return on_range_impl(self, buf, br, bc, er, ec, false, false)
+  return on_range_impl(self, win, buf, br, bc, er, ec, false, false)
 end
 
 ---@private
+---@param win integer
 ---@param buf integer
 ---@param srow integer
 ---@param erow integer
-function TSHighlighter._on_spell_nav(_, _, buf, srow, _, erow, _)
+function TSHighlighter._on_spell_nav(_, win, buf, srow, _, erow, _)
   local self = TSHighlighter.active[buf]
   if not self then
     return
@@ -507,85 +513,71 @@ function TSHighlighter._on_spell_nav(_, _, buf, srow, _, erow, _)
 
   -- Do not affect potentially populated highlight state. Here we just want a temporary
   -- empty state so the C code can detect whether the region should be spell checked.
-  local highlight_states = self._highlight_states
-  self:prepare_highlight_states(srow, erow)
+  local highlight_states = self._highlight_states[win]
+  self:prepare_highlight_states(win, srow, erow)
 
-  on_range_impl(self, buf, srow, 0, erow, 0, true, false)
-  self._highlight_states = highlight_states
+  on_range_impl(self, win, buf, srow, 0, erow, 0, true, false)
+  self._highlight_states[win] = highlight_states
 end
 
 ---@private
+---@param win integer
 ---@param buf integer
 ---@param row integer
-function TSHighlighter._on_conceal_line(_, _, buf, row)
+function TSHighlighter._on_conceal_line(_, win, buf, row)
   local self = TSHighlighter.active[buf]
   if not self or not self._conceal_line or self._conceal_checked[row] then
     return
   end
 
   -- Do not affect potentially populated highlight state.
-  local highlight_states = self._highlight_states
+  local highlight_states = self._highlight_states[win]
   self.tree:parse({ row, row })
-  self:prepare_highlight_states(row, row)
-  on_range_impl(self, buf, row, 0, row + 1, 0, false, true)
-  self._highlight_states = highlight_states
+  self:prepare_highlight_states(win, row, row)
+  on_range_impl(self, win, buf, row, 0, row + 1, 0, false, true)
+  self._highlight_states[win] = highlight_states
 end
 
 ---@private
 ---@param buf integer
 ---@param topline integer
 ---@param botline integer
-function TSHighlighter._on_win(_, _, buf, topline, botline)
+function TSHighlighter._on_win(_, win, buf, topline, botline)
   local self = TSHighlighter.active[buf]
   if not self then
     return false
   end
-  if not self.parsing then
+  self.parsing[win] = self.parsing[win]
+    or nil
+      == self.tree:parse({ topline, botline + 1 }, function(_, trees)
+        if trees and self.parsing[win] then
+          self.parsing[win] = false
+          if api.nvim_win_is_valid(win) then
+            api.nvim__redraw({ win = win, valid = false, flush = false })
+          end
+        end
+      end)
+  if not self.parsing[win] then
     self.redraw_count = self.redraw_count + 1
-    self:prepare_highlight_states(topline, botline)
+    self:prepare_highlight_states(win, topline, botline)
   else
-    self:for_each_highlight_state(function(state)
+    self:for_each_highlight_state(win, function(state)
+      -- TODO(ribru17): Inefficient. Eventually all marks should be applied in on_buf, and all
+      -- non-folded ranges of each open window should be merged, and iterators should only be
+      -- created over those regions. This would also fix #31777.
+      --
+      -- Currently this is not possible because the parser discards previously parsed injection
+      -- trees upon parsing a different region.
       state.iter = nil
       state.next_row = 0
-      state.next_col = 0
     end)
   end
-  return next(self._highlight_states) ~= nil
-end
-
-function TSHighlighter._on_start()
-  local buf_ranges = {} ---@type table<integer, Range[]>
-  for _, win in ipairs(api.nvim_tabpage_list_wins(0)) do
-    local buf = api.nvim_win_get_buf(win)
-    if TSHighlighter.active[buf] then
-      if not buf_ranges[buf] then
-        buf_ranges[buf] = {}
-      end
-      local topline, botline = vim.fn.line('w0', win) - 1, vim.fn.line('w$', win)
-      table.insert(buf_ranges[buf], { topline, botline })
-    end
-  end
-  for buf, ranges in pairs(buf_ranges) do
-    local highlighter = TSHighlighter.active[buf]
-    if not highlighter.parsing then
-      table.sort(ranges, function(a, b)
-        return a[1] < b[1]
-      end)
-      highlighter.parsing = highlighter.parsing
-        or nil
-          == highlighter.tree:parse(ranges, function(_, trees)
-            if trees and highlighter.parsing then
-              highlighter.parsing = false
-              api.nvim__redraw({ buf = buf, valid = false, flush = false })
-            end
-          end)
-    end
-  end
+  local hl_states = self._highlight_states[win] or {}
+  return #hl_states > 0
 end
 
 api.nvim_set_decoration_provider(ns, {
   on_win = TSHighlighter._on_win,
-  on_start = TSHighlighter._on_start,
   on_range = TSHighlighter._on_range,
   _on_spell_nav = TSHighlighter._on_spell_nav,
   _on_conceal_line = TSHighlighter._on_conceal_line,

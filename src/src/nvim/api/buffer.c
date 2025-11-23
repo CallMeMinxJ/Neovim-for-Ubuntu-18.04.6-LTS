@@ -109,8 +109,8 @@ Integer nvim_buf_line_count(Buffer buffer, Error *err)
 ///        Else the first notification will be `nvim_buf_changedtick_event`.
 ///        Not for Lua callbacks.
 /// @param  opts  Optional parameters.
-///             - on_lines: Called on linewise changes. Not called on buffer reload (`:checktime`,
-///               `:edit`, …), see `on_reload:`. Return a [lua-truthy] value to detach. Args:
+///             - on_lines: Lua callback invoked on change.
+///               Return a truthy value (not `false` or `nil`) to detach. Args:
 ///               - the string "lines"
 ///               - buffer id
 ///               - b:changedtick
@@ -120,9 +120,10 @@ Integer nvim_buf_line_count(Buffer buffer, Error *err)
 ///               - byte count of previous contents
 ///               - deleted_codepoints (if `utf_sizes` is true)
 ///               - deleted_codeunits (if `utf_sizes` is true)
-///             - on_bytes: Called on granular changes (compared to on_lines). Not called on buffer
-///               reload (`:checktime`, `:edit`, …), see `on_reload:`. Return a [lua-truthy] value
-///               to detach. Args:
+///             - on_bytes: Lua callback invoked on change.
+///               This callback receives more granular information about the
+///               change compared to on_lines.
+///               Return a truthy value (not `false` or `nil`) to detach. Args:
 ///               - the string "bytes"
 ///               - buffer id
 ///               - b:changedtick
@@ -138,15 +139,16 @@ Integer nvim_buf_line_count(Buffer buffer, Error *err)
 ///               - new end column of the changed text
 ///                 (if new end row = 0, offset from start column)
 ///               - new end byte length of the changed text
-///             - on_changedtick: Called on [changetick] increment without text change. Args:
+///             - on_changedtick: Lua callback invoked on changedtick
+///               increment without text change. Args:
 ///               - the string "changedtick"
 ///               - buffer id
 ///               - b:changedtick
-///             - on_detach: Called on detach. Args:
+///             - on_detach: Lua callback invoked on detach. Args:
 ///               - the string "detach"
 ///               - buffer id
-///             - on_reload: Called on whole-buffer load (`:checktime`, `:edit`, …). Clients should
-///               typically re-fetch the entire buffer contents. Args:
+///             - on_reload: Lua callback invoked on reload. The entire buffer
+///                          content should be considered changed. Args:
 ///               - the string "reload"
 ///               - buffer id
 ///             - utf_sizes: include UTF-32 and UTF-16 size of the replaced
@@ -155,7 +157,7 @@ Integer nvim_buf_line_count(Buffer buffer, Error *err)
 ///               events.
 /// @param[out] err Error details, if any
 /// @return False if attach failed (invalid parameter, or buffer isn't loaded);
-///         otherwise True.
+///         otherwise True. TODO: LUA_API_NO_EVAL
 Boolean nvim_buf_attach(uint64_t channel_id, Buffer buffer, Boolean send_buffer,
                         Dict(buf_attach) *opts, Error *err)
   FUNC_API_SINCE(4)

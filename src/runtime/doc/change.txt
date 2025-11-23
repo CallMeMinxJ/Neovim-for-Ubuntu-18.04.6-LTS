@@ -1,7 +1,7 @@
 *change.txt*    Nvim
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIM REFERENCE MANUAL    by Bram Moolenaar
 
 
 This file describes commands that delete or change text.  In this context,
@@ -232,8 +232,9 @@ white space after a word, they only change up to the end of the word.  This is
 because Vim interprets "cw" as change-word, and a word does not include the
 following white space.
 
-If you prefer "cw" to include the space after a word, see |cpo-_| to change
-the behavior.  Alternatively, use "caw" (see |aw|).
+If you prefer "cw" to include the space after a word, use this mapping: >
+	:map cw dwi
+Or use "caw" (see |aw|).
 
 							*:c* *:ch* *:change*
 :{range}c[hange][!]	Replace lines of text with some different text.
@@ -1287,7 +1288,7 @@ and ":put" commands and with CTRL-R.
 		"@:" to repeat the previous command-line command.
 		The command-line is only stored in this register when at least
 		one character of it was typed.  Thus it remains unchanged if
-		the command was executed completely from a mapping.
+		the command was completely from a mapping.
 
 							*quote_#* *quote#*
 6. Alternate file register "#

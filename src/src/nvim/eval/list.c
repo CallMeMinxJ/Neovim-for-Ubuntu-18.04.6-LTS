@@ -465,12 +465,13 @@ static varnumber_T count_string(const char *haystack, const char *needle, bool i
     return 0;
   }
 
-  size_t needlelen = strlen(needle);
   if (ic) {
+    const size_t len = strlen(needle);
+
     while (*p != NUL) {
-      if (mb_strnicmp(p, needle, needlelen) == 0) {
+      if (mb_strnicmp(p, needle, len) == 0) {
         n++;
-        p += needlelen;
+        p += len;
       } else {
         MB_PTR_ADV(p);
       }
@@ -479,7 +480,7 @@ static varnumber_T count_string(const char *haystack, const char *needle, bool i
     const char *next;
     while ((next = strstr(p, needle)) != NULL) {
       n++;
-      p = next + needlelen;
+      p = next + strlen(needle);
     }
   }
 

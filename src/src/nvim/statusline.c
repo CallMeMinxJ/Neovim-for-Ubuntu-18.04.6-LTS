@@ -872,6 +872,7 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
 
 #define TMPLEN 70
   char buf_tmp[TMPLEN];
+  char win_tmp[TMPLEN];
   char *usefmt = fmt;
   const bool save_redraw_not_allowed = redraw_not_allowed;
   const bool save_KeyTyped = KeyTyped;
@@ -1065,11 +1066,11 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
       //       Otherwise there would be no reason to do this step.
       if (curitem > stl_groupitems[groupdepth] + 1
           && stl_items[stl_groupitems[groupdepth]].minwid == 0) {
+        // remove group if all items are empty and highlight group
+        // doesn't change
         int group_start_userhl = 0;
         int group_end_userhl = 0;
         int n;
-        // remove group if all items are empty and highlight group
-        // doesn't change
         for (n = stl_groupitems[groupdepth] - 1; n >= 0; n--) {
           if (stl_items[n].type == Highlight) {
             group_start_userhl = group_end_userhl = stl_items[n].minwid;
@@ -1319,13 +1320,12 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
     switch (opt) {
     case STL_FILEPATH:
     case STL_FULLPATH:
-    case STL_FILENAME: {
+    case STL_FILENAME:
       // Set fillable to false so that ' ' in the filename will not
       // get replaced with the fillchar
       fillable = false;
-      char *name = buf_spname(wp->w_buffer);
-      if (name != NULL) {
-        xstrlcpy(NameBuff, name, MAXPATHL);
+      if (buf_spname(wp->w_buffer) != NULL) {
+        xstrlcpy(NameBuff, buf_spname(wp->w_buffer), MAXPATHL);
       } else {
         char *t = (opt == STL_FULLPATH) ? wp->w_buffer->b_ffname
                                         : wp->w_buffer->b_fname;
@@ -1338,8 +1338,6 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
         str = path_tail(NameBuff);
       }
       break;
-    }
-
     case STL_VIM_EXPR:     // '{'
     {
       char *block_start = fmt_p - 1;
@@ -1362,9 +1360,9 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
       }
       fmt_p++;
       if (reevaluate) {
-        out_p[-1] = NUL;  // remove the % at the end of %{% expr %}
+        out_p[-1] = 0;  // remove the % at the end of %{% expr %}
       } else {
-        *out_p = NUL;
+        *out_p = 0;
       }
 
       // Move our position in the output buffer
@@ -1376,8 +1374,8 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
       // Store the current buffer number as a string variable
       vim_snprintf(buf_tmp, sizeof(buf_tmp), "%d", curbuf->b_fnum);
       set_internal_string_var("g:actual_curbuf", buf_tmp);
-      vim_snprintf(buf_tmp, sizeof(buf_tmp), "%d", curwin->handle);
-      set_internal_string_var("g:actual_curwin", buf_tmp);
+      vim_snprintf(win_tmp, sizeof(win_tmp), "%d", curwin->handle);
+      set_internal_string_var("g:actual_curwin", win_tmp);
 
       buf_T *const save_curbuf = curbuf;
       win_T *const save_curwin = curwin;
@@ -1404,7 +1402,7 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
 
       // Check if the evaluated result is a number.
       // If so, convert the number to an int and free the string.
-      if (str != NULL && *str != NUL) {
+      if (str != NULL && *str != 0) {
         if (*skipdigits(str) == NUL) {
           num = atoi(str);
           XFREE_CLEAR(str);
@@ -1414,7 +1412,7 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
 
       // If the output of the expression needs to be evaluated
       // replace the %{} block with the result of evaluation
-      if (reevaluate && str != NULL && *str != NUL
+      if (reevaluate && str != NULL && *str != 0
           && strchr(str, '%') != NULL
           && evaldepth < MAX_STL_EVAL_DEPTH) {
         size_t parsed_usefmt = (size_t)(block_start - usefmt);
@@ -1484,7 +1482,7 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
     }
 
     case STL_PERCENTAGE:
-      num = calc_percentage(wp->w_cursor.lnum, wp->w_buffer->b_ml.ml_line_count);
+      num = ((wp->w_cursor.lnum * 100) / wp->w_buffer->b_ml.ml_line_count);
       break;
 
     case STL_ALTPERCENT:
@@ -1503,8 +1501,16 @@ int build_stl_str_hl(win_T *wp, char *out, size_t outlen, char *fmt, OptIndex op
 
     case STL_ARGLISTSTAT:
       fillable = false;
-      buf_tmp[0] = NUL;
-      if (append_arg_number(wp, buf_tmp, sizeof(buf_tmp)) > 0) {
+
+      // Note: This is important because `append_arg_number` starts appending
+      //       at the end of the null-terminated string.
+      //       Setting the first byte to null means it will place the argument
+      //       number string at the beginning of the buffer.
+      buf_tmp[0] = 0;
+
+      // Note: The call will only return true if it actually
+      //       appended data to the `buf_tmp` buffer.
+      if (append_arg_number(wp, buf_tmp, (int)sizeof(buf_tmp))) {
         str = buf_tmp;
       }
       break;
@@ -1809,7 +1815,7 @@ stcsign:
       // Note: The `*` means we take the width as one of the arguments
       *t++ = '*';
       *t++ = base == kNumBaseHexadecimal ? 'X' : 'd';
-      *t = NUL;
+      *t = 0;
       // }
 
       // { Determine how many characters the number will take up when printed
@@ -1852,13 +1858,17 @@ stcsign:
         *t++ = '%';
         // Use the same base as the first number
         *t = t[-3];
-        *++t = NUL;
+        *++t = 0;
         // }
 
-        out_p += vim_snprintf_safelen(out_p, remaining_buf_len, nstr, 0, num, n);
+        vim_snprintf(out_p, remaining_buf_len, nstr, 0, num, n);
       } else {
-        out_p += vim_snprintf_safelen(out_p, remaining_buf_len, nstr, minwid, num);
+        vim_snprintf(out_p, remaining_buf_len, nstr, minwid, num);
       }
+
+      // Advance the output buffer position to the end of the
+      // number we just printed
+      out_p += strlen(out_p);
 
       // Otherwise, there was nothing to print so mark the item as empty
     } else {
@@ -1885,8 +1895,6 @@ stcsign:
   }
 
   *out_p = NUL;
-  // Length of out[] used (excluding the NUL)
-  size_t outputlen = (size_t)(out_p - out);
   // Subtract offset from `itemcnt` and restore `curitem` to previous recursion level.
   int itemcnt = curitem - evalstart;
   curitem = evalstart;
@@ -1902,7 +1910,7 @@ stcsign:
   int width = vim_strsize(out);
   if (maxwidth > 0 && width > maxwidth && (!stcp || width > MAX_STCWIDTH)) {
     // Result is too long, must truncate somewhere.
-    int item_idx = evalstart;
+    int item_idx = 0;
     char *trunc_p;
 
     // If there are no items, truncate from beginning
@@ -1912,7 +1920,8 @@ stcsign:
       // Otherwise, look for the truncation item
     } else {
       // Default to truncating at the first item
-      trunc_p = stl_items[item_idx].start;
+      trunc_p = stl_items[0].start;
+      item_idx = 0;
 
       for (int i = evalstart; i < itemcnt + evalstart; i++) {
         if (stl_items[i].type == Trunc) {
@@ -1958,12 +1967,10 @@ stcsign:
 
       // Truncate the output
       *trunc_p++ = '>';
-      *trunc_p = NUL;
+      *trunc_p = 0;
 
       // Truncate at the truncation point we found
     } else {
-      char *end = out + outputlen;
-
       // { Determine how many bytes to remove
       int trunc_len = 0;
       while (width >= maxwidth) {
@@ -1974,8 +1981,7 @@ stcsign:
 
       // { Truncate the string
       char *trunc_end_p = trunc_p + trunc_len;
-      memmove(trunc_p + 1, trunc_end_p, (size_t)(end - trunc_end_p) + 1);  // +1 for NUL
-      end -= (size_t)(trunc_end_p - (trunc_p + 1));
+      STRMOVE(trunc_p + 1, trunc_end_p);
 
       // Put a `<` to mark where we truncated at
       *trunc_p = '<';
@@ -2003,15 +2009,13 @@ stcsign:
 
       if (width + 1 < maxwidth) {
         // Advance the pointer to the end of the string
-        trunc_p = end;
+        trunc_p = trunc_p + strlen(trunc_p);
       }
 
       // Fill up for half a double-wide character.
       while (++width < maxwidth) {
         schar_get_adv(&trunc_p, fillchar);
-        end = trunc_p;
       }
-      (void)end;
     }
     width = maxwidth;
 
@@ -2019,7 +2023,7 @@ stcsign:
     // add characters at the separate marker (if there is one) to
     // fill up the available space.
   } else if (width < maxwidth
-             && outputlen + (size_t)(maxwidth - width) + 1 < outlen) {
+             && strlen(out) + (size_t)(maxwidth - width) + 1 < outlen) {
     // Find how many separators there are, which we will use when
     // figuring out how many groups there are.
     int num_separators = 0;
