@@ -1,8 +1,3 @@
-/*
- * README.md for Neovim-for-Ubuntu-18.04.6-LTS
- * 完整内容，无嵌套代码块
- */
-
 # Neovim for Ubuntu 18.04.6 LTS
 
 <div align="center">
@@ -20,7 +15,8 @@
 
 ## 项目介绍
 
-这是一个为 **Ubuntu 18.04.6 LTS** 服务器环境精心打造的 **Neovim 开发环境**。专为无外网访问限制的环境设计，所有依赖和工具都已预编译打包，真正做到开箱即用。
+这是一个为 **Ubuntu 18.04.6 LTS** 服务器环境精心打造的 **Neovim 开发环境**。
+专为无外网访问限制的环境设计，所有依赖和工具都已预编译打包，真正做到开箱即用。
 
 ### 核心优势
 
@@ -58,6 +54,7 @@
 
 1. 克隆仓库
 git clone https://github.com/CallMeMinxJ/Neovim-for-Ubuntu-18.04.6-LTS.git
+
 cd Neovim-for-Ubuntu-18.04.6-LTS
 
 2. 运行初始化脚本
@@ -153,22 +150,6 @@ chmod +x tool/*/bin/* 2>/dev/null
 设置调试环境变量
 export NVIM_LOG_FILE=~/neovim.log
 nvim --cmd "set verbose=9"
-
-## 贡献指南
-
-我们欢迎贡献！请遵循以下步骤：
-
-1. Fork 本仓库
-2. 创建特性分支 (git checkout -b feature/AmazingFeature)
-3. 提交更改 (git commit -m 'Add some AmazingFeature')
-4. 推送到分支 (git push origin feature/AmazingFeature)
-5. 开启 Pull Request
-
-### 开发规范
-- 遵循现有的代码风格
-- 确保所有工具都包含在 tool/ 目录
-- 更新相应的文档
-- 测试在 Ubuntu 18.04.6 上的兼容性
 
 ## 更新日志
 
