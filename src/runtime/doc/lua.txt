@@ -184,10 +184,6 @@ Examples: >lua
     -- ba
     print(string.match("foo.bar", "%.bar"))
     -- .bar
-<
-                                                                  *lua-truthy*
-Only `false` and `nil` evaluate to "false" in Lua. All other values are "true".
-
 
 ==============================================================================
 IMPORTING LUA MODULES                                        *lua-module-load*
@@ -1383,10 +1379,8 @@ vim.on_key({fn}, {ns_id}, {opts})                               *vim.on_key()*
                  applied. {typed} may be empty if {key} is produced by
                  non-typed key(s) or by the same typed key(s) that produced a
                  previous {key}. If {fn} returns an empty string, {key} is
-                 discarded/ignored, and if {key} is <Cmd> then the
-                 "<Cmd>…<CR>" sequence is discarded as a whole. When {fn} is
-                 `nil`, the callback associated with namespace {ns_id} is
-                 removed.
+                 discarded/ignored. When {fn} is `nil`, the callback
+                 associated with namespace {ns_id} is removed.
       • {ns_id}  (`integer?`) Namespace ID. If nil or 0, generates and returns
                  a new |nvim_create_namespace()| id.
       • {opts}   (`table?`) Optional parameters
@@ -2416,13 +2410,10 @@ vim.filetype.match({args})                              *vim.filetype.match()*
                   Mutually exclusive with {buf}.
 
     Return (multiple): ~
-        (`string?`) The matched filetype, if any.
-        (`function?`) A function `fun(buf: integer)` that modifies buffer
-        state when called (for example, to set some filetype specific buffer
-        variables).
-        (`boolean?`) true if a match was found by falling back to a generic
-        filetype (i.e., ".conf"), which indicates the filetype should be set
-        with `:setf FALLBACK conf`. See |:setfiletype|.
+        (`string?`) If a match was found, the matched filetype.
+        (`function?`) A function that modifies buffer state when called (for
+        example, to set some filetype specific buffer variables). The function
+        accepts a buffer number as its only argument.
 
 
 ==============================================================================
@@ -2436,13 +2427,6 @@ Example: >lua
   if vim.uv.fs_stat(file) then
     vim.print('file exists')
   end
-<
-
-                                                               *vim.fs.read()*
-You can use |readblob()| to get a file's contents without explicitly opening/closing it.
-
-Example: >lua
-  vim.print(vim.fn.readblob('.git/config'))
 <
 
 
@@ -3449,18 +3433,6 @@ vim.keymap.set({mode}, {lhs}, {rhs}, {opts})                *vim.keymap.set()*
         end, { expr = true })
         -- Map "[%%" to a <Plug> mapping:
         vim.keymap.set('n', '[%%', '<Plug>(MatchitNormalMultiBackward)')
-
-        -- Use `getregionpos(getpos('v'))` to get the "current visual selection":
-        vim.keymap.set('x', 'M', function()
-          local region = vim.fn.getregionpos(vim.fn.getpos('v'), vim.fn.getpos('.'), {
-            type = 'v',
-            exclusive = false,
-            eol = false,
-          })
-          local line1 = region[1][1][2]
-          local line2 = region[#region][1][2]
-          vim.print({ line1, line2 })
-        end)
 <
 
     Parameters: ~
@@ -4159,7 +4131,6 @@ Provides operations to compare, calculate, and convert ranges represented by
     Fields: ~
       • {start}      (`vim.Pos`) Start position.
       • {end_}       (`vim.Pos`) End position, exclusive.
-      • {is_empty}   (`fun(self: vim.Range): boolean`) See |Range:is_empty()|.
       • {has}        (`fun(outer: vim.Range, inner: vim.Range): boolean`) See
                      |Range:has()|.
       • {intersect}  (`fun(r1: vim.Range, r2: vim.Range): vim.Range?`) See
@@ -4190,12 +4161,6 @@ Range:intersect({r1}, {r2})                                *Range:intersect()*
     Return: ~
         (`vim.Range?`) range that is present inside both `r1` and `r2`. `nil`
         if such range does not exist. See |vim.Range|.
-
-Range:is_empty()                                            *Range:is_empty()*
-    Checks whether the given range is empty; i.e., start >= end.
-
-    Return: ~
-        (`boolean`) `true` if the given range is empty
 
 Range:lsp({buf}, {range}, {position_encoding})                   *Range:lsp()*
     Creates a new |vim.Range| from `lsp.Range`.

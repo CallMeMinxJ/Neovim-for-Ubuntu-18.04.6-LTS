@@ -287,7 +287,7 @@ static const int included_patches[] = {
   2197,
   2196,
   // 2195,
-  2194,
+  // 2194,
   // 2193,
   // 2192,
   2191,
@@ -542,7 +542,7 @@ static const int included_patches[] = {
   1942,
   1941,
   1940,
-  1939,
+  // 1939,
   1938,
   1937,
   1936,
@@ -2755,7 +2755,7 @@ void intro_message(bool colon)
     N_("type  :help news<Enter> to see changes in v%s.%s"),
     "",
     N_("Help poor children in Uganda!"),
-    N_("type  :help Kuwasha<Enter>    for information "),
+    N_("type  :help iccf<Enter>       for information "),
   };
 
   // blanklines = screen height - # message lines

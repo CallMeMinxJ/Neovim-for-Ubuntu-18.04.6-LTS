@@ -24,7 +24,6 @@
 #include "nvim/event/proc.h"
 #include "nvim/event/rstream.h"
 #include "nvim/event/socket.h"
-#include "nvim/event/stream.h"
 #include "nvim/event/wstream.h"
 #include "nvim/ex_cmds.h"
 #include "nvim/garray.h"
@@ -132,7 +131,7 @@ bool channel_close(uint64_t id, ChannelPart part, const char **error)
   case kChannelStreamProc:
     proc = &chan->stream.proc;
     if (part == kChannelPartStdin || close_main) {
-      stream_may_close(&proc->in);
+      wstream_may_close(&proc->in);
     }
     if (part == kChannelPartStdout || close_main) {
       rstream_may_close(&proc->out);
@@ -151,7 +150,7 @@ bool channel_close(uint64_t id, ChannelPart part, const char **error)
       rstream_may_close(&chan->stream.stdio.in);
     }
     if (part == kChannelPartStdout || close_main) {
-      stream_may_close(&chan->stream.stdio.out);
+      wstream_may_close(&chan->stream.stdio.out);
     }
     if (part == kChannelPartStderr) {
       *error = e_invstream;

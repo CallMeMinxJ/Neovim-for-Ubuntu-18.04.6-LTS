@@ -1153,7 +1153,7 @@ void ex_changes(exarg_T *eap)
     } \
   }
 
-// "NO DELete": don't delete the line, just put at first deleted line.
+// don't delete the line, just put at first deleted line
 #define ONE_ADJUST_NODEL(add) \
   { \
     lp = add; \
@@ -1165,23 +1165,6 @@ void ex_changes(exarg_T *eap)
       } \
     } else if (amount_after && *lp > line2) { \
       *lp += amount_after; \
-    } \
-  }
-
-// Like ONE_ADJUST_NODEL(), but if the position is within the deleted range,
-// move it to the start of the line before the range.
-#define ONE_ADJUST_CURSOR(pp) \
-  { \
-    pos_T *posp = pp; \
-    if (posp->lnum >= line1 && posp->lnum <= line2) { \
-      if (amount == MAXLNUM) {  /* line with cursor is deleted */ \
-        posp->lnum = MAX(line1 - 1, 1); \
-        posp->col = 0; \
-      } else {  /* keep cursor on the same line */ \
-        posp->lnum += amount; \
-      } \
-    } else if (amount_after && posp->lnum > line2) { \
-      posp->lnum += amount_after; \
     } \
   }
 
@@ -1246,8 +1229,7 @@ void mark_adjust_buf(buf_T *buf, linenr_T line1, linenr_T line2, linenr_T amount
     ONE_ADJUST(&(buf->b_last_change.mark.lnum));
 
     // last cursor position, if it was set
-    if (!equalpos(buf->b_last_cursor.mark, initpos)
-        && (!by_term || buf->b_last_cursor.mark.lnum < buf->b_ml.ml_line_count)) {
+    if (!equalpos(buf->b_last_cursor.mark, initpos)) {
       ONE_ADJUST(&(buf->b_last_cursor.mark.lnum));
     }
 
@@ -1341,16 +1323,28 @@ void mark_adjust_buf(buf_T *buf, linenr_T line1, linenr_T line2, linenr_T amount
             win->w_topline += amount;
           }
           win->w_topfill = 0;
-        } else if (amount_after
-                   // api: display new line if inserted right at topline
-                   // TODO(bfredl): maybe always?
-                   && win->w_topline > line2 + (by_api && line2 < line1 ? 1 : 0)) {
+          // api: display new line if inserted right at topline
+          // TODO(bfredl): maybe always?
+        } else if (amount_after && win->w_topline > line2 + (by_api ? 1 : 0)) {
           win->w_topline += amount_after;
           win->w_topfill = 0;
         }
       }
       if (!by_api && (by_term ? win->w_cursor.lnum < buf->b_ml.ml_line_count : win != curwin)) {
-        ONE_ADJUST_CURSOR(&(win->w_cursor));
+        if (win->w_cursor.lnum >= line1 && win->w_cursor.lnum <= line2) {
+          if (amount == MAXLNUM) {         // line with cursor is deleted
+            if (line1 <= 1) {
+              win->w_cursor.lnum = 1;
+            } else {
+              win->w_cursor.lnum = line1 - 1;
+            }
+            win->w_cursor.col = 0;
+          } else {                      // keep cursor on the same line
+            win->w_cursor.lnum += amount;
+          }
+        } else if (amount_after && win->w_cursor.lnum > line2) {
+          win->w_cursor.lnum += amount_after;
+        }
       }
 
       if (adjust_folds) {
@@ -1361,14 +1355,6 @@ void mark_adjust_buf(buf_T *buf, linenr_T line1, linenr_T line2, linenr_T amount
 
   // adjust diffs
   diff_mark_adjust(buf, line1, line2, amount, amount_after);
-
-  // adjust per-window "last cursor" positions
-  for (size_t i = 0; i < kv_size(buf->b_wininfo); i++) {
-    WinInfo *wip = kv_A(buf->b_wininfo, i);
-    if (!by_term || wip->wi_mark.mark.lnum < buf->b_ml.ml_line_count) {
-      ONE_ADJUST_CURSOR(&(wip->wi_mark.mark));
-    }
-  }
 }
 
 // This code is used often, needs to be fast.

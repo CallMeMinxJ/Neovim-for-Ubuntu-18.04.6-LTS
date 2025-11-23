@@ -71,8 +71,6 @@ EDITOR
 - |i_CTRL-R| inserts named/clipboard registers (A-Z,a-z,0-9+) literally, like
   pasting instead of like user input. Improves performance, avoids broken
   formatting. To get the old behavior you can use `<C-R>=@x`.
-- Buffer name URI scheme parsing more closely follows RFC3986, so for example
-  "svn+ssh:", "ed2k:", and "iris.xpc:" are recognized as URI schemes.
 
 EVENTS
 
@@ -155,14 +153,6 @@ BUILD
 • A Zig-based build system has been added as an alternative to CMake. It is
   currently limited in functionality, and CMake remains the recommended option
   for the time being.
-• Nvim can be built without Unibilium (terminfo implementation), in which case
-  the user's terminfo database won't be loaded and only internal definitions
-  for the most common terminals are used: >
-
-  make distclean && make CMAKE_EXTRA_FLAGS="-DENABLE_UNIBILIUM=0" DEPS_CMAKE_FLAGS"-DUSE_BUNDLED_UNIBILIUM=0"
-<
-• On Windows, `tee.exe` is installed with `nvim.exe` by default so that
-  commands like :make, :grep work out of the box.
 
 DEFAULTS
 
@@ -265,9 +255,6 @@ LSP
 • Support for `textDocument/onTypeFormatting`: |lsp-on_type_formatting|
   https://microsoft.github.io/language-server-protocol/specification/#textDocument_onTypeFormatting
 • The filter option of |vim.lsp.buf.code_action()| now receives the client ID as an argument.
-• |Client:stop()| now accepts a numerical `force` argument to be interpreted as the time to wait
-  before forcing the shutdown.
-• Add cmp field to opts of |vim.lsp.completion.enable()| for custom completion ordering.
 
 LUA
 
@@ -286,7 +273,6 @@ LUA
 • Experimental `vim.pos` and `vim.range` for Position/Range abstraction.
 • |vim.json.encode()| has an `indent` option for pretty-formatting.
 • |vim.json.encode()| has an `sort_keys` option.
-• |Range:is_empty()| to check if a |vim.Range| is empty.
 
 OPTIONS
 
@@ -311,7 +297,6 @@ OPTIONS
 • |g:clipboard| accepts a string name to force any builtin clipboard tool.
 • 'busy' sets a buffer "busy" status. Indicated in the default statusline.
 • 'pumborder' adds a border to the popup menu.
-• |g:clipboard| autodetection only selects tmux when running inside tmux
 
 PERFORMANCE
 
@@ -345,7 +330,6 @@ TREESITTER
 
 • |Query:iter_captures()| supports specifying starting and ending columns.
 • |:EditQuery| command gained tab-completion, works with injected languages.
-• |LanguageTree:parse()| now accepts a list of ranges.
 
 TUI
 
@@ -376,7 +360,6 @@ VIMSCRIPT
 • |getcompletiontype()| gets command-line completion type for any string.
 • |prompt_getinput()| gets current user-input in prompt-buffer.
 • |wildtrigger()| triggers command-line expansion.
-• |v:vim_did_init| is set after sourcing |init.vim| but before |load-plugins|.
 
 ==============================================================================
 CHANGED FEATURES                                                 *news-changed*

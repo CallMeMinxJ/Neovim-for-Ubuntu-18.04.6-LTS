@@ -1,7 +1,7 @@
 *starting.txt*  Nvim
 
 
-		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+		  VIM REFERENCE MANUAL    by Bram Moolenaar
 
 
 Starting Vim						*starting*
@@ -517,9 +517,7 @@ accordingly, proceeding as follows:
 <	Skipped if ":syntax off" was called or if the "-u NONE" command
 	line argument was given.
 
-10. Set the |v:vim_did_init| variable to 1.
-
-11. Load the plugin scripts.					*load-plugins*
+10. Load the plugin scripts.					*load-plugins*
 	This does the same as the command: >
 		:runtime! plugin/**/*.{vim,lua}
 <	The result is that all directories in 'runtimepath' will be searched
@@ -549,21 +547,21 @@ accordingly, proceeding as follows:
 	if packages have been found, but that should not add a directory
 	ending in "after".
 
-12. Set 'shellpipe' and 'shellredir'
+11. Set 'shellpipe' and 'shellredir'
 	The 'shellpipe' and 'shellredir' options are set according to the
 	value of the 'shell' option, unless they have been set before.
 	This means that Nvim will figure out the values of 'shellpipe' and
 	'shellredir' for you, unless you have set them yourself.
 
-13. Set 'updatecount' to zero, if "-n" command argument used.
+12. Set 'updatecount' to zero, if "-n" command argument used.
 
-14. Set binary options if the |-b| flag was given.
+13. Set binary options if the |-b| flag was given.
 
-15. Read the |shada-file|.
+14. Read the |shada-file|.
 
-16. Read the quickfix file if the |-q| flag was given, or exit on failure.
+15. Read the quickfix file if the |-q| flag was given, or exit on failure.
 
-17. Open all windows
+16. Open all windows
 	When the |-o| flag was given, windows will be opened (but not
 	displayed yet).
 	When the |-p| flag was given, tab pages will be created (but not
@@ -573,7 +571,7 @@ accordingly, proceeding as follows:
 	Buffers for all windows will be loaded, without triggering |BufAdd|
 	autocommands.
 
-18. Execute startup commands
+17. Execute startup commands
 	If a |-t| flag was given, the tag is jumped to.
 	Commands given with |-c| and |+cmd| are executed.
 	The starting flag is reset, has("vim_starting") will now return zero.
@@ -1377,7 +1375,7 @@ paths.
 
 						*base-directories* *xdg*
 The "base" (root) directories conform to the XDG Base Directory Specification.
-https://specifications.freedesktop.org/basedir/latest/
+https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
 The $XDG_CONFIG_HOME, $XDG_DATA_HOME, $XDG_RUNTIME_DIR, $XDG_STATE_HOME,
 $XDG_CACHE_HOME, $XDG_CONFIG_DIRS and $XDG_DATA_DIRS environment variables
 are used if defined, else default values (listed below) are used.

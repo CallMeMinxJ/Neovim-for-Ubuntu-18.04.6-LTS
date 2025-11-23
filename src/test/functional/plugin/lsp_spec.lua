@@ -65,17 +65,6 @@ local function apply_text_edits(edits, encoding)
   end)
 end
 
---- @param notification_cb fun(method: 'body' | 'error', args: any)
-local function verify_single_notification(notification_cb)
-  local called = false
-  n.run(nil, function(method, args)
-    notification_cb(method, args)
-    stop()
-    called = true
-  end, nil, 1000)
-  eq(true, called)
-end
-
 -- TODO(justinmk): hangs on Windows https://github.com/neovim/neovim/pull/11837
 if skip(is_os('win')) then
   return
@@ -88,7 +77,7 @@ describe('LSP', function()
 
   after_each(function()
     stop()
-    exec_lua('vim.iter(lsp.get_clients()):each(function(client) client:stop(true) end)')
+    exec_lua('lsp.stop_client(lsp.get_clients(), true)')
     api.nvim_exec_autocmds('VimLeavePre', { modeline = false })
   end)
 
@@ -127,7 +116,7 @@ describe('LSP', function()
       end)
     end)
 
-    it('start_client(), Client:stop()', function()
+    it('start_client(), stop_client()', function()
       retry(nil, 4000, function()
         eq(
           1,
@@ -190,8 +179,34 @@ describe('LSP', function()
       )
 
       exec_lua(function()
-        vim.lsp.get_client_by_id(_G.TEST_CLIENT2):stop()
-        vim.lsp.get_client_by_id(_G.TEST_CLIENT3):stop()
+        vim.lsp.stop_client({ _G.TEST_CLIENT2, _G.TEST_CLIENT3 })
+      end)
+      retry(nil, 4000, function()
+        eq(
+          0,
+          exec_lua(function()
+            return #vim.lsp.get_clients()
+          end)
+        )
+      end)
+    end)
+
+    it('stop_client() also works on client objects', function()
+      exec_lua(function()
+        _G.TEST_CLIENT2 = _G.test__start_client()
+        _G.TEST_CLIENT3 = _G.test__start_client()
+      end)
+      retry(nil, 4000, function()
+        eq(
+          3,
+          exec_lua(function()
+            return #vim.lsp.get_clients()
+          end)
+        )
+      end)
+      -- Stop all clients.
+      exec_lua(function()
+        vim.lsp.stop_client(vim.lsp.get_clients())
       end)
       retry(nil, 4000, function()
         eq(
@@ -829,7 +844,7 @@ describe('LSP', function()
         local client_id = assert(vim.lsp.start({ name = 'dummy', cmd = server.cmd }))
         local buf = vim.api.nvim_get_current_buf()
         vim.api.nvim_exec_autocmds('BufWritePre', { buffer = buf, modeline = false })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       eq(4, #messages)
@@ -865,7 +880,7 @@ describe('LSP', function()
         local buf = vim.api.nvim_get_current_buf()
         local client_id = assert(vim.lsp.start({ name = 'dummy', cmd = server.cmd }))
         vim.api.nvim_exec_autocmds('BufWritePre', { buffer = buf, modeline = false })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return {
           messages = server.messages,
           lines = vim.api.nvim_buf_get_lines(buf, 0, -1, true),
@@ -1305,7 +1320,7 @@ describe('LSP', function()
         assert(ok)
 
         local has_pending = client.requests[request_id] ~= nil
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
 
         return has_pending
       end)
@@ -1932,58 +1947,28 @@ describe('LSP', function()
   end)
 
   describe('parsing tests', function()
-    local body = '{"jsonrpc":"2.0","id": 1,"method":"demo"}'
-
-    before_each(function()
-      exec_lua(create_tcp_echo_server)
-    end)
-
-    it('should catch error while parsing invalid header', function()
-      -- No whitespace is allowed between the header field-name and colon.
-      -- See https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.4
-      local field = 'Content-Length : 10 \r\n'
-      exec_lua(function()
-        _G._send_msg_to_server(field .. '\r\n')
-      end)
-      verify_single_notification(function(method, args) ---@param args [string, number]
-        eq('error', method)
-        eq(1, args[2])
-        matches(vim.pesc('Content-Length not found in header: ' .. field) .. '$', args[1])
-      end)
-    end)
-
-    it('value of Content-Length shoud be number', function()
-      local value = '123 foo'
-      exec_lua(function()
-        _G._send_msg_to_server('Content-Length: ' .. value .. '\r\n\r\n')
-      end)
-      verify_single_notification(function(method, args) ---@param args [string, number]
-        eq('error', method)
-        eq(1, args[2])
-        matches('value of Content%-Length is not number: ' .. value .. '$', args[1])
-      end)
-    end)
-
-    it('field name is case-insensitive', function()
-      exec_lua(function()
-        _G._send_msg_to_server('CONTENT-Length: ' .. #body .. ' \r\n\r\n' .. body)
-      end)
-      verify_single_notification(function(method, args) ---@param args [string]
-        eq('body', method)
-        eq(body, args[1])
-      end)
-    end)
-
-    it("ignore some lines ending with LF that don't contain content-length", function()
-      exec_lua(function()
-        _G._send_msg_to_server(
-          'foo \n bar\nWARN: no common words.\nContent-Length: ' .. #body .. ' \r\n\r\n' .. body
-        )
-      end)
-      verify_single_notification(function(method, args) ---@param args [string]
-        eq('body', method)
-        eq(body, args[1])
-      end)
+    it('should handle invalid content-length correctly', function()
+      local expected_handlers = {
+        { NIL, {}, { method = 'shutdown', client_id = 1 } },
+        { NIL, {}, { method = 'finish', client_id = 1 } },
+        { NIL, {}, { method = 'start', client_id = 1 } },
+      }
+      local client --- @type vim.lsp.Client
+      test_rpc_server {
+        test_name = 'invalid_header',
+        on_setup = function() end,
+        on_init = function(_client)
+          client = _client
+          client:stop(true)
+        end,
+        on_exit = function(code, signal)
+          eq(0, code, 'exit code')
+          eq(0, signal, 'exit signal')
+        end,
+        on_handler = function(err, result, ctx)
+          eq(table.remove(expected_handlers), { err, result, ctx }, 'expected handler')
+        end,
+      }
     end)
 
     it('should not trim vim.NIL from the end of a list', function()
@@ -3552,7 +3537,7 @@ describe('LSP', function()
           method = 'window/showDocument',
         }
         vim.lsp.handlers['window/showDocument'](nil, result, ctx)
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return {
           cursor = vim.api.nvim_win_get_cursor(0),
         }
@@ -4798,7 +4783,7 @@ describe('LSP', function()
         }))
 
         vim.lsp.buf.code_action({ apply = true })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       eq('codeAction/resolve', result[4].method)
@@ -4842,7 +4827,7 @@ describe('LSP', function()
         }))
 
         vim.lsp.buf.code_action({ apply = true })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       eq('codeAction/resolve', result[4].method)
@@ -4901,7 +4886,7 @@ describe('LSP', function()
         end
 
         vim.lsp.buf.code_action({ apply = true })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       eq(
@@ -5364,7 +5349,7 @@ describe('LSP', function()
         vim.cmd.normal('v')
         vim.api.nvim_win_set_cursor(0, { 2, 3 })
         vim.lsp.buf.format({ bufnr = bufnr, false })
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       eq('textDocument/rangeFormatting', result[3].method)
@@ -5401,7 +5386,7 @@ describe('LSP', function()
         vim.api.nvim_win_set_cursor(0, { 1, 2 })
         vim.lsp.buf.format({ bufnr = bufnr, false })
 
-        vim.lsp.get_client_by_id(client_id):stop()
+        vim.lsp.stop_client(client_id)
         return server.messages
       end)
       local expected_methods = {
@@ -5530,17 +5515,13 @@ describe('LSP', function()
       eq(3, result.tagstack.items[1].from[2])
       eq(7, result.tagstack.items[1].from[3])
 
-      local result_bufnr = api.nvim_get_current_buf()
-      n.feed(':tabe<CR>')
-      api.nvim_win_set_buf(0, result_bufnr)
-      local displayed_result_win = api.nvim_get_current_win()
       n.feed(':vnew<CR>')
       api.nvim_win_set_buf(0, result.bufnr)
       api.nvim_win_set_cursor(0, { 3, 6 })
       n.feed(':=vim.lsp.buf.definition({ reuse_win = true })<CR>')
-      eq(displayed_result_win, api.nvim_get_current_win())
+      eq(result.win, api.nvim_get_current_win())
       exec_lua(function()
-        vim.lsp.get_client_by_id(result.client_id):stop()
+        vim.lsp.stop_client(result.client_id)
       end)
     end)
     it('merges results from multiple servers', function()
@@ -5579,8 +5560,8 @@ describe('LSP', function()
             response = r
           end,
         })
-        vim.lsp.get_client_by_id(client_id1):stop()
-        vim.lsp.get_client_by_id(client_id2):stop()
+        vim.lsp.stop_client(client_id1)
+        vim.lsp.stop_client(client_id2)
         return response
       end)
       eq(2, #result.items)
@@ -5644,7 +5625,7 @@ describe('LSP', function()
 
     after_each(function()
       exec_lua(function()
-        vim.lsp.get_client_by_id(_G.client_id):stop()
+        vim.lsp.stop_client(_G.client_id)
       end)
     end)
 
@@ -5685,27 +5666,37 @@ describe('LSP', function()
   describe('cmd', function()
     it('connects to lsp server via rpc.connect using ip address', function()
       exec_lua(create_tcp_echo_server)
-      exec_lua(function()
-        local port = _G._create_tcp_server('127.0.0.1')
+      local result = exec_lua(function()
+        local server, port, last_message = _G._create_tcp_server('127.0.0.1')
         vim.lsp.start({ name = 'dummy', cmd = vim.lsp.rpc.connect('127.0.0.1', port) })
+        vim.wait(1000, function()
+          return last_message() ~= nil
+        end)
+        local init = last_message()
+        assert(init, 'server must receive `initialize` request')
+        server:close()
+        server:shutdown()
+        return vim.json.decode(init)
       end)
-      verify_single_notification(function(method, args) ---@param args [string]
-        eq('body', method)
-        eq('initialize', vim.json.decode(args[1]).method)
-      end)
+      eq('initialize', result.method)
     end)
 
     it('connects to lsp server via rpc.connect using hostname', function()
       skip(is_os('bsd'), 'issue with host resolution in ci')
       exec_lua(create_tcp_echo_server)
-      exec_lua(function()
-        local port = _G._create_tcp_server('::1')
+      local result = exec_lua(function()
+        local server, port, last_message = _G._create_tcp_server('::1')
         vim.lsp.start({ name = 'dummy', cmd = vim.lsp.rpc.connect('localhost', port) })
+        vim.wait(1000, function()
+          return last_message() ~= nil
+        end)
+        local init = last_message()
+        assert(init, 'server must receive `initialize` request')
+        server:close()
+        server:shutdown()
+        return vim.json.decode(init)
       end)
-      verify_single_notification(function(method, args) ---@param args [string]
-        eq('body', method)
-        eq('initialize', vim.json.decode(args[1]).method)
-      end)
+      eq('initialize', result.method)
     end)
 
     it('can connect to lsp server via pipe or domain_socket', function()
@@ -6043,7 +6034,7 @@ describe('LSP', function()
 
             wait_for_message()
 
-            vim.lsp.get_client_by_id(client_id):stop()
+            vim.lsp.stop_client(client_id)
 
             return server.messages
           end)
@@ -6490,7 +6481,7 @@ describe('LSP', function()
             },
           }, { client_id = client_id })
 
-          vim.lsp.get_client_by_id(client_id):stop(true)
+          vim.lsp.stop_client(client_id, true)
           return _G.watching
         end)
       end

@@ -71,7 +71,7 @@ vim.go.ambw = vim.go.ambiwidth
 --- - Disable the use of 'keymap' (without changing its value).
 --- Note that 'arabicshape' and 'delcombine' are not reset (it is a global
 --- option).
---- Also see `l10n-arabic.txt`.
+--- Also see `arabic.txt`.
 ---
 --- @type boolean
 vim.o.arabic = false
@@ -90,7 +90,7 @@ vim.wo.arab = vim.wo.arabic
 --- When disabled the display shows each character's true stand-alone
 --- form.
 --- Arabic is a complex language which requires other settings, for
---- further details see `l10n-arabic.txt`.
+--- further details see `arabic.txt`.
 ---
 --- @type boolean
 vim.o.arabicshape = true
@@ -6527,7 +6527,7 @@ vim.bo.spf = vim.bo.spellfile
 --- encoding is used, Vim doesn't check it.
 --- How the related spell files are found is explained here: `spell-load`.
 ---
---- If the `spellfile.lua` plugin is active and you use a language name
+--- If the `spellfile.vim` plugin is active and you use a language name
 --- for which Vim cannot find the .spl file in 'runtimepath' the plugin
 --- will ask you if you want to download the file.
 ---
@@ -7357,7 +7357,7 @@ vim.go.tgst = vim.go.tagstack
 --- 'arabic' is set and the value of 'arabicshape' will be ignored.
 --- Note that setting 'termbidi' has the immediate effect that
 --- 'arabicshape' is ignored, but 'rightleft' isn't changed automatically.
---- For further details see `l10n-arabic.txt`.
+--- For further details see `arabic.txt`.
 ---
 --- @type boolean
 vim.o.termbidi = false

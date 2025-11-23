@@ -2610,12 +2610,12 @@ endfunc
 
 func Test_getregion_invalid_buf()
   new
-  help index
-  call cursor(7, 6)
+  help
+  call cursor(5, 7)
   norm! mA
-  call cursor(7, 18)
+  call cursor(5, 18)
   norm! mB
-  call assert_equal(['file contains'], getregion(getpos("'A"), getpos("'B")))
+  call assert_equal(['Move around:'], getregion(getpos("'A"), getpos("'B")))
   " close the help window
   q
   call assert_fails("call getregion(getpos(\"'A\"), getpos(\"'B\"))", 'E681:')
