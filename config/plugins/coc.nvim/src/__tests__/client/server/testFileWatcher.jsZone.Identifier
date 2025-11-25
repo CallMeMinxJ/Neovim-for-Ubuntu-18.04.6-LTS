@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/neoclide/coc.nvim
+HostUrl=https://codeload.github.com/neoclide/coc.nvim/zip/refs/heads/master

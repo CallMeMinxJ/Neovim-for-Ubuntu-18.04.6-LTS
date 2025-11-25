@@ -1,0 +1,54 @@
+name: Bug Report
+description: File a bug/issue
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before** reporting an issue, make sure to read the [documentation](https://github.com/rose-pine/neovim) and search [existing issues](https://github.com/rose-pine/neovim/issues). Usage questions such as ***"How do I...?"*** belong in [Discussions](https://github.com/rose-pine/neovim/discussions) and will be closed.
+  - type: input
+    attributes:
+      label: "Neovim version (nvim -v)"
+      placeholder: "0.8.0 commit db1b0ee3b30f"
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "Terminal / multiplexer"
+      placeholder: "Kitty / tmux"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is. Please include screenshots if possible and any related errors you see in Neovim.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Repro
+      description: Minimal `init.lua` to reproduce this issue. Save as `repro.lua` and run with `nvim -u repro.lua`
+      value: |
+        vim.o.packpath = "/tmp/nvim/site"
+
+        local plugins = {
+          rose_pine = "https://github.com/rose-pine/neovim",
+          -- ADD OTHER PLUGINS _NECESSARY_ TO REPRODUCE THE ISSUE
+        }
+
+        for name, url in pairs(plugins) do
+          local install_path = "/tmp/nvim/site/pack/test/start/" .. name
+          if vim.fn.isdirectory(install_path) == 0 then
+            vim.fn.system({ "git", "clone", "--depth=1", url, install_path })
+          end
+        end
+
+        require("rose-pine").setup({
+          -- ADD ROSÉ PINE CONFIG THAT IS _NECESSARY_ TO REPRODUCE THE ISSUE
+        })
+
+        vim.cmd("colorscheme rose-pine")
+      render: Lua
+    validations:
+      required: false
