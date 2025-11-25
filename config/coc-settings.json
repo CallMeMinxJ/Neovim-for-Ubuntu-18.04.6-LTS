@@ -1,0 +1,15 @@
+{
+    "suggest.noselect": false,
+    "suggest.enablePreselect": true,
+    "suggest.enablePreview": true,
+    "suggest.triggerAfterInsertEnter": true,
+    "suggest.timeout": 500,
+    "languageserver": {
+        "bash": {
+            "command": "bash-language-server",
+            "args": ["start"],
+            "filetypes": ["sh"]
+        }
+    },
+
+}
