@@ -1,0 +1,46 @@
+{
+  "coc-json|global": {
+    "json-schema-cache": {
+      "https://json.schemastore.org/package.json": {
+        "etag": "W/\"69052263-ad0b\"",
+        "fileName": "473f72b44c2905902dfbcc770aab7f7a.schema.json",
+        "updateTime": 1762016385530
+      },
+      "https://json.schemastore.org/eslintrc.json": {
+        "etag": "W/\"69052263-d796\"",
+        "fileName": "c5064f140d4cfdbf4d6fbe68f68abbb1.schema.json",
+        "updateTime": 1762016388101
+      },
+      "https://json.schemastore.org/semantic-release.json": {
+        "etag": "W/\"69052263-e26\"",
+        "fileName": "fbc95702ba6eddb3e2de4f52e31ca82a.schema.json",
+        "updateTime": 1762016388304
+      },
+      "https://json.schemastore.org/jscpd.json": {
+        "etag": "W/\"69052263-298b\"",
+        "fileName": "22bfc1ab1ff56aae62322f6ce45dab5a.schema.json",
+        "updateTime": 1762016391008
+      },
+      "https://json.schemastore.org/stylelintrc.json": {
+        "etag": "W/\"69052263-1c1fa\"",
+        "fileName": "000bfbdd14d2fb8ec5b0d59bec32ef98.schema.json",
+        "updateTime": 1762016391019
+      },
+      "https://json.schemastore.org/partial-eslint-plugins.json": {
+        "etag": "W/\"69052263-72d5a\"",
+        "fileName": "fc7bb6e733b774ce47be6006f0b75b87.schema.json",
+        "updateTime": 1762016392631
+      },
+      "https://json.schemastore.org/prettierrc.json": {
+        "etag": "W/\"69052263-348e\"",
+        "fileName": "ea5ab10330a3ab77dfd6d00a735b0925.schema.json",
+        "updateTime": 1762016396209
+      },
+      "https://json.schemastore.org/ava.json": {
+        "etag": "W/\"69052263-19f0\"",
+        "fileName": "635f57185b22bce9d3a56c68f5da4ad7.schema.json",
+        "updateTime": 1762016412058
+      }
+    }
+  }
+}
