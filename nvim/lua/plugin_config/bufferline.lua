@@ -5,6 +5,10 @@
 vim.opt.termguicolors = true
 require("bufferline").setup{
   options = {
+    numbers = function(opts)
+      local total_buffers = #vim.fn.getbufinfo({buflisted = 1})
+      return string.format("%d/%d", opts.ordinal, total_buffers)
+    end,
     show_buffer_icons = true,         -- 显示文件图标
     show_buffer_close_icons = true,   -- 显示关闭按钮图标
     show_close_icon = false,
@@ -20,6 +24,7 @@ require("bufferline").setup{
         text_align = "left"
       }
     },
+
   }
 }
 

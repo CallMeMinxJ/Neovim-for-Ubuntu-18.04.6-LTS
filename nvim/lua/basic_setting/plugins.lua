@@ -9,7 +9,7 @@ end
 
 -- Get current path
 local config_dir = vim.fn.stdpath('config')  -- e.g. z:\home\astor\neovim\nvim
-local plugins_dir = vim.fn.fnamemodify(config_dir .. '/addons/', ':p')
+local plugins_dir = vim.fn.fnamemodify(config_dir .. '/plugins/', ':p')
 local colors_dir = vim.fn.fnamemodify(config_dir .. '/themes/', ':p')
 
 packer.init {
@@ -21,7 +21,7 @@ packer.init {
 
 packer.startup(function(use)
 
-    -- register local plugins from ./plugin/<name>
+    -- register local plugins from ./plugins/<name>
     use { plugins_dir .. "nvim-web-devicons"}
     use { plugins_dir .. "lualine.nvim"}
     use { plugins_dir .. "nvim-tree.lua"}
