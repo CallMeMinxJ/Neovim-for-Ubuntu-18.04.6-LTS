@@ -1,0 +1,51 @@
+=== Neovim 配置日志 Sat Nov 29 00:59:32 CST 2025 ===
+[2025-11-29 00:59:32] [INFO] STEP: 验证环境要求
+[2025-11-29 00:59:32] [DEBUG] 目录已存在: /home/astor/neovim/bin
+[2025-11-29 00:59:32] [DEBUG] 目录已存在: /home/astor/neovim/.cache
+[2025-11-29 00:59:32] [SUCCESS] 环境验证通过
+[2025-11-29 00:59:32] [INFO] STEP: 清理旧配置
+[2025-11-29 00:59:32] [SUCCESS] 旧配置清理完成
+[2025-11-29 00:59:32] [INFO] STEP: 配置工具符号链接
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/nvim -> /home/astor/neovim/app/bin/nvim
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/clangd -> /home/astor/neovim/tool/clangd-server/bin/clangd
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/fzf -> /home/astor/neovim/tool/fzf-0.67.0/fzf
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/lua-language-server -> /home/astor/neovim/tool/lua-server/bin/lua-language-server
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/rg -> /home/astor/neovim/tool/ripgrep-15.1.0/rg
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/node -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/bin/node
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/npm -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/npm/bin/npm-cli.js
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/npx -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/npm/bin/npx-cli.js
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/corepack -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/corepack/dist/corepack.js
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/bash-language-server -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/bash-language-server/bin/main.js
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/pyright -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/pyright/index.js
+[2025-11-29 00:59:33] [INFO] 符号链接已正确设置: /home/astor/neovim/bin/pyright-langserver -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/lib/node_modules/pyright/langserver.index.js
+[2025-11-29 00:59:33] [DEBUG] 目录已存在: /home/astor/neovim/bin
+[2025-11-29 00:59:33] [SUCCESS] 创建 yarn 符号链接: /home/astor/neovim/bin/yarn → /home/astor/neovim/tool/yarn-v1.22.22/bin/yarn
+[2025-11-29 00:59:33] [INFO] 工具链接统计: 13/13 成功
+[2025-11-29 00:59:33] [SUCCESS] 所有工具链接配置完成
+[2025-11-29 00:59:33] [INFO] STEP: 生成模块化配置文件
+[2025-11-29 00:59:33] [SUCCESS] 配置文件生成完成: /home/astor/neovim/nvim.conf
+[2025-11-29 00:59:33] [INFO] STEP: 配置 Shell 集成
+[2025-11-29 00:59:33] [INFO] 发现现有配置，进行更新...
+[2025-11-29 00:59:33] [SUCCESS] 已移除旧配置
+[2025-11-29 00:59:33] [SUCCESS] Shell 集成配置完成
+[2025-11-29 00:59:33] [INFO] STEP: 验证 Neovim 运行时配置
+[2025-11-29 00:59:33] [SUCCESS] 目录 lua: 包含 25 个配置文件
+[2025-11-29 00:59:33] [SUCCESS] 目录 pack: 包含 26 个配置文件
+[2025-11-29 00:59:33] [SUCCESS] 目录 plugin: 包含 1 个配置文件
+[2025-11-29 00:59:33] [SUCCESS] 目录 themes: 包含 324 个配置文件
+[2025-11-29 00:59:33] [SUCCESS] Neovim 运行时配置验证通过
+[2025-11-29 00:59:33] [INFO] STEP: 验证安装结果
+[2025-11-29 00:59:33] [SUCCESS] nvim: 链接有效 -> /home/astor/neovim/app/bin/nvim
+[2025-11-29 00:59:33] [SUCCESS] fzf: 链接有效 -> /home/astor/neovim/tool/fzf-0.67.0/fzf
+[2025-11-29 00:59:33] [SUCCESS] rg: 链接有效 -> /home/astor/neovim/tool/ripgrep-15.1.0/rg
+[2025-11-29 00:59:33] [SUCCESS] clangd: 链接有效 -> /home/astor/neovim/tool/clangd-server/bin/clangd
+[2025-11-29 00:59:33] [SUCCESS] lua-language-server: 链接有效 -> /home/astor/neovim/tool/lua-server/bin/lua-language-server
+[2025-11-29 00:59:33] [SUCCESS] node: 链接有效 -> /home/astor/neovim/tool/node-v16.20.2-linux-x64/bin/node
+[2025-11-29 00:59:33] [SUCCESS] Neovim 测试通过: NVIM v0.12.0-dev-1493+gfe4faaf81a
+[2025-11-29 00:59:33] [SUCCESS] 配置文件语法正确
+[2025-11-29 00:59:33] [INFO] 验证统计: 8/8 项通过
+[2025-11-29 00:59:33] [SUCCESS] 安装验证完全通过
+[2025-11-29 00:59:33] [INFO] 配置完成: 7/7 个步骤成功
+[2025-11-29 00:59:33] [INFO] 总耗时: 1 秒
+[2025-11-29 00:59:33] [INFO] 完成时间: Sat Nov 29 00:59:33 CST 2025
+[2025-11-29 00:59:33] [SUCCESS] 所有配置步骤顺利完成

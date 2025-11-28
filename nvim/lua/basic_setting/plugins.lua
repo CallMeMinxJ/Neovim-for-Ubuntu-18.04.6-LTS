@@ -9,7 +9,7 @@ end
 
 -- Get current path
 local config_dir = vim.fn.stdpath('config')  -- e.g. z:\home\astor\neovim\nvim
-local plugins_dir = vim.fn.fnamemodify(config_dir .. '/plugins/', ':p')
+local plugins_dir = vim.fn.fnamemodify(config_dir .. '/addons/', ':p')
 local colors_dir = vim.fn.fnamemodify(config_dir .. '/themes/', ':p')
 
 packer.init {
