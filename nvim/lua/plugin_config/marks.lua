@@ -98,6 +98,6 @@ require'marks'.setup {
     mappings = {
         next = "m]",
         prev = "m[",
-        delete_buf = "mC"
+        delete_buf = "Cm"
     }
 }

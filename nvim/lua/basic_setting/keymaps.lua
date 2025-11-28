@@ -8,16 +8,9 @@ vim.keymap.set("n","<leader>e",":source %<CR>",
     { desc = "Reload current lua file"})
 
 -- Switch tab: use Ctrl+A or Ctrl+D
-vim.keymap.set('n', '<C-D>', function()
-  local current = vim.fn.tabpagenr()
-  local total = vim.fn.tabpagenr('$')
-  vim.cmd(current == total and 'tabfirst' or 'tabnext')
-end, { noremap = true, silent = true })
-
-vim.keymap.set('n', '<C-A>', function()
-  local current = vim.fn.tabpagenr()
-  vim.cmd(current == 1 and 'tablast' or 'tabprevious')
-end, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-d>', ':bnext<CR>', { desc = 'next buffer' })
+vim.keymap.set('n', '<C-a>', ':bprevious<CR>', { desc = 'prev buffer' })
+vim.keymap.set('n', '<leader>bl', ':buffers<CR>', { desc = 'list buffer' })
 
 -- <leader>w: write file
 vim.keymap.set('n', '<leader>w', ':w<CR>',
