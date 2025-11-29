@@ -54,21 +54,3 @@ telescope.setup{
     }
 }
 require('telescope').load_extension('fzf')
-
--- 快捷使用的一组 keymaps（可移动到 keymaps.lua）
-local builtin = require('telescope.builtin')
-local map = vim.keymap.set
-map('n', '<leader>ff', builtin.find_files, {desc = 'Telescope find_files'})
-map('n', '<leader>fg', builtin.live_grep,  {desc = 'Telescope live_grep'})
-map('n', '<leader>fb', builtin.buffers,    {desc = 'Telescope buffers'})
-map('n', '<leader>fh', builtin.help_tags,  {desc = 'Telescope help_tags'})
-map('n', '<leader>s', function()
-    require('telescope.builtin').grep_string({
-        search = vim.fn.expand('<cword>'),
-        only_sort_text = true,
-        word_match = '-w',  -- 全词匹配
-        use_regex = false,  -- 不使用正则，直接搜索字面量
-    })
-end)--可带参数调用，例如显示隐藏文件:
--- map('n', '<leader>fF', function() builtin.find_files({hidden=true, no_ignore=true}) end, {desc = 'find files (hidden)'})
-

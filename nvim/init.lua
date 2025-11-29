@@ -25,5 +25,6 @@ require('basic_setting.keymaps')
 -- Plugins config
 require('basic_setting.plugins')
 
+
 -- Theme config
 vim.cmd.colorscheme "catppuccin-macchiato"
