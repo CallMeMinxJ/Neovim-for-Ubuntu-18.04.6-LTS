@@ -12,6 +12,10 @@ wk.add({
         -- Which key search keymaps
         { "<leader>?", "<Cmd>lua require('which-key').show('', { mode = 'n' })<CR>", desc = "Show keymaps (which-key)" },
 
+        -- Keymap bindings
+        { "<leader>tt", "<Cmd>lua require('expand_config.tab-mode').toggle_tab()<CR>", desc = "Switch Space/Tab mode" },
+        { "<leader>ts", "<Cmd>lua require('expand_config.tab-mode').show_tab_status()<CR>", desc = "Show current tab setting" },
+
         -- File operations
         { "<leader>e", ":source %<CR>", desc = "Reload current lua file" },
         { "<leader>w", ":w<CR>", desc = "Write file" },
@@ -23,7 +27,7 @@ wk.add({
         { "<leader>bl", ":buffers<CR>", desc = "List buffers" },
         
         -- Display settings
-        { "<leader>~", ":set list!<CR>", desc = "Switch toggle list" },
+        { "<leader>~", "<Cmd>lua require('expand_config.tab-mode').toggle_list()<CR>", desc = "Switch toggle list" },
         
         -- File path operations
         { "<leader>p", "<Cmd>lua print('📁 ' .. vim.fn.expand('%:p'))<CR>", desc = "Show full file path" },

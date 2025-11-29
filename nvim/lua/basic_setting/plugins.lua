@@ -52,24 +52,27 @@ packer.startup(function(use)
     -- use { plugins_dir .. 'lualine.nvim', config = function() require('lualine').setup{} end }
 end)
 
--- External plugin configs
-local plugin_configs = {
+-- External expand configs
+local expand_configs = {
     -- plugin manage
-    'plugin_config.nvim-web-devicons',
-    'plugin_config.lualine',
-    'plugin_config.nvim-tree',
-    'plugin_config.telescope',
-    'plugin_config.bufferline',
-    'plugin_config.coc',
-    'plugin_config.nvim-treesitter',
-    'plugin_config.comment',
-    'plugin_config.indent-blankline',
-    'plugin_config.neoscroll',
-    'plugin_config.which-key',
-    'plugin_config.neogen',
-    'plugin_config.header',
-    'plugin_config.alpha',
-    'plugin_config.marks',
+    'expand_config.nvim-web-devicons',
+    'expand_config.lualine',
+    'expand_config.nvim-tree',
+    'expand_config.telescope',
+    'expand_config.bufferline',
+    'expand_config.coc',
+    'expand_config.nvim-treesitter',
+    'expand_config.comment',
+    'expand_config.indent-blankline',
+    'expand_config.neoscroll',
+    'expand_config.which-key',
+    'expand_config.neogen',
+    'expand_config.header',
+    'expand_config.alpha',
+    'expand_config.marks',
+
+    -- expand lua scripts
+    'expand_config.tab-mode',
 
     -- theme manage
     'color_config.catppuccin',
@@ -79,7 +82,7 @@ local plugin_configs = {
     -- 'color_config.kanagawa',
 }
 
-for _, name in ipairs(plugin_configs) do
+for _, name in ipairs(expand_configs) do
     local ok, _ = pcall(require, name)
     if not ok then
         print("Warning: no config found for " .. name)
