@@ -22,5 +22,3 @@ require('nvim-tree').setup {
   },
 }
 
-vim.keymap.set('n', '<leader>n', ':NvimTreeToggle<CR>', {desc = 'Toggle file explorer'})
-vim.keymap.set('n', '<leader>m', ':NvimTreeFindFile<CR>', { noremap = true, silent = true, desc = '定位当前文件在树中位置' })

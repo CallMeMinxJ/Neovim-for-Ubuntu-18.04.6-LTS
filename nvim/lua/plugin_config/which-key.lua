@@ -12,7 +12,3 @@ require("which-key").setup({
   },
   triggers = {}, -- ✅ 禁用所有自动触发
 })
-
-vim.keymap.set("n", "<leader>?", function()
-  require("which-key").show("", { mode = "n"})
-end, { desc = "Show keymaps (which-key)" })
