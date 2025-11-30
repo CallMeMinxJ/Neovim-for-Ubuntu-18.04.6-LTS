@@ -74,11 +74,6 @@ end
 time([[try_loadstring definition]], false)
 time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
-  ["alpha.nvim"] = {
-    loaded = true,
-    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/alpha.nvim",
-    url = "/home/astor/neovim/nvim/addons/alpha.nvim"
-  },
   ["bufferline.nvim"] = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
@@ -188,6 +183,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/tokyonight",
     url = "/home/astor/neovim/nvim/themes/tokyonight"
+  },
+  ["vim-startify"] = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/vim-startify",
+    url = "/home/astor/neovim/nvim/addons/vim-startify"
   },
   ["which-key"] = {
     loaded = true,

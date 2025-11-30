@@ -7,7 +7,7 @@
 # 版本：3.2 - 修复语法错误版本
 # =============================================================================
 
-set -euo pipefail  # 严格的安全设置
+set -euo pipefail # 严格的安全设置
 
 # =============================================================================
 # 初始化配置和常量
@@ -48,9 +48,12 @@ readonly LOG_LEVEL_ERROR=3
 LOG_LEVEL=${LOG_LEVEL:-$LOG_LEVEL_INFO}
 
 log() {
-local level="$1"; shift
-    local color="$1"; shift
-    local prefix="$1"; shift
+    local level="$1"
+    shift
+    local color="$1"
+    shift
+    local prefix="$1"
+    shift
     local message="$*"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
 
@@ -99,7 +102,7 @@ create_directory() {
     fi
 
     if [[ ! -d "$dir" ]]; then
-        if mkdir -p "$dir" 2>/dev/null; then
+        if mkdir -p "$dir" 2> /dev/null; then
             log_success "创建目录: $dir ($description)"
         else
             log_error "无法创建目录: $dir"
@@ -194,7 +197,7 @@ create_symlink() {
     fi
 
     if [[ ! -x "$source" ]]; then
-        if ! chmod +x "$source" 2>/dev/null; then
+        if ! chmod +x "$source" 2> /dev/null; then
             log_warning "无法使文件可执行: $source"
             return 1
         fi
@@ -203,7 +206,7 @@ create_symlink() {
     # 处理已存在的目标
     if [[ -e "$target" ]]; then
         if [[ -L "$target" ]]; then
-            local current_target=$(readlink "$target" 2>/dev/null || echo "")
+            local current_target=$(readlink "$target" 2> /dev/null || echo "")
             if [[ "$current_target" == "$source" ]]; then
                 log_info "符号链接已正确设置: $target -> $source"
                 return 0
@@ -221,12 +224,12 @@ create_symlink() {
     create_directory "$target_dir" "目标目录"
 
     # 创建符号链接
-    if ln -sf "$source" "$target" 2>/dev/null; then
+    if ln -sf "$source" "$target" 2> /dev/null; then
         log_success "创建 $description 符号链接: $target → $source"
         return 0
     else
         log_warning "符号链接创建失败，尝试复制文件"
-        if cp "$source" "$target" 2>/dev/null && chmod +x "$target"; then
+        if cp "$source" "$target" 2> /dev/null && chmod +x "$target"; then
             log_success "复制 $description: $target"
             return 0
         else
@@ -294,7 +297,7 @@ setup_tool_links() {
         else
             failed_tools+=("$link_name")
             # 尝试查找替代的可执行文件
-            local alternative=$(find "$tool_path" -type f -executable -name "$link_name" 2>/dev/null | head -1)
+            local alternative=$(find "$tool_path" -type f -executable -name "$link_name" 2> /dev/null | head -1)
             if [[ -n "$alternative" ]]; then
                 log_info "尝试替代文件: $alternative"
                 if create_symlink "$alternative" "$link_path" "$link_name"; then
@@ -451,13 +454,13 @@ setup_shell_integration() {
     local marker_end="# END_NVIM_DEV_CONFIG"
 
     # 检查是否已存在配置
-    if grep -q "$marker" "$BASHRC_FILE" 2>/dev/null; then
+    if grep -q "$marker" "$BASHRC_FILE" 2> /dev/null; then
         log_info "发现现有配置，进行更新..."
 
         # 使用临时文件来确保操作原子性
         local temp_file
         temp_file=$(mktemp)
-        if sed "/$marker/,/$marker_end/d" "$BASHRC_FILE" > "$temp_file" 2>/dev/null; then
+        if sed "/$marker/,/$marker_end/d" "$BASHRC_FILE" > "$temp_file" 2> /dev/null; then
             mv "$temp_file" "$BASHRC_FILE"
             log_success "已移除旧配置"
         else
@@ -503,7 +506,7 @@ validate_neovim_runtime() {
     for dir in "${REQUIRED_DIRS[@]}"; do
         local dir_path="$CONFIG_DIR/$dir"
         if [[ -d "$dir_path" ]]; then
-            local file_count=$(find "$dir_path" \( -name "*.lua" -o -name "*.vim" \) -type f 2>/dev/null | wc -l)
+            local file_count=$(find "$dir_path" \( -name "*.lua" -o -name "*.vim" \) -type f 2> /dev/null | wc -l)
             log_success "目录 $dir: 包含 $file_count 个配置文件"
             ((valid_count++))
         else
@@ -537,7 +540,7 @@ verify_installation() {
 
         if [[ -e "$tool_path" ]]; then
             if [[ -L "$tool_path" ]]; then
-                local target=$(readlink "$tool_path" 2>/dev/null || echo "")
+                local target=$(readlink "$tool_path" 2> /dev/null || echo "")
                 if [[ -e "$target" ]]; then
                     log_success "$tool: 链接有效 -> $target"
                     ((success_count++))
@@ -556,8 +559,8 @@ verify_installation() {
     done
 
     # 测试 Neovim
-    if command -v "${BIN_DIR}/nvim" >/dev/null 2>&1; then
-        local version=$("${BIN_DIR}/nvim" --version 2>/dev/null | head -1 || echo "未知版本")
+    if command -v "${BIN_DIR}/nvim" > /dev/null 2>&1; then
+        local version=$("${BIN_DIR}/nvim" --version 2> /dev/null | head -1 || echo "未知版本")
         log_success "Neovim 测试通过: $version"
         ((success_count++))
     else
@@ -566,7 +569,7 @@ verify_installation() {
     ((total_count++))
 
     # 验证配置文件语法
-    if bash -n "${CONFIG_FILE}" 2>/dev/null; then
+    if bash -n "${CONFIG_FILE}" 2> /dev/null; then
         log_success "配置文件语法正确"
         ((success_count++))
     else
@@ -596,9 +599,9 @@ cleanup_old_config() {
     local marker_end_patterns=("# END_NEOVIM_DEV_ENV" "# END_XDG_CONFIG_HOME")
 
     for i in "${!old_markers[@]}"; do
-        if grep -q "${old_markers[i]}" "$BASHRC_FILE" 2>/dev/null; then
+        if grep -q "${old_markers[i]}" "$BASHRC_FILE" 2> /dev/null; then
             log_info "清理旧配置标记: ${old_markers[i]}"
-            sed -i "/${old_markers[i]}/,/${marker_end_patterns[i]}/d" "$BASHRC_FILE" 2>/dev/null || true
+            sed -i "/${old_markers[i]}/,/${marker_end_patterns[i]}/d" "$BASHRC_FILE" 2> /dev/null || true
         fi
     done
 
@@ -654,7 +657,7 @@ main() {
     log_info "开始时间: $(date)"
 
     # 创建日志目录
-    mkdir -p "$(dirname "${LOG_FILE}")" 2>/dev/null || true
+    mkdir -p "$(dirname "${LOG_FILE}")" 2> /dev/null || true
     echo "=== Neovim 配置日志 $(date) ===" > "${LOG_FILE}"
 
     # 执行配置步骤
@@ -683,7 +686,7 @@ main() {
                     log_error "环境验证失败，终止执行"
                     return 1
                     ;;
-                "setup_tool_links"|"generate_module_config"|"setup_shell_integration")
+                "setup_tool_links" | "generate_module_config" | "setup_shell_integration")
                     log_error "关键步骤失败，终止执行"
                     return 1
                     ;;
