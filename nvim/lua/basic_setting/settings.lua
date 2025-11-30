@@ -20,7 +20,7 @@ local function load_config()
     end
     
     config = parsed or {}
-	print("Config loaded successfully")  -- Debug: Check if config is loaded
+	vim.notify("Config loaded successfully")  -- Debug: Check if config is loaded
     
     -- Apply Neovim options
     if config.options then
@@ -63,8 +63,30 @@ end
 -- Get configuration value
 function func.get_config(key, category)
     category = category or "options"
+	-- print("Get config " .. category .. "." .. key ..
+	-- 	" "..(tostring(config[category][key])))
     return config[category] and config[category][key] or nil
 end
+
+-- Create new command
+vim.api.nvim_create_user_command(
+    'SetConfig',
+    function(opts)
+        local key, value, category = opts.fargs[1], opts.fargs[2], opts.fargs[3]
+		func.set_config(key, value, category)
+    end,
+    {nargs = '*', desc = 'Set configuration value' }
+)
+
+vim.api.nvim_create_user_command(
+    'GetConfig',
+    function(opts)
+		local key, category = opts.fargs[1], opts.fargs[2]
+        func.get_config(key, category)
+    end,
+    { nargs = '*', desc = 'Get configuration value' }
+)
+
 
 -- Call load_config function to load settings immediately
 load_config()

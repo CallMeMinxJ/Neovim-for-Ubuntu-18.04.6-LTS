@@ -17,4 +17,11 @@ require("header").setup({
     author_from_git = false,
 })
 
-vim.keymap.set("n", "<leader>//", function() require("header").add_headers() end)
+-- Create new command
+vim.api.nvim_create_user_command(
+    "AddComment",
+    function()
+        require("neogen").generate()
+    end,
+    { nargs = 0}
+)
