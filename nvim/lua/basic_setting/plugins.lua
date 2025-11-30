@@ -37,7 +37,7 @@ packer.startup(function(use)
     use { plugins_dir .. "which-key"}
     use { plugins_dir .. "neogen"}
     use { plugins_dir .. "header.nvim"}
-    use { plugins_dir .. "alpha.nvim"}
+    use { plugins_dir .. "vim-startify"}
     use { plugins_dir .. "marks.nvim"}
     use { plugins_dir .. "gitsigns.nvim"}
     use { plugins_dir .. "formatter.nvim"}
@@ -69,7 +69,7 @@ local expand_configs = {
     'expand_config.which-key',
     'expand_config.neogen',
     'expand_config.header',
-    'expand_config.alpha',
+    'expand_config.startify',
     'expand_config.marks',
     'expand_config.gitsigns',
     'expand_config.formatter',

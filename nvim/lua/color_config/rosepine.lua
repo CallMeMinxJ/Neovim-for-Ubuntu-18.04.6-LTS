@@ -1,4 +1,4 @@
-require("rose-pine").setup{
+require("rose-pine").setup({
     variant = "auto", -- auto, main, moon, or dawn
     dark_variant = "main", -- main, moon, or dawn
     dim_inactive_windows = false,
@@ -55,8 +55,8 @@ require("rose-pine").setup{
         -- },
     },
 
-	-- NOTE: Highlight groups are extended (merged) by default. Disable this
-	-- per group via `inherit = false`
+    -- NOTE: Highlight groups are extended (merged) by default. Disable this
+    -- per group via `inherit = false`
     highlight_groups = {
         -- Comment = { fg = "foam" },
         -- StatusLine = { fg = "love", bg = "love", blend = 15 },
@@ -75,7 +75,7 @@ require("rose-pine").setup{
         --     highlight.fg = palette.foam
         -- end
     end,
-}
+})
 
 -- vim.cmd("colorscheme rose-pine")
 -- vim.cmd("colorscheme rose-pine-main")
