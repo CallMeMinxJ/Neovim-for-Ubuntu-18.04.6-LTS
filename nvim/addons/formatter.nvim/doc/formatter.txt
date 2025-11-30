@@ -1,0 +1,334 @@
+*formatter.txt*  Format runner.                         *formatter* *formatter.nvim*
+
+We want to thank the `neoformat` <https://github.com/sbdchd/neoformat>
+contributors for developing a lot of formatter configurations that we used as
+a reference to create our own opt-in default formatter configurations.
+
+    Author    :    Mike Hartington <https://github.com/mhartington>
+    Homepage  :    https://github.com/mhartington/formatter.nvim
+
+
+==============================================================================
+                                                            *formatter-contents*
+
+CONTENTS
+
+    1. Features ................................ |formatter-features|
+    2. Install ................................. |formatter-install|
+    3. Configure ............................... |formatter-configure|
+      3.1. Configuration specification ......... |formatter-config-spec|
+    4. Contribute .............................. |formatter-contribute|
+      4.1. Default configurations .............. |formatter-contrib-formatters|
+
+
+==============================================================================
+                                                            *formatter-features*
+
+1. Features ~
+
+ - Written in `lua`
+ - Asynchronous execution
+ - Buffer locking
+ - Opt-in default formatter configurations
+ - Before/after format hooks
+
+
+==============================================================================
+                                                             *formatter-install*
+
+2. Install ~
+
+With `packer.nvim`:
+>
+  require('packer').use { 'mhartington/formatter.nvim' }
+<
+With `paq-nvim`:
+>
+  require("paq") { 'mhartington/formatter.nvim' }
+<
+With `vim-plug`:
+>
+  Plug 'mhartington/formatter.nvim'
+<
+With `Vundle.vim`:
+>
+  Plugin 'mhartington/formatter.nvim'
+<
+With `vim-pathogen`:
+>
+  cd ~/.vim/bundle && \
+  git clone https://github.com/mhartington/formatter.nvim
+<
+With `dein.vim`:
+>
+  call dein#add('mhartington/formatter.nvim')
+<
+
+==============================================================================
+                                                           *formatter-configure*
+
+3. Configure ~
+
+Setup:
+>
+  -- Utilities for creating configurations
+  local util = require "formatter.util"
+
+  -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+  require("formatter").setup {
+    -- Enable or disable logging
+    logging = true,
+    -- Set the log level
+    log_level = vim.log.levels.WARN,
+    -- All formatter configurations are opt-in
+    filetype = {
+      -- Formatter configurations for filetype "lua" go here
+      -- and will be executed in order
+      lua = {
+        -- "formatter.filetypes.lua" defines default configurations for the
+        -- "lua" filetype
+        require("formatter.filetypes.lua").stylua,
+
+        -- You can also define your own configuration
+        function()
+          -- Supports conditional formatting
+          if util.get_current_buffer_file_name() == "special.lua" then
+            return nil
+          end
+
+          -- Full specification of configurations is down below and in Vim help
+          -- files
+          return {
+            exe = "stylua",
+            args = {
+              "--search-parent-directories",
+              "--stdin-filepath",
+              util.escape_path(util.get_current_buffer_file_path()),
+              "--",
+              "-",
+            },
+            stdin = true,
+          }
+        end
+      },
+
+      -- Use the special "*" filetype for defining formatter configurations on
+      -- any filetype
+      ["*"] = {
+        -- "formatter.filetypes.any" defines default configurations for any
+        -- filetype
+        require("formatter.filetypes.any").remove_trailing_whitespace,
+
+        -- Remove trailing whitespace without 'sed'
+        -- require("formatter.filetypes.any").substitute_trailing_whitespace,
+      }
+    }
+  }
+<
+
+                                                   *formatter-opt-in-formatters*
+
+By default, there are no preconfigured formatters. You can opt-into
+default configurations per formatter (lua/formatter/defaults),
+default configurations per `filetype` (lua/formatter/filetypes),
+and default configurations for any `filetype` (lua/formatter/filetypes/any.lua)
+or write your own. It is hard to predict what everyone wants, but
+at the same time we realize that most formatter configurations are the same.
+See the discussion in #97
+<https://github.com/mhartington/formatter.nvim/issues/97> for more
+information.
+
+You can use the
+default configurations per formatter (lua/formatter/defaults),
+default configurations per `filetype` (lua/formatter/filetypes),
+and default configurations for any `filetype` (lua/formatter/filetypes/any.lua)
+as a starting point for creating your configurations.
+Feel free to contribute to this repository by creating or improving default
+configurations that everyone can use! The guide for contributing to default
+configurations is below.
+
+
+                                                                *formatter-util*
+
+You can use the `util` module (lua/formatter/util) which has various
+functions that help with creating default configurations as shown above.
+
+
+                                                            *formatter-map-keys*
+Map keys:
+>
+  nnoremap <silent> <leader>f :Format<CR>
+  nnoremap <silent> <leader>F :FormatWrite<CR>
+<
+
+                                                   *formatter-format-after-save*
+Format and write after save asynchronously:
+>
+  augroup FormatAutogroup
+    autocmd!
+    autocmd BufWritePost * FormatWrite
+  augroup END
+<
+
+                                                               *formatter-hooks*
+Before/after format hooks
+
+You can execute code before and after formatting like so:
+>
+  augroup FormatAutogroup
+    autocmd!
+    autocmd User FormatterPre lua print "This will print before formatting"
+    autocmd User FormatterPost lua print "This will print after formatting"
+  augroup END
+<
+
+Note that these commands are executed using `silent` when the `log_level`
+is higher than `vim.log.levels.DEBUG`.
+
+                                                      *formatter-buffer-locking*
+Buffer locking
+
+Use the `FormatLock` and `FormatWriteLock` commands instead of `Format` and
+`FormatWrite` to lock the buffer (set buffer option `modifiable` to false)
+while formatting.
+
+
+------------------------------------------------------------------------------
+                                                         *formatter-config-spec*
+
+3.1. Configuration specification ~
+
+Each formatter configuration is a function that returns a table. Because
+each entry is a function, the tables for each `filetype` act as an ordered list
+(or array). This means things run in the order you list them, keep this
+in mind. You can also return `nil` from these functions to conditionally apply
+formatters.
+
+Each formatter configuration should return a table that consist of:
+
+- `exe`: the program you wish to run.
+- `args`: a table of arguments to pass (optional)
+- `stdin`: if it should use the standard input (optional)
+- `cwd` : the path to run the program from (optional)
+- `try_node_modules`: tries to run a formatter from locally install npm
+  packages (optional)
+- `no_append` : don't append the path of the file to the formatter command
+  (optional)
+- `ignore_exitcode` : set to true if the program expects non-zero success exit
+  code (optional)
+- `transform` : pass a function that takes in the formatted text and returns
+  the text to be applied to the buffer (optional) (see ruby rubocop
+  (lua/formatter/filetypes/ruby) default formatter configuration as an example)
+- `tempfile_dir`: directory for temp file when not using `stdin` (optional)
+- `tempfile_prefix`: prefix for temp file when not using `stdin` (optional)
+- `tempfile_postfix`: postfix for temp file when not using `stdin` (optional)
+
+
+                                                                 *formatter-cwd*
+
+The `cwd` argument can be used for in example monolithic projects which contain
+sources with different styles. Setting `cwd` to the path of the file being
+formatted causes, for example, `clang-format` to search for the nearest
+`.clang-format` file in the file's parent directories.
+
+
+                           *formatter-try-node-modules* *b:formatter_node_modules*
+
+The `try_node_modules` argument causes formatter.nvim to look for the formatter
+in `node_modules/.bin` before $PATH. `node_modules` path will be resolved only
+once per buffer and saved to |b:formatter_node_modules|.
+
+
+                                                           *formatter-no-append*
+
+The `no_append` argument is important for formatters that don't take the path
+to the formatted file as the last argument. A small minority of formatters take
+the path to the formatted file as a named argument. For an example, check the
+default `javascript` `prettydiff` configuration
+(lua/formatter/filetypes/javascript.lua).
+
+
+==============================================================================
+                                                          *formatter-contribute*
+
+4. Contribute ~
+
+
+------------------------------------------------------------------------------
+                                                  *formatter-contrib-formatters*
+
+3.1. Default configurations ~
+
+All default configurations are placed in the
+default configurations per formatter(lua/formatter/defaults),
+default configurations per `filetype` (lua/formatter/filetypes), and
+default configurations for any `filetype` (lua/formatter/filetypes/any.lua).
+You should use the `util` module (lua/formatter/util)
+which has various functions that help with creating default configurations.
+
+The default configurations per formatter (lua/formatter/defaults) return
+functions which create a formatter configuration. For example, the `prettier`
+default configuration function takes in a parser argument:
+
+>
+  local util = require "formatter.util"
+
+  return function(parser)
+    if not parser then
+      return {
+        exe = "prettier",
+        args = {
+          "--stdin-filepath",
+          util.escape_path(util.get_current_buffer_file_path()),
+        },
+        stdin = true,
+        try_node_modules = true,
+      }
+    end
+
+    return {
+      exe = "prettier",
+      args = {
+        "--stdin-filepath",
+        util.escape_path(util.get_current_buffer_file_path()),
+        "--parser",
+        parser,
+      },
+      stdin = true,
+      try_node_modules = true,
+    }
+  end
+<
+
+Default configurations per formatter (lua/formatter/defaults)
+are used to create default configurations per `filetype`
+(lua/formatter/filetypes), and default configurations for any `filetype`
+(lua/formatter/filetypes/any.lua).
+
+For example, the default formatter configuration for `prettier` for the
+`typescript` `filetype` (lua/formatter/defaults/typescript.lua) uses the default
+formatter configuration function for `prettier`
+(lua/formatter/defaults/prettier.lua):
+
+>
+  local M = {}
+
+  local defaults = require "formatter.defaults"
+  local util = require "formatter.util"
+
+  -- other formatters...
+
+  -- "util.withl" here returns a function that executes the defaults.prettier
+  -- function with "typescript" as the first argument for the parser
+  M.prettier = util.withl(defaults.prettier, "typescript")
+
+  -- other formatters...
+
+  return M
+<
+
+The default configurations for any `filetype` (lua/formatter/filetypes/any.lua)
+are in exactly the same format as default configurations per `filetype`
+(lua/formatter/filetypes).
+It is just important to note that this file is special because all formatter
+default configurations that can be applied to any `filetype` go here.

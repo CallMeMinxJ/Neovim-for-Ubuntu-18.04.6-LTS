@@ -43,11 +43,36 @@ end
 -- Switch tab space etc. display
 tab_mod.toggle_list = function()
     local list = require('basic_setting.settings').get_config("list", "options")
-	list = not list
-	require('basic_setting.settings').set_config("list", list, "options")
-	local status = list and "Show" or "Donot Show"
-	print("Change status to " .. status)
+    list = not list
+    require('basic_setting.settings').set_config("list", list, "options")
+    local status = list and "Show" or "Donot Show"
+    print("Change status to " .. status)
 end
+
+-- Create new command
+vim.api.nvim_create_user_command(
+    'TabToggle',
+    function()
+        tab_mod.toggle_tab()
+    end,
+    { nargs = 0 }
+)
+
+vim.api.nvim_create_user_command(
+    'TabStatus',
+    function()
+        tab_mod.show_tab_status()
+    end,
+    { nargs = 0 }
+)
+
+vim.api.nvim_create_user_command(
+    'ListToggle',
+    function()
+        tab_mod.toggle_list()
+    end,
+    { nargs = 0 }
+)
 
 return tab_mod
 

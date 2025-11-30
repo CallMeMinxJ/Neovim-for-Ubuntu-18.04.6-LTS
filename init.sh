@@ -48,16 +48,16 @@ readonly LOG_LEVEL_ERROR=3
 LOG_LEVEL=${LOG_LEVEL:-$LOG_LEVEL_INFO}
 
 log() {
-    local level="$1"; shift
+local level="$1"; shift
     local color="$1"; shift
     local prefix="$1"; shift
     local message="$*"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-    
+
     if [[ ${level} -ge ${LOG_LEVEL} ]]; then
         echo -e "${color}[${prefix}]${COLOR_RESET} ${message}" >&2
     fi
-    
+
     # 写入日志文件
     echo "[${timestamp}] [${prefix}] ${message}" >> "${LOG_FILE}"
 }
@@ -77,7 +77,7 @@ print_header() {
     echo -e "${COLOR_RESET}"
 }
 
-print_step() { 
+print_step() {
     echo -e "${COLOR_PURPLE}[STEP]${COLOR_RESET} $1"
     log_info "STEP: $1"
 }
@@ -92,12 +92,12 @@ print_divider() {
 create_directory() {
     local dir="${1:-}"
     local description="${2:-未命名目录}"
-    
+
     if [[ -z "$dir" ]]; then
         log_error "create_directory: 目录参数为空"
         return 1
     fi
-    
+
     if [[ ! -d "$dir" ]]; then
         if mkdir -p "$dir" 2>/dev/null; then
             log_success "创建目录: $dir ($description)"
@@ -116,10 +116,10 @@ create_directory() {
 # =============================================================================
 validate_environment() {
     print_step "验证环境要求"
-    
+
     local missing_dirs=()
     local missing_tools=()
-    
+
     # 检查基础目录
     if [[ ! -d "$CONFIG_DIR" ]]; then
         missing_dirs+=("$CONFIG_DIR (CONFIG_DIR)")
@@ -130,7 +130,7 @@ validate_environment() {
     if [[ ! -d "$NVIM_DIR" ]]; then
         missing_dirs+=("$NVIM_DIR (NVIM_DIR)")
     fi
-    
+
     # 检查必要的工具目录
     local required_tools=("clangd-server" "fzf-0.67.0" "lua-server" "ripgrep-15.1.0" "node-v16.20.2-linux-x64")
     for tool_dir in "${required_tools[@]}"; do
@@ -138,13 +138,13 @@ validate_environment() {
             missing_tools+=("$tool_dir")
         fi
     done
-    
+
     # 检查 Neovim 可执行文件
     if [[ ! -f "${NVIM_DIR}/bin/nvim" ]]; then
         log_error "未找到 Neovim 可执行文件: ${NVIM_DIR}/bin/nvim"
         return 1
     fi
-    
+
     # 报告缺失项
     if [[ ${#missing_dirs[@]} -gt 0 ]]; then
         log_warning "缺失目录:"
@@ -152,18 +152,18 @@ validate_environment() {
             log_warning "  - $dir"
         done
     fi
-    
+
     if [[ ${#missing_tools[@]} -gt 0 ]]; then
         log_warning "缺失工具目录:"
         for tool in "${missing_tools[@]}"; do
             log_warning "  - $tool"
         done
     fi
-    
+
     # 创建必要的目录
     create_directory "${BIN_DIR}" "二进制文件目录"
     create_directory "${CACHE_DIR}" "缓存目录"
-    
+
     if [[ ${#missing_dirs[@]} -eq 0 && ${#missing_tools[@]} -eq 0 ]]; then
         log_success "环境验证通过"
         return 0
@@ -180,26 +180,26 @@ create_symlink() {
     local source="${1:-}"
     local target="${2:-}"
     local description="${3:-未命名链接}"
-    
+
     # 验证参数
     if [[ -z "$source" || -z "$target" ]]; then
         log_error "create_symlink: 源或目标路径为空"
         return 1
     fi
-    
+
     # 验证源文件是否存在且可执行
     if [[ ! -f "$source" ]]; then
         log_warning "源文件不存在: $source"
         return 1
     fi
-    
+
     if [[ ! -x "$source" ]]; then
         if ! chmod +x "$source" 2>/dev/null; then
             log_warning "无法使文件可执行: $source"
             return 1
         fi
     fi
-    
+
     # 处理已存在的目标
     if [[ -e "$target" ]]; then
         if [[ -L "$target" ]]; then
@@ -215,11 +215,11 @@ create_symlink() {
             rm -rf "$target"
         fi
     fi
-    
+
     # 确保目标目录存在
     local target_dir=$(dirname "$target")
     create_directory "$target_dir" "目标目录"
-    
+
     # 创建符号链接
     if ln -sf "$source" "$target" 2>/dev/null; then
         log_success "创建 $description 符号链接: $target → $source"
@@ -241,11 +241,11 @@ setup_tool_links() {
     print_step "配置工具符号链接"
 
     chmod -R +x *
-    
+
     local success_count=0
     local total_count=0
     local failed_tools=()
-    
+
     # 工具映射配置
     local tool_mappings=(
         "clangd-server|bin/clangd|clangd"
@@ -260,8 +260,11 @@ setup_tool_links() {
         "node-v16.20.2-linux-x64|lib/node_modules/pyright/index.js|pyright"
         "node-v16.20.2-linux-x64|lib/node_modules/pyright/langserver.index.js|pyright-langserver"
         "yarn-v1.22.22|bin/yarn|yarn"
+        "clang-format|clang-format|clang-format"
+        "stylua|stylua|stylua"
+        "shfmt|shfmt_v3.12.0_linux_amd64|shfmt"
     )
-    
+
     # 首先设置 Neovim
     if create_symlink \
         "${NVIM_DIR}/bin/nvim" \
@@ -270,22 +273,22 @@ setup_tool_links() {
         ((success_count++))
     fi
     ((total_count++))
-    
+
     # 处理所有工具映射
     for mapping in "${tool_mappings[@]}"; do
         IFS='|' read -r tool_dir exec_path link_name <<< "$mapping"
         ((total_count++))
-        
+
         local tool_path="${TOOL_DIR}/$tool_dir"
         local executable="$tool_path/$exec_path"
         local link_path="${BIN_DIR}/$link_name"
-        
+
         if [[ ! -d "$tool_path" ]]; then
             log_warning "工具目录不存在: $tool_path"
             failed_tools+=("$link_name (目录不存在)")
             continue
         fi
-        
+
         if create_symlink "$executable" "$link_path" "$link_name"; then
             ((success_count++))
         else
@@ -306,7 +309,7 @@ setup_tool_links() {
             fi
         fi
     done
-    
+
     # 输出统计信息
     print_divider
     log_info "工具链接统计: $success_count/$total_count 成功"
@@ -316,7 +319,7 @@ setup_tool_links() {
             [[ -n "$tool" ]] && log_warning "  - $tool"
         done
     fi
-    
+
     if [[ $success_count -eq $total_count ]]; then
         log_success "所有工具链接配置完成"
     else
@@ -330,10 +333,10 @@ setup_tool_links() {
 # =============================================================================
 generate_module_config() {
     print_step "生成模块化配置文件"
-    
+
     # 备份现有配置文件
     backup_file "$CONFIG_FILE"
-    
+
     # 生成新的配置文件
     cat > "$CONFIG_FILE" << 'EOF'
 #!/bin/bash
@@ -415,7 +418,7 @@ if command -v complete >/dev/null 2>&1; then
     _nvim_dev_commands() {
         local cur prev words cword
         _get_comp_words_by_ref -n : cur prev words cword
-        
+
         local commands="info clean reload"
         case "${cword}" in
             1)
@@ -427,7 +430,7 @@ if command -v complete >/dev/null 2>&1; then
 fi
 
 EOF
-    
+
     if [[ $? -eq 0 ]]; then
         chmod +x "$CONFIG_FILE"
         log_success "配置文件生成完成: $CONFIG_FILE"
@@ -443,14 +446,14 @@ EOF
 # =============================================================================
 setup_shell_integration() {
     print_step "配置 Shell 集成"
-    
+
     local marker="# NVIM_DEV_CONFIG"
     local marker_end="# END_NVIM_DEV_CONFIG"
-    
+
     # 检查是否已存在配置
     if grep -q "$marker" "$BASHRC_FILE" 2>/dev/null; then
         log_info "发现现有配置，进行更新..."
-        
+
         # 使用临时文件来确保操作原子性
         local temp_file
         temp_file=$(mktemp)
@@ -463,7 +466,7 @@ setup_shell_integration() {
             rm -f "$temp_file"
         fi
     fi
-    
+
     # 添加新配置
     cat >> "$BASHRC_FILE" << EOF
 
@@ -479,7 +482,7 @@ else
 fi
 ${marker_end}
 EOF
-    
+
     if [[ $? -eq 0 ]]; then
         log_success "Shell 集成配置完成"
         return 0
@@ -494,9 +497,9 @@ EOF
 # =============================================================================
 validate_neovim_runtime() {
     print_step "验证 Neovim 运行时配置"
-    
+
     local valid_count=0
-    
+
     for dir in "${REQUIRED_DIRS[@]}"; do
         local dir_path="$CONFIG_DIR/$dir"
         if [[ -d "$dir_path" ]]; then
@@ -507,7 +510,7 @@ validate_neovim_runtime() {
             log_warning "目录不存在: $dir"
         fi
     done
-    
+
     if [[ $valid_count -eq ${#REQUIRED_DIRS[@]} ]]; then
         log_success "Neovim 运行时配置验证通过"
     else
@@ -521,17 +524,17 @@ validate_neovim_runtime() {
 # =============================================================================
 verify_installation() {
     print_step "验证安装结果"
-    
+
     local success_count=0
     local total_count=0
-    
+
     # 测试关键工具
     local critical_tools=("nvim" "fzf" "rg" "clangd" "lua-language-server" "node")
-    
+
     for tool in "${critical_tools[@]}"; do
         ((total_count++))
         local tool_path="${BIN_DIR}/$tool"
-        
+
         if [[ -e "$tool_path" ]]; then
             if [[ -L "$tool_path" ]]; then
                 local target=$(readlink "$tool_path" 2>/dev/null || echo "")
@@ -551,7 +554,7 @@ verify_installation() {
             log_warning "$tool: 未找到"
         fi
     done
-    
+
     # 测试 Neovim
     if command -v "${BIN_DIR}/nvim" >/dev/null 2>&1; then
         local version=$("${BIN_DIR}/nvim" --version 2>/dev/null | head -1 || echo "未知版本")
@@ -561,7 +564,7 @@ verify_installation() {
         log_error "Neovim 测试失败"
     fi
     ((total_count++))
-    
+
     # 验证配置文件语法
     if bash -n "${CONFIG_FILE}" 2>/dev/null; then
         log_success "配置文件语法正确"
@@ -570,10 +573,10 @@ verify_installation() {
         log_error "配置文件语法错误"
     fi
     ((total_count++))
-    
+
     print_divider
     log_info "验证统计: $success_count/$total_count 项通过"
-    
+
     if [[ $success_count -eq $total_count ]]; then
         log_success "安装验证完全通过"
         return 0
@@ -588,17 +591,17 @@ verify_installation() {
 # =============================================================================
 cleanup_old_config() {
     print_step "清理旧配置"
-    
+
     local old_markers=("# NEOVIM_DEV_ENV" "# XDG_CONFIG_HOME")
     local marker_end_patterns=("# END_NEOVIM_DEV_ENV" "# END_XDG_CONFIG_HOME")
-    
+
     for i in "${!old_markers[@]}"; do
         if grep -q "${old_markers[i]}" "$BASHRC_FILE" 2>/dev/null; then
             log_info "清理旧配置标记: ${old_markers[i]}"
             sed -i "/${old_markers[i]}/,/${marker_end_patterns[i]}/d" "$BASHRC_FILE" 2>/dev/null || true
         fi
     done
-    
+
     log_success "旧配置清理完成"
     return 0
 }
@@ -610,18 +613,18 @@ show_results() {
     print_header
     echo -e "${COLOR_GREEN}Neovim 开发环境配置完成！${COLOR_RESET}"
     echo ""
-    
+
     echo -e "${COLOR_CYAN}配置摘要:${COLOR_RESET}"
     echo -e "  ${COLOR_BLUE}• 配置文件:${COLOR_RESET} ${CONFIG_FILE}"
     echo -e "  ${COLOR_BLUE}• 工具目录:${COLOR_RESET} ${BIN_DIR}/"
     echo -e "  ${COLOR_BLUE}• 缓存目录:${COLOR_RESET} ${CACHE_DIR}/"
     echo ""
-    
+
     echo -e "${COLOR_CYAN}使用方法:${COLOR_RESET}"
     echo -e "  ${COLOR_YELLOW}source ~/.bashrc${COLOR_RESET}          # 立即生效"
     echo -e "  或 ${COLOR_YELLOW}source \"${CONFIG_FILE}\"${COLOR_RESET}  # 直接加载配置"
     echo ""
-    
+
     echo -e "${COLOR_CYAN}可用命令:${COLOR_RESET}"
     echo -e "  ${COLOR_GREEN}nvim-dev-info${COLOR_RESET}    # 显示环境信息"
     echo -e "  ${COLOR_GREEN}nvim-dev-clean${COLOR_RESET}   # 清理缓存"
@@ -629,13 +632,13 @@ show_results() {
     echo -e "  ${COLOR_GREEN}nvim${COLOR_RESET}             # 启动 Neovim"
     echo -e "  ${COLOR_GREEN}nvim-cfg${COLOR_RESET}         # 编辑配置"
     echo ""
-    
+
     echo -e "${COLOR_YELLOW}下一步:${COLOR_RESET}"
     echo -e "  1. 运行 ${COLOR_YELLOW}source ~/.bashrc${COLOR_RESET} 使配置生效"
     echo -e "  2. 运行 ${COLOR_YELLOW}nvim-dev-info${COLOR_RESET} 验证安装"
     echo -e "  3. 运行 ${COLOR_YELLOW}nvim${COLOR_RESET} 启动编辑器测试"
     echo ""
-    
+
     print_divider
 }
 
@@ -644,27 +647,27 @@ show_results() {
 # =============================================================================
 main() {
     local start_time=$(date +%s)
-    
+
     print_header
     log_info "启动 Neovim 开发环境配置"
     log_info "工作目录: $SCRIPT_DIR"
     log_info "开始时间: $(date)"
-    
+
     # 创建日志目录
     mkdir -p "$(dirname "${LOG_FILE}")" 2>/dev/null || true
     echo "=== Neovim 配置日志 $(date) ===" > "${LOG_FILE}"
-    
+
     # 执行配置步骤
     local steps=(
         "validate_environment"
-        "cleanup_old_config" 
+        "cleanup_old_config"
         "setup_tool_links"
         "generate_module_config"
         "setup_shell_integration"
         "validate_neovim_runtime"
         "verify_installation"
     )
-    
+
     local success_count=0
     for step in "${steps[@]}"; do
         print_divider
@@ -673,7 +676,7 @@ main() {
         else
             local exit_code=$?
             log_error "步骤失败: $step (退出码: $exit_code)"
-            
+
             # 根据步骤的重要性决定是否继续
             case "$step" in
                 "validate_environment")
@@ -690,15 +693,15 @@ main() {
             esac
         fi
     done
-    
+
     local end_time=$(date +%s)
     local duration=$((end_time - start_time))
-    
+
     print_divider
     log_info "配置完成: $success_count/${#steps[@]} 个步骤成功"
     log_info "总耗时: ${duration} 秒"
     log_info "完成时间: $(date)"
-    
+
     if [[ $success_count -eq ${#steps[@]} ]]; then
         log_success "所有配置步骤顺利完成"
         show_results
@@ -721,7 +724,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
         echo -e "期望包含的目录: ${BIN_DIR}" >&2
         exit 1
     fi
-    
+
     # 执行主函数
     if main "$@"; then
         exit 0
