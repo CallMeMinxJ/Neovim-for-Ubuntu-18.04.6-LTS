@@ -99,6 +99,21 @@ _G.packer_plugins = {
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/comment.nvim",
     url = "/home/astor/neovim/nvim/addons/comment.nvim"
   },
+  ["formatter.nvim"] = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/formatter.nvim",
+    url = "/home/astor/neovim/nvim/addons/formatter.nvim"
+  },
+  ["gitsigns.nvim"] = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
+    url = "/home/astor/neovim/nvim/addons/gitsigns.nvim"
+  },
+  gruvbox = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/gruvbox",
+    url = "/home/astor/neovim/nvim/themes/gruvbox"
+  },
   ["header.nvim"] = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/header.nvim",
@@ -108,6 +123,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
     url = "/home/astor/neovim/nvim/addons/indent-blankline.nvim"
+  },
+  kanagawa = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/kanagawa",
+    url = "/home/astor/neovim/nvim/themes/kanagawa"
   },
   ["lualine.nvim"] = {
     loaded = true,
@@ -149,6 +169,11 @@ _G.packer_plugins = {
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/plenary.nvim",
     url = "/home/astor/neovim/nvim/addons/plenary.nvim"
   },
+  rosepine = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/rosepine",
+    url = "/home/astor/neovim/nvim/themes/rosepine"
+  },
   ["telescope-fzf-native.nvim"] = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/telescope-fzf-native.nvim",
@@ -158,6 +183,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "/home/astor/neovim/nvim/addons/telescope.nvim"
+  },
+  tokyonight = {
+    loaded = true,
+    path = "/home/astor/neovim/.local/share/nvim/site/pack/packer/start/tokyonight",
+    url = "/home/astor/neovim/nvim/themes/tokyonight"
   },
   ["which-key"] = {
     loaded = true,

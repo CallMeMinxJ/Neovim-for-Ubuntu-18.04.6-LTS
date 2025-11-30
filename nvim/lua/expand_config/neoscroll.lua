@@ -1,7 +1,7 @@
 local neoscroll = require('neoscroll')
 
 neoscroll.setup({
-  mappings = {}, -- 禁用所有默认键位
+  mappings = {}, -- disable default keymaps
   hide_cursor = true,
   stop_eof = true,
   respect_scrolloff = false,
@@ -14,18 +14,17 @@ neoscroll.setup({
   ignored_events = { 'WinScrolled', 'CursorMoved' },
 })
 
--- 只绑定你需要的两个键位
-local keymap = {
-  ["<C-k>"] = function()
-    neoscroll.scroll(-10.0, { move_cursor = true, duration = 200 })
-  end,
-  ["<C-j>"] = function()
-    neoscroll.scroll(10.0, { move_cursor = true, duration = 200 })
-  end,
-}
+-- Create new command
+vim.api.nvim_create_user_command(
+    'Scroll',
+    function(opts)
+        local lines = tonumber(opts.args)
+        neoscroll.scroll(lines, { move_cursor = true, duration = 50 })
+    end,
+    { nargs = 1 }
+)
 
-local modes = { "n", "v", "x" }
-for key, func in pairs(keymap) do
-  vim.keymap.set(modes, key, func, { silent = true })
-end
+-- Ensure keybinding is for normal mode
+-- vim.keymap.set('n', '<C-k>', '<cmd>Scroll -10<CR>', { noremap = true, silent = true, desc = "scroll up" })
+-- vim.keymap.set('n', '<C-j>', '<cmd>Scroll 10<CR>', { noremap = true, silent = true, desc = "scroll down" })
 

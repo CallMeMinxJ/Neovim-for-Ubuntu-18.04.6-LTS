@@ -39,14 +39,15 @@ packer.startup(function(use)
     use { plugins_dir .. "header.nvim"}
     use { plugins_dir .. "alpha.nvim"}
     use { plugins_dir .. "marks.nvim"}
+    use { plugins_dir .. "gitsigns.nvim"}
+    use { plugins_dir .. "formatter.nvim"}
 
     -- register local theme from ./colors/<name>
-    use { colors_dir .. "catppuccin", as = "catppuccin" }
-    -- use_theme(use, 'tokyonight')
-    -- use_theme(use, 'rosepine')
-    -- use_theme(use, 'gruvbox')
-    -- use_theme(use, 'catppuccin')
-    -- use_theme(use, 'kanagawa')
+    use { colors_dir .. "catppuccin", as = "catppuccin"}
+    use { colors_dir .. "gruvbox", as = "gruvbox"}
+    use { colors_dir .. "kanagawa", as = "kanagawa"}
+    use { colors_dir .. "rosepine", as = "rosepine"}
+    use { colors_dir .. "tokyonight", as = "tokyonight"}
 
     -- Example: if a local plugin requires config, you can do:
     -- use { plugins_dir .. 'lualine.nvim', config = function() require('lualine').setup{} end }
@@ -70,16 +71,18 @@ local expand_configs = {
     'expand_config.header',
     'expand_config.alpha',
     'expand_config.marks',
+    'expand_config.gitsigns',
+    'expand_config.formatter',
 
     -- expand lua scripts
     'expand_config.tab-mode',
 
     -- theme manage
     'color_config.catppuccin',
-    -- 'color_config.gruvbox',
-    -- 'color_config.tokyonight',
-    -- 'color_config.rosepine',
-    -- 'color_config.kanagawa',
+    'color_config.gruvbox',
+    'color_config.tokyonight',
+    'color_config.rosepine',
+    'color_config.kanagawa',
 }
 
 for _, name in ipairs(expand_configs) do

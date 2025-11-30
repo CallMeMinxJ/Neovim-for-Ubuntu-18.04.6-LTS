@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://github.com/mhartington/formatter.nvim
+HostUrl=https://codeload.github.com/mhartington/formatter.nvim/zip/refs/heads/master

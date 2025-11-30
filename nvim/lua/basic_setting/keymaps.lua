@@ -10,11 +10,11 @@ wk.add({
         mode = "n",
         
         -- Which key search keymaps
-        { "<leader>?", "<Cmd>lua require('which-key').show('', { mode = 'n' })<CR>", desc = "Show keymaps (which-key)" },
+        { "<leader>?", "<Cmd>lua requir('which-key').show('', { mode = 'n' })<CR>", desc = "Show keymaps (which-key)" },
 
         -- Keymap bindings
-        { "<leader>tt", "<Cmd>lua require('expand_config.tab-mode').toggle_tab()<CR>", desc = "Switch Space/Tab mode" },
-        { "<leader>ts", "<Cmd>lua require('expand_config.tab-mode').show_tab_status()<CR>", desc = "Show current tab setting" },
+        { "<leader>tt", "<cmd>TabToggle<CR>", desc = "Switch Space/Tab mode" },
+        { "<leader>ts", "<cmd>TabStatus<CR>", desc = "Show current tab setting" },
 
         -- File operations
         { "<leader>e", ":source %<CR>", desc = "Reload current lua file" },
@@ -27,7 +27,7 @@ wk.add({
         { "<leader>bl", ":buffers<CR>", desc = "List buffers" },
         
         -- Display settings
-        { "<leader>~", "<Cmd>lua require('expand_config.tab-mode').toggle_list()<CR>", desc = "Switch toggle list" },
+        { "<leader>~", "<cmd>ListToggle<CR>", desc = "Switch toggle list" },
         
         -- File path operations
         { "<leader>p", "<Cmd>lua print('📁 ' .. vim.fn.expand('%:p'))<CR>", desc = "Show full file path" },
@@ -39,8 +39,8 @@ wk.add({
         { "<Esc><Esc>", "<cmd>nohlsearch<CR>", desc = "Cancel highlight" },
 
         -- Add coments header and func/file annotations
-        { "<leader>//", '<Cmd>lua require("header").add_headers()<CR>', desc = "Add header comment"},
-        { "<leader>/", '<Cmd>lua require("neogen").generate()<CR>', desc = "Add func/file comment"},
+        { "<leader>//", '<cmd>AddHeader<CR>', desc = "Add header comment"},
+        { "<leader>/", '<cmd>AddComment<CR>', desc = "Add func/file comment"},
 
         -- Nvim tree keybindings
         { "<leader>n", '<cmd>NvimTreeToggle<CR>', desc = "Toggle file explorer"},
@@ -49,17 +49,30 @@ wk.add({
         -- Telescope search files and string
         { "<leader>f", group = "telescope" },
         -- Telescope file operations
-        { "<leader>ff", "<Cmd>lua require('telescope.builtin').find_files()<CR>", desc = "Find files" },
-        { "<leader>fg", "<Cmd>lua require('telescope.builtin').live_grep()<CR>", desc = "Live grep" },
-        { "<leader>fb", "<Cmd>lua require('telescope.builtin').buffers()<CR>", desc = "Find buffers" },
+        { "<leader>ff", "<cmd>FindFiles<CR>", desc = "Find files" },
+        { "<leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
         -- Telescope helps
-        { "<leader>fh", "<Cmd>lua require('telescope.builtin').help_tags()<CR>", desc = "Help tags" },
+        { "<leader>fh", "<cmd>FindHelp<CR>", desc = "Help tags" },
         -- Telescope search one word
-        { "<leader>fs", [[<Cmd>lua require('telescope.builtin').grep_string({search = vim.fn.expand('<cword>'), only_sort_text = true, word_match = '-w', use_regex = false})<CR>]], desc = "Search current word" },
+        { "<leader>fs", "<cmd>FindString<CR>", desc = "Search current word" },
 
         -- Neoscroll keybindings
-        { "C-k", '<Cmd>lua neoscroll.scroll(-10.0, { move_cursor = true, duration = 200 }<CR>', desc = "scroll up"},
-        { "C-j", '<Cmd>lua neoscroll.scroll(10.0, { move_cursor = true, duration = 200 }<CR>', desc = "scroll down"},
+        { "<C-k>", '<cmd>Scroll -5<CR>', desc = "scroll up"},
+        { "<C-j>", '<cmd>Scroll 5<CR>', desc = "scroll down"},
+
+        -- Fommatter keybindings
+        { "<C-j>", '<cmd>Scroll 5<CR>', desc = "scroll down"},
+
+        -- Theme change
+        { "<leader>tn", '<cmd>ThemeNext<CR>', desc = "Theme next"},
+
+        { "<leader>g", group = "gitsigns" },
+        { "<leader>gn", "<cmd>GitSignsNextHunk<CR>", desc = "Jump to next hunk" },
+        { "<leader>gp", "<cmd>GitSignsPrevHunk<CR>", desc = "Jump to previous hunk" },
+        { "<leader>gh", "<cmd>GitSignsPreviewHunk<CR>", desc = "Preview current hunk" },
+        { "<leader>gl", "<cmd>GitSignsBlameLine<CR>", desc = "Show blame for current line" },
+        { "<leader>gb", "<cmd>GitSignsBlame<CR>", desc = "Show blame for current line" },
+        { "<leader>gd", "<cmd>GitSignsDiffThis<CR>", desc = "Show diff of current file" },
         
         -- Coc diagnostics and navigation
         { "[g", "<Plug>(coc-diagnostic-prev)", desc = "Previous diagnostic" },
@@ -78,7 +91,7 @@ wk.add({
         
         -- Coc code actions
         { "<leader>rn", "<Plug>(coc-rename)", desc = "Rename symbol" },
-        { "<leader>F", "<Plug>(coc-format)", desc = "Format all code" },
+        -- { "<leader>F", "<Plug>(coc-format)", desc = "Format all code" },
         { "<leader>a", "<Plug>(coc-codeaction-selected)", desc = "Apply code action (selected)" },
         { "<leader>ac", "<Plug>(coc-codeaction-cursor)", desc = "Apply code action (cursor)" },
         { "<leader>as", "<Plug>(coc-codeaction-source)", desc = "Apply code action (source)" },
