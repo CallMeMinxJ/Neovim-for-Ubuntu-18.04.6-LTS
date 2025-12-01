@@ -155,7 +155,7 @@ wk.add({
 
         -- Coc code actions
         { "<leader>rn", "<Plug>(coc-rename)", desc = "Rename symbol" },
-        -- { "<leader>F", "<Plug>(coc-format)", desc = "Format all code" },
+        { "<leader>FF", "<Plug>(coc-format)", desc = "Format all code" },
         {
             "<leader>a",
             "<Plug>(coc-codeaction-selected)",

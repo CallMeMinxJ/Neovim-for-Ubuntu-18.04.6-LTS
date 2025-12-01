@@ -1,1 +1,0 @@
-[ERROR Sun Nov 30 14:37:01 2025 4751148957800] ...neovim/nvim/pack/packer/start/packer.nvim/lua/packer.lua:1022: Failure running setup function: "/home/astor/neovim/nvim/lua/basic_setting/plugins.lua:44: attempt to call global 'as' (a nil value)"

@@ -1,15 +1,85 @@
 {
-    "suggest.noselect": false,
-    "suggest.enablePreselect": true,
-    "suggest.enablePreview": true,
-    "suggest.triggerAfterInsertEnter": true,
-    "suggest.timeout": 500,
     "languageserver": {
+        "lua": {
+            "command": "lua-language-server",
+            "filetypes": [
+                "lua"
+            ],
+            "rootPatterns": [
+                ".git/",
+                "init.lua",
+                "init.json"
+            ],
+            "settings": {
+                "Lua": {
+                    "diagnostics": {
+                        "globals": [
+                            "vim"
+                        ]
+                    },
+                    "workspace": {
+                        "library": {
+                            "/usr/share/nvim/runtime/lua": true,
+                            "/path/to/your/lua/libs": true
+                        }
+                    }
+                }
+            }
+        },
         "bash": {
             "command": "bash-language-server",
-            "args": ["start"],
-            "filetypes": ["sh"]
+            "args": [
+                "start"
+            ],
+            "filetypes": [
+                "sh",
+                "bash"
+            ],
+            "rootPatterns": [
+                ".git/"
+            ],
+            "settings": {}
+        },
+        "python": {
+            "command": "pyright-langserver",
+            "args": [
+                "--stdio"
+            ],
+            "filetypes": [
+                "python"
+            ],
+            "rootPatterns": [
+                ".git/"
+            ],
+            "settings": {
+                "python": {
+                    "pythonPath": "/usr/bin/python3",
+                    "autoFormat": true
+                }
+            }
+        },
+        "c": {
+            "command": "clangd",
+            "args": [
+                "--background-index",
+                "--clang-tidy",
+                "--header-insertion=never",
+                "--completion-style=detailed"
+            ],
+            "filetypes": [
+                "c",
+                "cpp",
+                "objc",
+                "objcpp"
+            ],
+            "rootPatterns": [
+                ".git/"
+            ],
+            "settings": {}
         }
     },
-
+    "suggest.noselect": false,
+    "diagnostic.checkCurrentLine": true,
+    "diagnostic.enable": true,
+    "diagnostic.virtualText": true,
 }
