@@ -1,1 +1,0 @@
-/home/astor/neovim/nvim/addons/nvim-tree.lua
