@@ -12,7 +12,7 @@ wk.add({
         -- Which key search keymaps
         {
             "<leader>?",
-            "<Cmd>lua requir('which-key').show('', { mode = 'n' })<CR>",
+            "<Cmd>lua require('which-key').show('', { mode = 'n' })<CR>",
             desc = "Show keymaps (which-key)",
         },
 
