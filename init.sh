@@ -634,6 +634,7 @@ show_results() {
     echo -e "  ${COLOR_GREEN}nvim-dev-reload${COLOR_RESET}  # 重载配置"
     echo -e "  ${COLOR_GREEN}nvim${COLOR_RESET}             # 启动 Neovim"
     echo -e "  ${COLOR_GREEN}nvim-cfg${COLOR_RESET}         # 编辑配置"
+    echo -e "  ${COLOR_GREEN}nvim-pack-sync${COLOR_RESET}   # 更新插件"
     echo ""
 
     echo -e "${COLOR_YELLOW}下一步:${COLOR_RESET}"

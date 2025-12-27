@@ -26,7 +26,7 @@ local function set_current_theme(new_theme)
     require('basic_setting.settings').set_config("current", new_theme, "themes")
 
     vim.cmd("colorscheme " .. new_theme)
-    vim.notify("✅ Switched to " .. new_theme .. " theme!")
+    -- vim.notify("✅ Switched to " .. new_theme .. " theme!")
 end
 
 -- switch next theme

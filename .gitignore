@@ -1,6 +1,6 @@
 *:Zone.Identifier
+**/*.log
 tool/lua-server/log/
-*.log
 bin/
 .cache/
 .local/
