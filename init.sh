@@ -364,12 +364,8 @@ export PATH="${NVIM_DEV_ROOT}/bin:${PATH}"
 # =============================================================================
 # XDG 基础目录规范配置
 # =============================================================================
-export XDG_CONFIG_HOME="${NVIM_DEV_ROOT}"
-export XDG_DATA_HOME="${NVIM_DEV_ROOT}/.local/share"
-export XDG_CACHE_HOME="${NVIM_DEV_ROOT}/.cache"
-
-# 确保目录存在
-mkdir -p "${XDG_DATA_HOME}" "${XDG_CACHE_HOME}" 2>/dev/null || true
+# 直接在终端执行这个命令
+[ -L "$HOME/.config/nvim" ] || ln -sf "${NVIM_DEV_ROOT}/nvim" "$HOME/.config/nvim"
 
 # =============================================================================
 # 工具路径配置
@@ -431,6 +427,7 @@ if command -v complete >/dev/null 2>&1; then
     }
     complete -F _nvim_dev_commands nvim-dev- 2>/dev/null || true
 fi
+
 
 EOF
 

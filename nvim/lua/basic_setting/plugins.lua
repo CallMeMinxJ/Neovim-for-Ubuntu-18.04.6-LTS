@@ -42,7 +42,7 @@ packer.startup(function(use)
     use { plugins_dir .. "gitsigns.nvim"}
     use { plugins_dir .. "formatter.nvim"}
     use { plugins_dir .. "nvim-treesitter-context"}
-    use { plugins_dir .. "symbols-outline.nvim"}
+    use { plugins_dir .. "outline.nvim"}
 
     -- register local theme from ./colors/<name>
     use { colors_dir .. "catppuccin", as = "catppuccin"}
@@ -76,7 +76,7 @@ local expand_configs = {
     'expand_config.gitsigns',
     'expand_config.formatter',
     'expand_config.treesitter-context',
-    'expand_config.symbols-outline',
+    'expand_config.outline',
 
     -- expand lua scripts
     'expand_config.tab-mode',
