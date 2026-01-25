@@ -444,56 +444,6 @@ EOF
     fi
 }
 
-# =============================================================================
-# Shell 集成系统
-# =============================================================================
-setup_shell_integration() {
-    print_step "配置 Shell 集成"
-
-    local marker="# NVIM_DEV_CONFIG"
-    local marker_end="# END_NVIM_DEV_CONFIG"
-
-    # 检查是否已存在配置
-    if grep -q "$marker" "$BASHRC_FILE" 2> /dev/null; then
-        log_info "发现现有配置，进行更新..."
-
-        # 使用临时文件来确保操作原子性
-        local temp_file
-        temp_file=$(mktemp)
-        if sed "/$marker/,/$marker_end/d" "$BASHRC_FILE" > "$temp_file" 2> /dev/null; then
-            mv "$temp_file" "$BASHRC_FILE"
-            log_success "已移除旧配置"
-        else
-            log_warning "使用备用方案更新配置"
-            grep -v "$marker" "$BASHRC_FILE" > "$temp_file" && mv "$temp_file" "$BASHRC_FILE"
-            rm -f "$temp_file"
-        fi
-    fi
-
-    # 添加新配置
-    cat >> "$BASHRC_FILE" << EOF
-
-${marker}
-# Neovim 开发环境配置
-# 此配置由初始化脚本自动生成
-if [[ -f "${CONFIG_FILE}" ]]; then
-    # shellcheck source=/dev/null
-    source "${CONFIG_FILE}"
-else
-    echo "警告: Neovim 开发环境配置文件不存在: ${CONFIG_FILE}"
-    echo "请运行初始化脚本重新配置"
-fi
-${marker_end}
-EOF
-
-    if [[ $? -eq 0 ]]; then
-        log_success "Shell 集成配置完成"
-        return 0
-    else
-        log_error "Shell 集成配置失败"
-        return 1
-    fi
-}
 
 # =============================================================================
 # 运行时验证系统
@@ -624,8 +574,7 @@ show_results() {
     echo ""
 
     echo -e "${COLOR_CYAN}使用方法:${COLOR_RESET}"
-    echo -e "  ${COLOR_YELLOW}source ~/.bashrc${COLOR_RESET}          # 立即生效"
-    echo -e "  或 ${COLOR_YELLOW}source \"${CONFIG_FILE}\"${COLOR_RESET}  # 直接加载配置"
+    echo -e "${COLOR_YELLOW}在默认shell config中：source \"${CONFIG_FILE}\"${COLOR_RESET}  # 直接加载配置"
     echo ""
 
     echo -e "${COLOR_CYAN}可用命令:${COLOR_RESET}"
@@ -667,7 +616,6 @@ main() {
         "cleanup_old_config"
         "setup_tool_links"
         "generate_module_config"
-        "setup_shell_integration"
         "validate_neovim_runtime"
         "verify_installation"
     )
@@ -722,10 +670,10 @@ main() {
 # =============================================================================
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     # 检查是否在正确目录运行
-    if [[ ! -d "${BIN_DIR}" ]]; then
+    if [[ ! -d "${NVIM_DIR}" ]]; then
         echo -e "${COLOR_RED}[ERROR]${COLOR_RESET} 请在项目根目录运行此脚本" >&2
         echo -e "当前目录: $(pwd)" >&2
-        echo -e "期望包含的目录: ${BIN_DIR}" >&2
+        echo -e "期望包含的目录: ${NVIM_DIR}" >&2
         exit 1
     fi
 

@@ -4,3 +4,5 @@ tool/lua-server/log/
 bin/
 .cache/
 .local/
+nvim/nvim-settings.json
+nvim/plugin/packer_compiled.lua
