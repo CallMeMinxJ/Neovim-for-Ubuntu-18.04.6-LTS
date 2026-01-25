@@ -78,6 +78,13 @@ wk.add({
             desc = "Find the file location",
         },
 
+        -- Open the outline
+        {
+            "<leader>l",
+            "<cmd>Outline<CR>",
+            desc = "Open outline",
+        },
+
         -- Telescope search files and string
         { "<leader>f", group = "telescope" },
         -- Telescope file operations
