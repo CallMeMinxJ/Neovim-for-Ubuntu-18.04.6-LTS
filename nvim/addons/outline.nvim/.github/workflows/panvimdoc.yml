@@ -1,0 +1,26 @@
+name: panvimdoc
+
+on:
+  push:
+    paths:
+      - '**.md'
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    name: pandoc to vimdoc
+    steps:
+      - uses: actions/checkout@v2
+      - name: panvimdoc
+        uses: kdheepak/panvimdoc@main
+        with:
+          vimdoc: outline
+          version: "NVIM v0.7.0"
+      - name: Strip last change date
+        run: sed -E '1s_\s+Last.*__' -i doc/outline.txt
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore(vimdoc): Auto update"
+          branch: ${{ github.head_ref }}
+          # Don't commit if no changes are needed
+          skip_dirty_check: false
