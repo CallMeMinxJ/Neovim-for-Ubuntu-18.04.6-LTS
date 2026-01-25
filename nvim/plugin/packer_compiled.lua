@@ -49,8 +49,8 @@ local function save_profiles(threshold)
 end
 
 time([[Luarocks path setup]], true)
-local package_path_str = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?.lua;/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?/init.lua;/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?.lua;/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?/init.lua"
-local install_cpath_pattern = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/lua/5.1/?.so"
+local package_path_str = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?.lua;/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?/init.lua;/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?.lua;/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?/init.lua"
+local install_cpath_pattern = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.cache/nvim/packer_hererocks/2.1.1760617492/lib/lua/5.1/?.so"
 if not string.find(package.path, package_path_str, 1, true) then
   package.path = package.path .. ';' .. package_path_str
 end
@@ -76,123 +76,133 @@ time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
   ["bufferline.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/bufferline.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/bufferline.nvim"
   },
   catppuccin = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/catppuccin",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/catppuccin"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/catppuccin",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/catppuccin"
   },
   ["coc.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/coc.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/coc.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/coc.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/coc.nvim"
   },
   ["comment.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/comment.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/comment.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/comment.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/comment.nvim"
   },
   ["formatter.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/formatter.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/formatter.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/formatter.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/formatter.nvim"
   },
   ["gitsigns.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/gitsigns.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/gitsigns.nvim"
   },
   gruvbox = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/gruvbox",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/gruvbox"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/gruvbox",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/gruvbox"
   },
   ["header.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/header.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/header.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/header.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/header.nvim"
   },
   ["indent-blankline.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/indent-blankline.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/indent-blankline.nvim"
   },
   kanagawa = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/kanagawa",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/kanagawa"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/kanagawa",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/kanagawa"
   },
   ["lualine.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/lualine.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/lualine.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/lualine.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/lualine.nvim"
   },
   ["marks.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/marks.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/marks.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/marks.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/marks.nvim"
   },
   neogen = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/neogen",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/neogen"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/neogen",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/neogen"
   },
   ["neoscroll.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/neoscroll.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/neoscroll.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/neoscroll.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/neoscroll.nvim"
   },
   ["nvim-tree.lua"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-tree.lua",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-tree.lua"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-tree.lua",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-tree.lua"
   },
   ["nvim-treesitter"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-treesitter"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-treesitter"
+  },
+  ["nvim-treesitter-context"] = {
+    loaded = true,
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-treesitter-context",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-treesitter-context"
   },
   ["nvim-web-devicons"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-web-devicons"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/nvim-web-devicons"
   },
   ["plenary.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/plenary.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/plenary.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/plenary.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/plenary.nvim"
   },
   rosepine = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/rosepine",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/rosepine"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/rosepine",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/rosepine"
+  },
+  ["symbols-outline.nvim"] = {
+    loaded = true,
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/symbols-outline.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/symbols-outline.nvim"
   },
   ["telescope-fzf-native.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/telescope-fzf-native.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/telescope-fzf-native.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/telescope-fzf-native.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/telescope-fzf-native.nvim"
   },
   ["telescope.nvim"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/telescope.nvim",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/telescope.nvim"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/telescope.nvim",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/telescope.nvim"
   },
   tokyonight = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/tokyonight",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/tokyonight"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/tokyonight",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/themes/tokyonight"
   },
   ["vim-startify"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/vim-startify",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/vim-startify"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/vim-startify",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/vim-startify"
   },
   ["which-key"] = {
     loaded = true,
-    path = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/which-key",
-    url = "/home/astor/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/which-key"
+    path = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/.local/share/nvim/site/pack/packer/start/which-key",
+    url = "/home/astor/software/Neovim-for-Ubuntu-18.04.6-LTS/nvim/addons/which-key"
   }
 }
 
