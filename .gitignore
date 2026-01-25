@@ -6,3 +6,4 @@ bin/
 .local/
 nvim/nvim-settings.json
 nvim/plugin/packer_compiled.lua
+nvim.conf
