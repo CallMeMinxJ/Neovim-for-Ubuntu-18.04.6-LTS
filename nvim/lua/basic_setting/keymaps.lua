@@ -89,11 +89,14 @@ wk.add({
         { "<leader>f", group = "telescope" },
         -- Telescope file operations
         { "<leader>ff", "<cmd>FindFiles<CR>", desc = "Find files" },
-        { "<leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
+        { "leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
         -- Telescope helps
         { "<leader>fh", "<cmd>FindHelp<CR>", desc = "Help tags" },
         -- Telescope search one word
         { "<leader>fs", "<cmd>FindString<CR>", desc = "Search current word" },
+
+        -- Flash search words
+        { "s", "<cmd>FlashJump<CR>", desc = "Search word" },
 
         -- Neoscroll keybindings
         { "<C-k>", "<cmd>Scroll -5<CR>", desc = "scroll up" },
@@ -104,6 +107,7 @@ wk.add({
 
         -- Theme change
         { "<leader>tn", "<cmd>ThemeNext<CR>", desc = "Theme next" },
+        { "<leader>tm", "<cmd>ThemeMode<CR>", desc = "Theme mode switch" },
 
         { "<leader>g", group = "gitsigns" },
         {
@@ -162,7 +166,8 @@ wk.add({
 
         -- Coc code actions
         { "<leader>rn", "<Plug>(coc-rename)", desc = "Rename symbol" },
-        { "<leader>FF", "<Plug>(coc-format)", desc = "Format all code" },
+        -- { "<leader>FF", "<Plug>(coc-format)",     desc = "Format all code" },
+        { "<leader>FF", ":Format<CR>", desc = "Format all code" },
         {
             "<leader>a",
             "<Plug>(coc-codeaction-selected)",

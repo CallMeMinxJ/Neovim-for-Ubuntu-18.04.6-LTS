@@ -74,6 +74,16 @@ end
 time([[try_loadstring definition]], false)
 time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
+  PaperColorSlim = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/PaperColorSlim",
+    url = "/home/astor/.config/nvim/themes/papercolor-theme-slim"
+  },
+  ayu = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/ayu",
+    url = "/home/astor/.config/nvim/themes/neovim-ayu"
+  },
   ["bufferline.nvim"] = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
@@ -93,6 +103,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/comment.nvim",
     url = "/home/astor/.config/nvim/addons/comment.nvim"
+  },
+  ["flash.nvim"] = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/flash.nvim",
+    url = "/home/astor/.config/nvim/addons/flash.nvim"
   },
   ["formatter.nvim"] = {
     loaded = true,
@@ -134,6 +149,11 @@ _G.packer_plugins = {
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/marks.nvim",
     url = "/home/astor/.config/nvim/addons/marks.nvim"
   },
+  melange = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/melange",
+    url = "/home/astor/.config/nvim/themes/melange-nvim"
+  },
   neogen = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/neogen",
@@ -143,6 +163,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/neoscroll.nvim",
     url = "/home/astor/.config/nvim/addons/neoscroll.nvim"
+  },
+  noctis = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/noctis",
+    url = "/home/astor/.config/nvim/themes/noctis-nvim"
   },
   ["nvim-tree.lua"] = {
     loaded = true,
@@ -163,6 +188,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
     url = "/home/astor/.config/nvim/addons/nvim-web-devicons"
+  },
+  ["open-color"] = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/open-color",
+    url = "/home/astor/.config/nvim/themes/vim-open-color"
   },
   ["outline.nvim"] = {
     loaded = true,
@@ -189,6 +219,11 @@ _G.packer_plugins = {
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "/home/astor/.config/nvim/addons/telescope.nvim"
   },
+  toast = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/toast",
+    url = "/home/astor/.config/nvim/themes/toast.vim"
+  },
   tokyonight = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/tokyonight",
@@ -198,6 +233,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/vim-startify",
     url = "/home/astor/.config/nvim/addons/vim-startify"
+  },
+  vscode = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/vscode",
+    url = "/home/astor/.config/nvim/themes/vscode.nvim"
   },
   ["which-key"] = {
     loaded = true,
