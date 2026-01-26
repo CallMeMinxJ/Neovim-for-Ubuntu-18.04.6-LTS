@@ -1,0 +1,34 @@
+language: python
+dist: xenial
+python: 3.8
+addons:
+  apt:
+    packages:
+      - vim-gtk
+      - xvfb
+install:
+  - pip install vim-vint
+before_script:
+  - |
+    export DISPLAY=:99.0
+    /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x24
+  - mkdir -p dist
+  - vim --version
+script:
+  - vint colors/
+  - gvim -T xterm-256color -E -n -u ci/init.vim -S ci/dark_gui.vim ci/vimcolors.rb >/dev/null && sleep 3 && [ -e dist/dark_gui.html ]
+  - gvim -T xterm-256color -E -n -u ci/init.vim -S ci/light_gui.vim ci/vimcolors.rb >/dev/null && sleep 3 && [ -e dist/light_gui.html ]
+  - vim -T xterm-256color -E -n -u ci/init.vim -S ci/dark_256.vim ci/vimcolors.rb >/dev/null && [ -e dist/dark_256.html ]
+  - vim -T xterm-256color -E -n -u ci/init.vim -S ci/light_256.vim ci/vimcolors.rb >/dev/null && [ -e dist/light_256.html ]
+branches:
+  only:
+    - master
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  local_dir: dist
+  target_branch: gh-pages
+  on:
+    branch: master

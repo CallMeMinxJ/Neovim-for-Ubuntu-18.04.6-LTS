@@ -41,6 +41,12 @@ require('lualine').setup {
         lualine_a = { { 'mode', separator = { left = '' }, right_padding = 2 } },
         lualine_b = { 'filename', 'branch' },
         lualine_c = {
+            {
+                function()
+                    return vim.g.colors_name or "default"
+                end,
+                color = { fg = colors.white },
+            },
             '%=', --[[ add your center components here in place of this comment ]]
         },
         lualine_x = {},
@@ -52,7 +58,14 @@ require('lualine').setup {
     inactive_sections = {
         lualine_a = { 'filename' },
         lualine_b = {},
-        lualine_c = {},
+        lualine_c = {
+            {
+                function()
+                    return vim.g.colors_name or "default"
+                end,
+                color = { fg = colors.white },
+            }
+        },
         lualine_x = {},
         lualine_y = {},
         lualine_z = { 'location' },

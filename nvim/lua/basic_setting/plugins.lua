@@ -43,6 +43,7 @@ packer.startup(function(use)
     use { plugins_dir .. "formatter.nvim"}
     use { plugins_dir .. "nvim-treesitter-context"}
     use { plugins_dir .. "outline.nvim"}
+    use { plugins_dir .. "flash.nvim"}
 
     -- register local theme from ./colors/<name>
     use { colors_dir .. "catppuccin", as = "catppuccin"}
@@ -50,6 +51,13 @@ packer.startup(function(use)
     use { colors_dir .. "kanagawa", as = "kanagawa"}
     use { colors_dir .. "rosepine", as = "rosepine"}
     use { colors_dir .. "tokyonight", as = "tokyonight"}
+    use { colors_dir .. "melange-nvim", as = "melange"}
+    use { colors_dir .. "toast.vim", as = "toast"}
+    use { colors_dir .. "vscode.nvim", as = "vscode"}
+    use { colors_dir .. "neovim-ayu", as = "ayu"}
+    use { colors_dir .. "vim-open-color", as = "open-color"}
+    use { colors_dir .. "papercolor-theme-slim", as = "PaperColorSlim"}
+    use { colors_dir .. "noctis-nvim", as = "noctis"}
 
     -- Example: if a local plugin requires config, you can do:
     -- use { plugins_dir .. 'lualine.nvim', config = function() require('lualine').setup{} end }

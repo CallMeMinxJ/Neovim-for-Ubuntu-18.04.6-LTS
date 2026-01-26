@@ -85,6 +85,16 @@ require("formatter").setup({
             end,
         },
 
+        json = {
+            function()
+                return {
+                    exe = "python3",
+                    args = { "-m", "json.tool", "--indent", "4" },
+                    stdin = true,
+                }
+            end,
+        },
+
         -- Default formatter configurations for all filetypes
         ["*"] = {
             -- Remove trailing whitespace in any filetype

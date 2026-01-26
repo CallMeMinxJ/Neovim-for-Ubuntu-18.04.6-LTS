@@ -62,6 +62,16 @@ theme.load_theme = function()
     theme.switch_theme(get_current_theme())
 end
 
+-- Switch light and dark module
+theme.switch_theme_mod = function ()
+    local mode = require('basic_setting.settings').get_config("background", "options") or "dark"
+    if mode == "light" then
+        require('basic_setting.settings').set_config("background", "dark", "options")
+    else
+        require('basic_setting.settings').set_config("background", "light", "options")
+    end
+end
+
 theme.load_theme()
 
 -- create new command
@@ -79,6 +89,14 @@ vim.api.nvim_create_user_command(
         theme.switch_theme(opts.args)
     end,
     { nargs = 1, desc = 'Switch to a specific theme (e.g., :ThemeSet catppuccin)' }
+)
+
+vim.api.nvim_create_user_command(
+    'ThemeMode',
+    function ()
+        theme.switch_theme_mod()
+    end,
+    {desc = 'Switch theme mode'}
 )
 
 return theme
