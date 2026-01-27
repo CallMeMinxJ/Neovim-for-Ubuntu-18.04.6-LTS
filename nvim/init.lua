@@ -23,9 +23,6 @@ require("basic_setting.plugins")
 -- Basic config
 require("basic_setting.settings")
 
--- LSP config
-require("basic_setting.lsp")
-
 -- Keymaps setting
 require("basic_setting.keymaps")
 
