@@ -3,7 +3,7 @@
 tool/lua-server/log/
 bin/
 .cache/
-.local/
+.local/share/nvim/*
 nvim/nvim-settings.json
 nvim/plugin/packer_compiled.lua
-nvim.conf
+nvim/addons/nvim-treesitter/parser
