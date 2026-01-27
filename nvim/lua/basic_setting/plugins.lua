@@ -85,6 +85,7 @@ local expand_configs = {
     'expand_config.formatter',
     'expand_config.treesitter-context',
     'expand_config.outline',
+    'expand_config.flash',
 
     -- expand lua scripts
     'expand_config.tab-mode',
