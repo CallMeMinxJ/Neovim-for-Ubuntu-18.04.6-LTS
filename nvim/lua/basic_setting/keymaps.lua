@@ -89,7 +89,7 @@ wk.add({
         { "<leader>f", group = "telescope" },
         -- Telescope file operations
         { "<leader>ff", "<cmd>FindFiles<CR>", desc = "Find files" },
-        { "leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
+        { "<leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
         -- Telescope helps
         { "<leader>fh", "<cmd>FindHelp<CR>", desc = "Help tags" },
         -- Telescope search one word
