@@ -39,6 +39,9 @@ readonly SRC_NVIM_CONFIG="$SCRIPT_DIR/nvim"
 readonly SRC_NVIM_DATA="$SCRIPT_DIR/.local/share/nvim"
 readonly SRC_COC_CONFIG="$SCRIPT_DIR/coc"
 
+readonly PARSER_SOURCE="$NVIM_DIR/lib/nvim/parser"
+readonly PARSER_TARGET="$SRC_NVIM_CONFIG/addons/nvim-treesitter/parser"
+
 # Configuration directories that should be removed if existing (not symlinks)
 readonly CONFIG_DIRS_TO_REMOVE=("$TARGET_NVIM_CONFIG" "$TARGET_NVIM_DATA" "$TARGET_COC_CONFIG")
 
@@ -488,6 +491,47 @@ setup_tool_links() {
 }
 
 # =============================================================================
+# Parser directory symlink setup
+# =============================================================================
+setup_parser_symlink() {
+    print_step "Setting up nvim-treesitter parser symlink"
+
+    if [[ ! -d "$PARSER_SOURCE" ]]; then
+        log_warning "Parser source directory not found: $PARSER_SOURCE"
+        log_info "Creating parser source directory..."
+        mkdir -p "$PARSER_SOURCE"
+        log_success "Created parser source directory"
+    fi
+
+    local target_parent=$(dirname "$PARSER_TARGET")
+    create_directory "$target_parent" "Parser target parent directory"
+
+    if [[ -e "$PARSER_TARGET" ]]; then
+        if [[ -L "$PARSER_TARGET" ]]; then
+            local current_target=$(readlink "$PARSER_TARGET" 2> /dev/null || echo "")
+            if [[ "$current_target" == "$PARSER_SOURCE" ]]; then
+                log_success "Parser symlink already correctly set: $PARSER_TARGET -> $PARSER_SOURCE"
+                return 0
+            else
+                log_info "Updating parser symlink: $PARSER_TARGET (was -> $current_target)"
+                rm -f "$PARSER_TARGET"
+            fi
+        elif [[ -d "$PARSER_TARGET" ]]; then
+            log_info "Removing existing parser directory: $PARSER_TARGET"
+            rm -rf "$PARSER_TARGET"
+        fi
+    fi
+ 
+    if ln -sf "$PARSER_SOURCE" "$PARSER_TARGET" 2> /dev/null; then
+        log_success "Created parser symlink: $PARSER_TARGET -> $PARSER_SOURCE"
+        return 0
+    else
+        log_error "Failed to create parser symlink: $PARSER_TARGET"
+        return 1
+    fi
+}
+
+# =============================================================================
 # Runtime validation system
 # =============================================================================
 validate_neovim_runtime() {
@@ -658,6 +702,7 @@ main() {
         "setup_config_directories"
         "setup_config_symlinks"
         "setup_tool_links"
+        "setup_parser_symlink"
         "validate_neovim_runtime"
         "verify_installation"
     )
