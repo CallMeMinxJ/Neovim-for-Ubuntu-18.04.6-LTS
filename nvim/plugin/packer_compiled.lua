@@ -49,8 +49,8 @@ local function save_profiles(threshold)
 end
 
 time([[Luarocks path setup]], true)
-local package_path_str = "/home/jiangmingxing/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?.lua;/home/jiangmingxing/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?/init.lua;/home/jiangmingxing/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?.lua;/home/jiangmingxing/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?/init.lua"
-local install_cpath_pattern = "/home/jiangmingxing/.cache/nvim/packer_hererocks/2.1.1760617492/lib/lua/5.1/?.so"
+local package_path_str = "/home/astor/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?.lua;/home/astor/.cache/nvim/packer_hererocks/2.1.1760617492/share/lua/5.1/?/init.lua;/home/astor/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?.lua;/home/astor/.cache/nvim/packer_hererocks/2.1.1760617492/lib/luarocks/rocks-5.1/?/init.lua"
+local install_cpath_pattern = "/home/astor/.cache/nvim/packer_hererocks/2.1.1760617492/lib/lua/5.1/?.so"
 if not string.find(package.path, package_path_str, 1, true) then
   package.path = package.path .. ';' .. package_path_str
 end
@@ -76,173 +76,173 @@ time([[Defining packer_plugins]], true)
 _G.packer_plugins = {
   PaperColorSlim = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/PaperColorSlim",
-    url = "/home/jiangmingxing/.config/nvim/themes/papercolor-theme-slim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/PaperColorSlim",
+    url = "/home/astor/.config/nvim/themes/papercolor-theme-slim"
   },
   ayu = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/ayu",
-    url = "/home/jiangmingxing/.config/nvim/themes/neovim-ayu"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/ayu",
+    url = "/home/astor/.config/nvim/themes/neovim-ayu"
   },
   ["bufferline.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/bufferline.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/bufferline.nvim",
+    url = "/home/astor/.config/nvim/addons/bufferline.nvim"
   },
   catppuccin = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/catppuccin",
-    url = "/home/jiangmingxing/.config/nvim/themes/catppuccin"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/catppuccin",
+    url = "/home/astor/.config/nvim/themes/catppuccin"
   },
   ["coc.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/coc.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/coc.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/coc.nvim",
+    url = "/home/astor/.config/nvim/addons/coc.nvim"
   },
   ["comment.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/comment.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/comment.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/comment.nvim",
+    url = "/home/astor/.config/nvim/addons/comment.nvim"
   },
   ["flash.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/flash.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/flash.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/flash.nvim",
+    url = "/home/astor/.config/nvim/addons/flash.nvim"
   },
   ["formatter.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/formatter.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/formatter.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/formatter.nvim",
+    url = "/home/astor/.config/nvim/addons/formatter.nvim"
   },
   ["gitsigns.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/gitsigns.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
+    url = "/home/astor/.config/nvim/addons/gitsigns.nvim"
   },
   gruvbox = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/gruvbox",
-    url = "/home/jiangmingxing/.config/nvim/themes/gruvbox"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/gruvbox",
+    url = "/home/astor/.config/nvim/themes/gruvbox"
   },
   ["header.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/header.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/header.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/header.nvim",
+    url = "/home/astor/.config/nvim/addons/header.nvim"
   },
   ["indent-blankline.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/indent-blankline.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
+    url = "/home/astor/.config/nvim/addons/indent-blankline.nvim"
   },
   kanagawa = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/kanagawa",
-    url = "/home/jiangmingxing/.config/nvim/themes/kanagawa"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/kanagawa",
+    url = "/home/astor/.config/nvim/themes/kanagawa"
   },
   ["lualine.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/lualine.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/lualine.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/lualine.nvim",
+    url = "/home/astor/.config/nvim/addons/lualine.nvim"
   },
   ["marks.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/marks.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/marks.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/marks.nvim",
+    url = "/home/astor/.config/nvim/addons/marks.nvim"
   },
   melange = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/melange",
-    url = "/home/jiangmingxing/.config/nvim/themes/melange-nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/melange",
+    url = "/home/astor/.config/nvim/themes/melange-nvim"
   },
   neogen = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/neogen",
-    url = "/home/jiangmingxing/.config/nvim/addons/neogen"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/neogen",
+    url = "/home/astor/.config/nvim/addons/neogen"
   },
   ["neoscroll.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/neoscroll.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/neoscroll.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/neoscroll.nvim",
+    url = "/home/astor/.config/nvim/addons/neoscroll.nvim"
   },
   noctis = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/noctis",
-    url = "/home/jiangmingxing/.config/nvim/themes/noctis-nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/noctis",
+    url = "/home/astor/.config/nvim/themes/noctis-nvim"
   },
   ["nvim-tree.lua"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/nvim-tree.lua",
-    url = "/home/jiangmingxing/.config/nvim/addons/nvim-tree.lua"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/nvim-tree.lua",
+    url = "/home/astor/.config/nvim/addons/nvim-tree.lua"
   },
   ["nvim-treesitter"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
-    url = "/home/jiangmingxing/.config/nvim/addons/nvim-treesitter"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/nvim-treesitter",
+    url = "/home/astor/.config/nvim/addons/nvim-treesitter"
   },
   ["nvim-treesitter-context"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/nvim-treesitter-context",
-    url = "/home/jiangmingxing/.config/nvim/addons/nvim-treesitter-context"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/nvim-treesitter-context",
+    url = "/home/astor/.config/nvim/addons/nvim-treesitter-context"
   },
   ["nvim-web-devicons"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
-    url = "/home/jiangmingxing/.config/nvim/addons/nvim-web-devicons"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
+    url = "/home/astor/.config/nvim/addons/nvim-web-devicons"
   },
   ["open-color"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/open-color",
-    url = "/home/jiangmingxing/.config/nvim/themes/vim-open-color"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/open-color",
+    url = "/home/astor/.config/nvim/themes/vim-open-color"
   },
   ["outline.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/outline.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/outline.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/outline.nvim",
+    url = "/home/astor/.config/nvim/addons/outline.nvim"
   },
   ["plenary.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/plenary.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/plenary.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/plenary.nvim",
+    url = "/home/astor/.config/nvim/addons/plenary.nvim"
   },
   rosepine = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/rosepine",
-    url = "/home/jiangmingxing/.config/nvim/themes/rosepine"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/rosepine",
+    url = "/home/astor/.config/nvim/themes/rosepine"
   },
   ["telescope-fzf-native.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/telescope-fzf-native.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/telescope-fzf-native.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/telescope-fzf-native.nvim",
+    url = "/home/astor/.config/nvim/addons/telescope-fzf-native.nvim"
   },
   ["telescope.nvim"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/telescope.nvim",
-    url = "/home/jiangmingxing/.config/nvim/addons/telescope.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/telescope.nvim",
+    url = "/home/astor/.config/nvim/addons/telescope.nvim"
   },
   toast = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/toast",
-    url = "/home/jiangmingxing/.config/nvim/themes/toast.vim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/toast",
+    url = "/home/astor/.config/nvim/themes/toast.vim"
   },
   tokyonight = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/tokyonight",
-    url = "/home/jiangmingxing/.config/nvim/themes/tokyonight"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/tokyonight",
+    url = "/home/astor/.config/nvim/themes/tokyonight"
   },
   ["vim-startify"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/vim-startify",
-    url = "/home/jiangmingxing/.config/nvim/addons/vim-startify"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/vim-startify",
+    url = "/home/astor/.config/nvim/addons/vim-startify"
   },
   vscode = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/vscode",
-    url = "/home/jiangmingxing/.config/nvim/themes/vscode.nvim"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/vscode",
+    url = "/home/astor/.config/nvim/themes/vscode.nvim"
   },
   ["which-key"] = {
     loaded = true,
-    path = "/home/jiangmingxing/.local/share/nvim/site/pack/packer/start/which-key",
-    url = "/home/jiangmingxing/.config/nvim/addons/which-key"
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/which-key",
+    url = "/home/astor/.config/nvim/addons/which-key"
   }
 }
 
