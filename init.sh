@@ -4,7 +4,7 @@
 # Neovim Development Environment Initialization Script
 # Purpose: Configure Neovim development environment without internet access
 # Design Principles: Modular, Maintainable, Elegant error handling
-# Version: 3.3 - Added configuration directory symlinks
+# Version: 3.4 - Direct removal of existing config directories
 # =============================================================================
 
 set -euo pipefail # Strict security settings
@@ -20,7 +20,6 @@ readonly BIN_DIR="$SCRIPT_DIR/bin"
 readonly CONFIG_DIR="$SCRIPT_DIR/nvim"
 readonly TOOL_DIR="$SCRIPT_DIR/tool"
 readonly NVIM_DIR="$SCRIPT_DIR/app"
-readonly CONFIG_FILE="$SCRIPT_DIR/nvim.conf"
 readonly BASHRC_FILE="$HOME/.bashrc"
 readonly CACHE_DIR="$SCRIPT_DIR/.cache"
 readonly LOG_FILE="$SCRIPT_DIR/setup.log"
@@ -39,6 +38,9 @@ readonly TARGET_COC_CONFIG="$TARGET_CONFIG/coc"
 readonly SRC_NVIM_CONFIG="$SCRIPT_DIR/nvim"
 readonly SRC_NVIM_DATA="$SCRIPT_DIR/.local/share/nvim"
 readonly SRC_COC_CONFIG="$SCRIPT_DIR/coc"
+
+# Configuration directories that should be removed if existing (not symlinks)
+readonly CONFIG_DIRS_TO_REMOVE=("$TARGET_NVIM_CONFIG" "$TARGET_NVIM_DATA" "$TARGET_COC_CONFIG")
 
 # =============================================================================
 # Logging and output system
@@ -87,7 +89,7 @@ print_header() {
     echo -e "${COLOR_CYAN}"
     echo "========================================"
     echo "  Neovim Development Environment Setup"
-    echo "  Version 3.3 - Config Symlinks Added"
+    echo "  Version 3.4 - Direct Config Removal"
     echo "========================================"
     echo -e "${COLOR_RESET}"
 }
@@ -123,6 +125,30 @@ create_directory() {
     else
         log_debug "Directory already exists: $dir"
     fi
+    return 0
+}
+
+# =============================================================================
+# Configuration directory cleanup
+# =============================================================================
+cleanup_existing_config_dirs() {
+    print_step "Cleaning up existing configuration directories"
+
+    for config_dir in "${CONFIG_DIRS_TO_REMOVE[@]}"; do
+        if [[ -e "$config_dir" ]]; then
+            if [[ -L "$config_dir" ]]; then
+                # It's a symlink, just remove it
+                log_info "Removing existing symlink: $config_dir"
+                rm -f "$config_dir"
+            elif [[ -d "$config_dir" ]]; then
+                # It's a directory, remove it (no backup)
+                log_info "Removing existing directory: $config_dir"
+                rm -rf "$config_dir"
+            fi
+        fi
+    done
+
+    log_success "Existing configuration directories cleaned up"
     return 0
 }
 
@@ -188,10 +214,9 @@ create_config_symlink() {
                 rm -f "$target"
             fi
         else
-            # Backup existing directory/file
-            local backup_name="${target}.backup.$(date +%Y%m%d_%H%M%S)"
-            log_warning "Backing up existing $description: $target -> $backup_name"
-            mv "$target" "$backup_name"
+            # For config directories, just remove them (no backup)
+            log_info "Removing existing $description directory: $target"
+            rm -rf "$target"
         fi
     fi
 
@@ -535,15 +560,6 @@ verify_installation() {
     fi
     ((total_count++))
 
-    # Verify config file syntax
-    if bash -n "${CONFIG_FILE}" 2> /dev/null; then
-        log_success "Config file syntax is correct"
-        ((success_count++))
-    else
-        log_error "Config file syntax error"
-    fi
-    ((total_count++))
-
     # Verify configuration symlinks
     local config_symlinks=(
         "$TARGET_NVIM_CONFIG"
@@ -638,6 +654,7 @@ main() {
     local steps=(
         "validate_environment"
         "cleanup_old_config"
+        "cleanup_existing_config_dirs"
         "setup_config_directories"
         "setup_config_symlinks"
         "setup_tool_links"
