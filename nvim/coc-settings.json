@@ -62,9 +62,16 @@
             "command": "clangd",
             "args": [
                 "--background-index",
-                "--clang-tidy",
+                "--completion-style=detailed",
                 "--header-insertion=never",
-                "--completion-style=detailed"
+                "--all-scopes-completion",
+                "--compile-commands-dir=${workspaceFolder}",
+                "--log=info",
+                "-j=2",
+                "--pch-storage=memory",
+                "--pretty",
+                "--function-arg-placeholders=false",
+                "--enable-config"
             ],
             "filetypes": [
                 "c",
@@ -73,13 +80,25 @@
                 "objcpp"
             ],
             "rootPatterns": [
-                ".git/"
+                ".git/",
+                ".clangd",
+                "compile_commands.json"
             ],
             "settings": {}
         }
     },
+    "tagging.enable": true,
+    "tagging.useCtags": true,
+    "tagging.ctagsPath": "ctags",
+    "tagging.ctagsArgs": [
+        "--fields=+niazS",
+        "--extras=+q",
+        "--c++-kinds=+px",
+        "--c-kinds=+px"
+    ],
     "suggest.noselect": false,
     "diagnostic.checkCurrentLine": true,
+    "suggest.autoTrigger": "always",
     "diagnostic.enable": true,
-    "diagnostic.virtualText": true,
+    "diagnostic.virtualText": true
 }
