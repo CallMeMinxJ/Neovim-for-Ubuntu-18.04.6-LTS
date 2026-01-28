@@ -93,5 +93,27 @@ vim.api.nvim_create_user_command(
     { nargs = 0 }
 )
 
+vim.api.nvim_create_user_command(
+    'FindSymbol',
+    function()
+        local word = vim.fn.expand('<cword>')
+        require('telescope.builtin').tags({
+            default_text = word,
+            initial_mode = 'normal',
+            search = '^' .. word .. '$',
+        })
+    end,
+    { nargs = 0, desc = 'Find tags for current word' }
+)
+
+vim.api.nvim_create_user_command(
+    'SearchTags',
+    function()
+        require('telescope.builtin').tags({
+            initial_mode = 'insert',
+        })
+    end,
+    { nargs = 0, desc = 'Search tags (empty dialog)' }
+)
 
 

@@ -94,6 +94,10 @@ wk.add({
         { "<leader>fh", "<cmd>FindHelp<CR>", desc = "Help tags" },
         -- Telescope search one word
         { "<leader>fs", "<cmd>FindString<CR>", desc = "Search current word" },
+        -- Telescope search one symbol bt tags
+        { "<leader>ft", "<cmd>FindSymbol<CR>", desc = "Search current word" },
+        -- Telescope search symbol
+        { "<leader>fT", "<cmd>SearchTags<CR>", desc = "Search current word" },
 
         -- Flash search words
         { "s", "<cmd>FlashJump<CR>", desc = "Search word" },

@@ -425,6 +425,9 @@ setup_tool_links() {
         "clang-format|clang-format|clang-format"
         "stylua|stylua|stylua"
         "shfmt|shfmt_v3.12.0_linux_amd64|shfmt"
+        "uctag-linux-x86_64|bin/ctags|ctags"
+        "uctag-linux-x86_64|bin/optscript|optscript"
+        "uctag-linux-x86_64|bin/readtags|readtags"
     )
 
     # First set up Neovim
