@@ -1,0 +1,142 @@
+.\" Man page generated from reStructuredText
+.\" by the Docutils 0.22.4 manpage writer.
+.
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.TH "ctags-lang-make" "7" "" "6.2.0" "Universal Ctags"
+.SH Name
+ctags-lang-make \- Random notes about tagging Make source code with Universal Ctags
+.SH SYNOPSIS
+.nf
+\fBctags\fP ... \-\-languages=+Make ...
+\fBctags\fP ... \-\-language\-force=Make ...
+\fBctags\fP ... \-\-map\-Make=+([Mm]akefile) \-\-map\-Make=+(GNUmakefile) ...
+\fBctags\fP ... \-\-map\-Make=+.mak \-\-map\-Make=+.mk ...
+.fi
+.sp
+.SH DESCRIPTION
+.sp
+This parser extracts macro and target definitions. It also extracts included files as references.
+.SS Examples
+.sp
+\(dqinput.mak\(dq
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+\-include base.mak
+
+SRC = hello.c
+
+all: hello
+hello: hello.o
+hello.o: hello.c
+$(CC) \-c $(CFLAGS) $(CPPFLAGS) $<
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+\(dqoutput.tags\(dq
+with \(dq\-\-options=NONE \-\-extras=+r \-\-fields=+KlrE \-o \- input.mak\(dq
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+SRC  input.mak       /^SRC = hello.c$/;\(dq     macro   language:Make   roles:def
+all  input.mak       /^all: hello$/;\(dq        target  language:Make   roles:def
+base.mak     input.mak       /^\-include base.mak$/;\(dq makefile        language:Make   roles:optional  extras:reference
+hello        input.mak       /^hello: hello.o$/;\(dq    target  language:Make   roles:def
+hello.o      input.mak       /^hello.o: hello.c$/;\(dq  target  language:Make   roles:def
+.EE
+.UNINDENT
+.UNINDENT
+.SH EXTRACTING CPP MACRO DEFINTIONS DEFINED WITH -DFOO
+.sp
+With \fB\-D\fP option in a C compiler like gcc, a programmer can define a
+macro outside C source files. The options appears on a Makefile
+frequently. For an example:
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+CPPFLAGS = \-DDEBUG
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+The Make parser has heuristics [DINMAKE] for extracting the macros defined with
+the option. With enabling \fBCppDef\fP extra, you can turn on the heuristics.
+.SS Examples
+.sp
+\(dqinput.mak\(dq
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+\-include base.mak
+
+CFLAGS = \-g \-O2
+CPPFLAGS = \-DOUTPUT=stdout
+SRC = hello.c
+
+all: hello
+hello: hello.o
+hello.o: hello.c
+$(CC) \-c $(CFLAGS) $(CPPFLAGS) $<
+.EE
+.UNINDENT
+.UNINDENT
+.sp
+\(dqoutput.tags\(dq
+with \(dq\-\-options=NONE \-\-extras\-Make=+{CppDef} \-\-fields=+KlE \-o \- input.mak\(dq
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.EX
+CFLAGS       input.mak       /^CFLAGS = \-g \-O2$/;\(dq   macro   language:Make
+CPPFLAGS     input.mak       /^CPPFLAGS = \-DOUTPUT=stdout$/;\(dq        macro   language:Make
+OUTPUT       input.mak       /^CPPFLAGS = \-DOUTPUT=stdout$/;\(dq        macro   language:CPreProcessor  extras:CppDef
+SRC  input.mak       /^SRC = hello.c$/;\(dq     macro   language:Make
+all  input.mak       /^all: hello$/;\(dq        target  language:Make
+hello        input.mak       /^hello: hello.o$/;\(dq    target  language:Make
+hello.o      input.mak       /^hello.o: hello.c$/;\(dq  target  language:Make
+.EE
+.UNINDENT
+.UNINDENT
+.SH VERSIONS
+.SS Change since \(dq0.0\(dq
+.INDENT 0.0
+.IP \(bu 2
+New extra \fBCppDef\fP [DINMAKE]
+.UNINDENT
+.SH SEE ALSO
+.sp
+ctags(1)
+.IP [DINMAKE] 5
+CONFIG_X86_X32_ABI is not visible (defined in Makefile, not C or Kconfig) \%<https://\:github\:.com/\:bootlin/\:elixir/\:issues/\:221> (\%<https://\:github\:.com/\:bootlin/\:elixir/\:issues/\:221>)
+.\" End of generated man page.
