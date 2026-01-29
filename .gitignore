@@ -1,7 +1,7 @@
 *:Zone.Identifier
 **/*.log
 tool/lua-server/log/
-bin/
+/bin/
 .cache/
 .local/share/nvim/*
 nvim/nvim-settings.json
