@@ -16,6 +16,8 @@ vim.g.clipboard = {
 }
 
 -- init.lua Main Enterement
+-- Theme config
+require("basic_setting.theme")
 
 -- Plugins config
 require("basic_setting.plugins")
@@ -26,5 +28,3 @@ require("basic_setting.settings")
 -- Keymaps setting
 require("basic_setting.keymaps")
 
--- Theme config
-require("basic_setting.theme")
