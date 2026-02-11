@@ -6,10 +6,9 @@ require('neogen').setup {
 
 -- Create new command
 vim.api.nvim_create_user_command(
-    "AddHeader",
+    "AddComment",
     function()
-        require("header").add_headers()
+        require("neogen").generate()
     end,
     { nargs = 0}
 )
-

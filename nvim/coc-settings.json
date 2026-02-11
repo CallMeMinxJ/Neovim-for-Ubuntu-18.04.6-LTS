@@ -1,4 +1,5 @@
 {
+    "inlayHint": false,
     "languageserver": {
         "lua": {
             "command": "lua-language-server",
