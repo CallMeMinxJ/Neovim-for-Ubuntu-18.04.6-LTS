@@ -36,6 +36,38 @@ wk.add({
         { "<leader>qa", ":qa<CR>", desc = "Quit all" },
 
         -- Buffer operations
+        { "<leader>b", group = "buffer" },
+        -- Navigation
+        { "<C-d>", "<Cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+        { "<C-a>", "<Cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
+        -- Move
+        { "<leader>b>", "<Cmd>BufferLineMoveNext<CR>", desc = "Move right" },
+        { "<leader>b<", "<Cmd>BufferLineMovePrev<CR>", desc = "Move left" },
+        -- Pick & Close
+        { "<leader>bb", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
+        { "<leader>bd", "<Cmd>bdelete<CR>", desc = "Close current" },
+        {
+            "<leader>bo",
+            "<Cmd>BufferLineCloseOthers<CR>",
+            desc = "Close others",
+        },
+        {
+            "<leader>br",
+            "<Cmd>BufferLineCloseRight<CR>",
+            desc = "Close right",
+        },
+        { "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Close left" },
+        -- Sort only, no groups
+        {
+            "<leader>bs",
+            "<Cmd>BufferLineSortByDirectory<CR>",
+            desc = "By directory",
+        },
+        {
+            "<leader>bS",
+            "<Cmd>BufferLineSortByExtension<CR>",
+            desc = "By extension",
+        },
         { "<leader>bl", ":buffers<CR>", desc = "List buffers" },
 
         -- Display settings
@@ -54,8 +86,6 @@ wk.add({
         },
 
         -- Buffer navigation
-        { "<C-d>", ":bnext<CR>", desc = "Next buffer" },
-        { "<C-a>", ":bprevious<CR>", desc = "Previous buffer" },
         { "<Esc><Esc>", "<cmd>nohlsearch<CR>", desc = "Cancel highlight" },
 
         -- Add coments header and func/file annotations
@@ -285,3 +315,4 @@ wk.add({
         },
     },
 })
+
