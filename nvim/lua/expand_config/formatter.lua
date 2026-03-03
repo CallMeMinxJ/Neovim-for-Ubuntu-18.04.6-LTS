@@ -1,6 +1,43 @@
 -- Utilities for creating configurations
 local util = require("formatter.util")
 
+-- Formatter configurations for C/C++ files that adapts to Neovim's indentation settings
+local function clang_format_config()
+    return function()
+        -- Get current buffer's indentation settings
+        local expandtab = vim.bo.expandtab
+        local shiftwidth = vim.bo.shiftwidth
+        local tabstop = vim.bo.tabstop
+        
+        -- Determine if we should use tabs or spaces based on expandtab
+        local use_tab = expandtab and "Never" or "Always"
+        
+        -- Use shiftwidth if set, otherwise fall back to tabstop
+        local indent_width = shiftwidth > 0 and shiftwidth or tabstop
+        
+        -- Build the style string
+        local style_str = string.format(
+            "--style='{" ..
+            "BasedOnStyle: Google, " ..
+            "IndentWidth: %d, " ..
+            "TabWidth: %d, " ..
+            "UseTab: %s, " ..
+            "ColumnLimit: 80, " ..
+            "SortIncludes: true" ..
+            "}'",
+            indent_width,
+            tabstop,
+            use_tab
+        )
+        
+        return {
+            exe = "clang-format", -- The executable for C/C++ formatting
+            args = { style_str },  -- Dynamic style based on Neovim settings
+            stdin = true,         -- Read from stdin
+        }
+    end
+end
+
 -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
 require("formatter").setup({
     -- Enable or disable logging
@@ -67,24 +104,16 @@ require("formatter").setup({
         },
 
         -- Formatter configurations for C files
-        c = {
-            -- Custom C formatting using clang-format
-            function()
-                return {
-                    exe = "clang-format", -- The executable for C formatting
-                    args = {
-                        "--style=Google", -- Use Google style for formatting
-                        "--indent-width",
-                        "4", -- Use 4 spaces for indentation
-                        "--sort-includes", -- Sort includes alphabetically
-                        "--column-limit",
-                        "80", -- Set max line length to 80 characters
-                    },
-                    stdin = true, -- Read from stdin
-                }
-            end,
-        },
+        c = clang_format_config(),
+        
+        -- Formatter configurations for C++ files
+        cpp = clang_format_config(),
+        
+        -- Formatter configurations for C/C++ header files
+        h = clang_format_config(),
+        hpp = clang_format_config(),
 
+        -- Formatter configurations for JSON files
         json = {
             function()
                 return {
