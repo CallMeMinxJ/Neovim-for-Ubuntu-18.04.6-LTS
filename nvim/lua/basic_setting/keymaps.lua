@@ -29,23 +29,23 @@ wk.add({
         },
 
         -- File operations
-        { "<leader>e", ":source %<CR>", desc = "Reload current lua file" },
-        { "<leader>w", ":w<CR>", desc = "Write file" },
-        { "<leader>q", ":bd<CR>", desc = "Quit file" },
-        { "<leader>wq", "<Cmd>w<Bar>bd<CR>", desc = "Write and quit" },
-        { "<leader>qa", ":qa<CR>", desc = "Quit all" },
+        { "<leader>e",  ":source %<CR>",                desc = "Reload current lua file" },
+        { "<leader>w",  ":w<CR>",                       desc = "Write file" },
+        { "<leader>q",  ":bd<CR>",                      desc = "Quit file" },
+        { "<leader>wq", "<Cmd>w<Bar>bd<CR>",            desc = "Write and quit" },
+        { "<leader>qa", ":qa<CR>",                      desc = "Quit all" },
 
         -- Buffer operations
-        { "<leader>b", group = "buffer" },
+        { "<leader>b",  group = "buffer" },
         -- Navigation
-        { "<C-d>", "<Cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
-        { "<C-a>", "<Cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
+        { "<C-d>",      "<Cmd>BufferLineCycleNext<CR>", desc = "Next buffer" },
+        { "<C-a>",      "<Cmd>BufferLineCyclePrev<CR>", desc = "Previous buffer" },
         -- Move
-        { "<leader>b>", "<Cmd>BufferLineMoveNext<CR>", desc = "Move right" },
-        { "<leader>b<", "<Cmd>BufferLineMovePrev<CR>", desc = "Move left" },
+        { "<leader>b>", "<Cmd>BufferLineMoveNext<CR>",  desc = "Move right" },
+        { "<leader>b<", "<Cmd>BufferLineMovePrev<CR>",  desc = "Move left" },
         -- Pick & Close
-        { "<leader>bb", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
-        { "<leader>bd", "<Cmd>bdelete<CR>", desc = "Close current" },
+        { "<leader>bb", "<Cmd>BufferLinePick<CR>",      desc = "Pick buffer" },
+        { "<leader>bd", "<Cmd>bdelete<CR>",             desc = "Close current" },
         {
             "<leader>bo",
             "<Cmd>BufferLineCloseOthers<CR>",
@@ -68,10 +68,10 @@ wk.add({
             "<Cmd>BufferLineSortByExtension<CR>",
             desc = "By extension",
         },
-        { "<leader>bl", ":buffers<CR>", desc = "List buffers" },
+        { "<leader>bl", ":buffers<CR>",                 desc = "List buffers" },
 
         -- Display settings
-        { "<leader>~", "<cmd>ListToggle<CR>", desc = "Switch toggle list" },
+        { "<leader>~",  "<cmd>ListToggle<CR>",          desc = "Switch toggle list" },
 
         -- File path operations
         {
@@ -89,7 +89,7 @@ wk.add({
         { "<Esc><Esc>", "<cmd>nohlsearch<CR>", desc = "Cancel highlight" },
 
         -- Add coments header and func/file annotations
-        { "<leader>//", "<cmd>AddHeader<CR>", desc = "Add header comment" },
+        { "<leader>//", "<cmd>AddHeader<CR>",  desc = "Add header comment" },
         {
             "<leader>/",
             "<cmd>AddComment<CR>",
@@ -107,6 +107,16 @@ wk.add({
             "<cmd>NvimTreeFindFile<CR>",
             desc = "Find the file location",
         },
+        {
+            "<leader>>",
+            ":vertical resize +5<CR>",
+            desc = "Expanding nvim tree width",
+        },
+        {
+            "<leader><",
+            ":vertical resize -5<CR>",
+            desc = "Reduce nvim tree width",
+        },
 
         -- Open the outline
         {
@@ -116,12 +126,12 @@ wk.add({
         },
 
         -- Telescope search files and string
-        { "<leader>f", group = "telescope" },
+        { "<leader>f",  group = "telescope" },
         -- Telescope file operations
-        { "<leader>ff", "<cmd>FindFiles<CR>", desc = "Find files" },
-        { "<leader>fg", "<cmd>FindGrep<CR>", desc = "Live grep" },
+        { "<leader>ff", "<cmd>FindFiles<CR>",  desc = "Find files" },
+        { "<leader>fg", "<cmd>FindGrep<CR>",   desc = "Live grep" },
         -- Telescope helps
-        { "<leader>fh", "<cmd>FindHelp<CR>", desc = "Help tags" },
+        { "<leader>fh", "<cmd>FindHelp<CR>",   desc = "Help tags" },
         -- Telescope search one word
         { "<leader>fs", "<cmd>FindString<CR>", desc = "Search current word" },
         -- Telescope search one symbol bt tags
@@ -130,20 +140,20 @@ wk.add({
         { "<leader>fT", "<cmd>SearchTags<CR>", desc = "Search current word" },
 
         -- Flash search words
-        { "s", "<cmd>FlashJump<CR>", desc = "Search word" },
+        { "s",          "<cmd>FlashJump<CR>",  desc = "Search word" },
 
         -- Neoscroll keybindings
-        { "<C-k>", "<cmd>Scroll -5<CR>", desc = "scroll up" },
-        { "<C-j>", "<cmd>Scroll 5<CR>", desc = "scroll down" },
+        { "<C-k>",      "<cmd>Scroll -5<CR>",  desc = "scroll up" },
+        { "<C-j>",      "<cmd>Scroll 5<CR>",   desc = "scroll down" },
 
         -- Fommatter keybindings
-        { "<leader>F", ":Format<CR>", desc = "format code" },
+        { "<leader>F",  ":Format<CR>",         desc = "format code" },
 
         -- Theme change
-        { "<leader>tn", "<cmd>ThemeNext<CR>", desc = "Theme next" },
-        { "<leader>tm", "<cmd>ThemeMode<CR>", desc = "Theme mode switch" },
+        { "<leader>tn", "<cmd>ThemeNext<CR>",  desc = "Theme next" },
+        { "<leader>tm", "<cmd>ThemeMode<CR>",  desc = "Theme mode switch" },
 
-        { "<leader>g", group = "gitsigns" },
+        { "<leader>g",  group = "gitsigns" },
         {
             "<leader>gn",
             "<cmd>GitSignsNextHunk<CR>",
@@ -178,30 +188,29 @@ wk.add({
         -- Coc diagnostics and navigation
         { "[g", "<Plug>(coc-diagnostic-prev)", desc = "Previous diagnostic" },
         { "]g", "<Plug>(coc-diagnostic-next)", desc = "Next diagnostic" },
-        { "gd", "<Plug>(coc-definition)", desc = "Go to definition" },
+        { "gd", "<Plug>(coc-definition)",      desc = "Go to definition" },
         {
             "gy",
             "<Plug>(coc-type-definition)",
             desc = "Go to type definition",
         },
-        { "gi", "<Plug>(coc-implementation)", desc = "Go to implementation" },
-        { "gr", "<Plug>(coc-references)", desc = "Go to references" },
-        { "K", "<CMD>lua _G.show_docs()<CR>", desc = "Show documentation" },
+        { "gi", "<Plug>(coc-implementation)",  desc = "Go to implementation" },
+        { "gr", "<Plug>(coc-references)",      desc = "Go to references" },
+        { "K",  "<CMD>lua _G.show_docs()<CR>", desc = "Show documentation" },
 
         -- Coc text objects
-        { "if", "<Plug>(coc-funcobj-i)", desc = "Function text object" },
+        { "if", "<Plug>(coc-funcobj-i)",       desc = "Function text object" },
         {
             "af",
             "<Plug>(coc-funcobj-a)",
             desc = "Function text object (all)",
         },
-        { "ic", "<Plug>(coc-classobj-i)", desc = "Class text object" },
-        { "ac", "<Plug>(coc-classobj-a)", desc = "Class text object (all)" },
+        { "ic",         "<Plug>(coc-classobj-i)", desc = "Class text object" },
+        { "ac",         "<Plug>(coc-classobj-a)", desc = "Class text object (all)" },
 
         -- Coc code actions
-        { "<leader>rn", "<Plug>(coc-rename)", desc = "Rename symbol" },
-        -- { "<leader>FF", "<Plug>(coc-format)",     desc = "Format all code" },
-        { "<leader>FF", ":Format<CR>", desc = "Format all code" },
+        { "<leader>rn", "<Plug>(coc-rename)",     desc = "Rename symbol" },
+        { "<leader>FF", "<Plug>(coc-format)",     desc = "Format all code" },
         {
             "<leader>a",
             "<Plug>(coc-codeaction-selected)",
@@ -245,14 +254,14 @@ wk.add({
             desc = "Manage extensions",
         },
         { "<space>c", ":<C-u>CocList commands<cr>", desc = "Show commands" },
-        { "<space>o", ":<C-u>CocList outline<cr>", desc = "Show outline" },
+        { "<space>o", ":<C-u>CocList outline<cr>",  desc = "Show outline" },
         {
             "<space>s",
             ":<C-u>CocList -I symbols<cr>",
             desc = "Search symbols",
         },
-        { "<space>j", ":<C-u>CocNext<cr>", desc = "Next item" },
-        { "<space>k", ":<C-u>CocPrev<cr>", desc = "Previous item" },
+        { "<space>j", ":<C-u>CocNext<cr>",       desc = "Next item" },
+        { "<space>k", ":<C-u>CocPrev<cr>",       desc = "Previous item" },
         { "<space>p", ":<C-u>CocListResume<cr>", desc = "Resume CocList" },
     },
 
@@ -315,4 +324,3 @@ wk.add({
         },
     },
 })
-

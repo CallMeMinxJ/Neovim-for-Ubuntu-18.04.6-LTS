@@ -16,6 +16,7 @@ vim.g.clipboard = {
 }
 
 -- init.lua Main Enterement
+
 -- Theme config
 require("basic_setting.theme")
 
