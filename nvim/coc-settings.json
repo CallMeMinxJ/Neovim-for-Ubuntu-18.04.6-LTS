@@ -101,5 +101,6 @@
     "diagnostic.checkCurrentLine": true,
     "suggest.autoTrigger": "always",
     "diagnostic.enable": true,
-    "diagnostic.virtualText": true
+    "diagnostic.virtualText": true,
+    "snippets.ultisnips.pythonPrompt": false
 }
