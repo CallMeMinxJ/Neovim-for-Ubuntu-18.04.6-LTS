@@ -1,133 +1,123 @@
--- Utilities for creating configurations
+-- formatter.lua
+-- Formatter configuration for various filetypes
+-- Uses clang-format for C/C++ files with dynamic or project-based formatting
 local util = require("formatter.util")
 
--- Formatter configurations for C/C++ files that adapts to Neovim's indentation settings
+-- Function to create dynamic C/C++ formatting configurations
 local function clang_format_config()
-    return function()
-        -- Get current buffer's indentation settings
-        local expandtab = vim.bo.expandtab
-        local shiftwidth = vim.bo.shiftwidth
-        local tabstop = vim.bo.tabstop
-        
-        -- Determine if we should use tabs or spaces based on expandtab
-        local use_tab = expandtab and "Never" or "Always"
-        
-        -- Use shiftwidth if set, otherwise fall back to tabstop
-        local indent_width = shiftwidth > 0 and shiftwidth or tabstop
-        
-        -- Build the style string
-        local style_str = string.format(
-            "--style='{" ..
-            "BasedOnStyle: Google, " ..
-            "IndentWidth: %d, " ..
-            "TabWidth: %d, " ..
-            "UseTab: %s, " ..
-            "ColumnLimit: 80, " ..
-            "SortIncludes: true" ..
-            "}'",
-            indent_width,
-            tabstop,
-            use_tab
-        )
-        
-        return {
-            exe = "clang-format", -- The executable for C/C++ formatting
-            args = { style_str },  -- Dynamic style based on Neovim settings
-            stdin = true,         -- Read from stdin
-        }
-    end
+	return function()
+		-- Check for existence of a .clang-format configuration file
+		local config_path = vim.fn.findfile(".clang-format", ".;")
+		local style_arg
+
+		if config_path ~= "" then
+			-- Use project-specific .clang-format configuration file
+			style_arg = "-style=file"
+		else
+			-- No project configuration found, use dynamic formatting
+			-- Retrieve current buffer's indentation settings
+			local expandtab = vim.bo.expandtab
+			local shiftwidth = vim.bo.shiftwidth
+			local tabstop = vim.bo.tabstop
+
+			-- Determine indentation method based on buffer settings
+			local use_tab = expandtab and "Never" or "Always"
+
+			-- Use shiftwidth if defined, otherwise fallback to tabstop
+			local indent_width = shiftwidth > 0 and shiftwidth or tabstop
+
+			-- Construct style string with dynamic formatting options
+			style_arg = string.format(
+				"--style={BasedOnStyle: Google, IndentWidth: %d, TabWidth: %d, UseTab: %s, ColumnLimit: 80, SortIncludes: true}",
+				indent_width,
+				tabstop,
+				use_tab
+			)
+		end
+
+		return {
+			exe = "clang-format", -- Executable for C/C++ formatting
+			args = { style_arg }, -- Dynamic or project-based style
+			stdin = true, -- Read input from standard input
+		}
+	end
 end
 
--- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+-- Stylua configuration for Lua files
+local function stylua_config()
+	return {
+		exe = "stylua",           -- Executable for Lua formatting
+		args = {
+			"--search-parent-directories", -- Search parent directories for configuration
+			"--stdin-filepath",
+			util.escape_path(util.get_current_buffer_file_path()),
+			"--", -- Argument delimiter
+			"-", -- Read from stdin
+		},
+		stdin = true, -- Read input from standard input
+	}
+end
+
+-- shfmt configuration for shell script formatting
+local function shfmt_config()
+	return {
+		exe = "shfmt", -- Executable for shell script formatting
+		args = {
+			"-i 4", -- Indent with 4 spaces
+			"-ln bash", -- Language: bash
+			"-ci", -- Redirect operators with leading space
+			"-sr", -- Simplify code
+		},
+		stdin = true, -- Read input from standard input
+	}
+end
+
+-- JSON formatter configuration
+local function json_config()
+	return {
+		exe = "python3", -- Use Python's JSON tool
+		args = { "-m", "json.tool", "--indent", "4" },
+		stdin = true, -- Read input from standard input
+	}
+end
+
+-- Main formatter setup
 require("formatter").setup({
-    -- Enable or disable logging
-    logging = true,
-    -- Set the log level
-    log_level = vim.log.levels.WARN,
+	-- Enable logging for debugging purposes
+	logging = true,
+	-- Set log level to display warnings and errors
+	log_level = vim.log.levels.WARN,
 
-    -- All formatter configurations are opt-in
-    filetype = {
-        -- Formatter configurations for lua files
-        lua = {
-            -- Use the default lua configuration (stylua)
-            require("formatter.filetypes.lua").stylua,
+	-- Formatter configurations for specific filetypes
+	filetype = {
+		-- Lua file formatting
+		lua = stylua_config,
 
-            -- Custom Lua formatting configuration
-            function()
-                return {
-                    exe = "stylua", -- The executable to use for formatting
-                    args = {
-                        "--search-parent-directories", -- Search parent directories for stylua.toml
-                        "--stdin-filepath",
-                        util.escape_path(util.get_current_buffer_file_path()), -- Ensure the file is passed properly
-                        "--column-width 80",
-                        "--indent-type Spaces",
-                        "--",
-                        "-",
-                    },
-                    stdin = true, -- Read from stdin
-                }
-            end,
-        },
+		-- Bash shell script formatting
+		bash = shfmt_config,
+		sh = shfmt_config,
 
-        -- Formatter configurations for bash files
-        bash = {
-            -- Custom Bash formatting using shfmt
-            function()
-                return {
-                    exe = "shfmt", -- The executable for bash formatting
-                    args = {
-                        "-i 4",
-                        "-ln bash",
-                        "-ci",
-                        "-sr",
-                    },
-                    stdin = true, -- Read from stdin
-                }
-            end,
-        },
+		-- C/C++ file formatting with dynamic configuration
+		c = clang_format_config(),
+		cpp = clang_format_config(),
+		h = clang_format_config(),
+		hpp = clang_format_config(),
 
-        sh = {
-            -- Custom Bash formatting using shfmt
-            function()
-                return {
-                    exe = "shfmt", -- The executable for bash formatting
-                    args = {
-                        "-i 4",
-                        "-ln bash",
-                        "-ci",
-                        "-sr",
-                    },
-                    stdin = true, -- Read from stdin
-                }
-            end,
-        },
+		-- JSON file formatting
+		json = json_config,
 
-        -- Formatter configurations for C files
-        c = clang_format_config(),
-        
-        -- Formatter configurations for C++ files
-        cpp = clang_format_config(),
-        
-        -- Formatter configurations for C/C++ header files
-        h = clang_format_config(),
-        hpp = clang_format_config(),
+		-- Default formatter for all other filetypes
+		["*"] = {
+			-- Remove trailing whitespace in any filetype
+			require("formatter.filetypes.any").remove_trailing_whitespace,
+		},
+	},
+})
 
-        -- Formatter configurations for JSON files
-        json = {
-            function()
-                return {
-                    exe = "python3",
-                    args = { "-m", "json.tool", "--indent", "4" },
-                    stdin = true,
-                }
-            end,
-        },
-
-        -- Default formatter configurations for all filetypes
-        ["*"] = {
-            -- Remove trailing whitespace in any filetype
-            require("formatter.filetypes.any").remove_trailing_whitespace,
-        },
-    },
+local augroup = vim.api.nvim_create_augroup
+local autocmd = vim.api.nvim_create_autocmd
+augroup("__formatter__", { clear = true })
+autocmd("BufWritePost", {
+	group = "__formatter__",
+	command = ":FormatWrite",
 })
