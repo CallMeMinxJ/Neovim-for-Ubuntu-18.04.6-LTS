@@ -46,7 +46,7 @@ end
 -- Stylua configuration for Lua files
 local function stylua_config()
 	return {
-		exe = "stylua",           -- Executable for Lua formatting
+		exe = "stylua", -- Executable for Lua formatting
 		args = {
 			"--search-parent-directories", -- Search parent directories for configuration
 			"--stdin-filepath",
@@ -114,10 +114,32 @@ require("formatter").setup({
 	},
 })
 
+local function auto_format_toggle()
+	local auto_format = require("basic_setting.settings").get_config("auto_format", "custom")
+	auto_format = not auto_format
+	require("basic_setting.settings").set_config("auto_format", auto_format, "custom")
+
+	if auto_format then
+		print("✅ Open auto format")
+	else
+		print("✅ Close auto format")
+	end
+end
+
+vim.api.nvim_create_user_command("AutoFormatToggle", function()
+	auto_format_toggle()
+end, { nargs = 0 })
+
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 augroup("__formatter__", { clear = true })
 autocmd("BufWritePost", {
 	group = "__formatter__",
-	command = ":FormatWrite",
+	callback = function(args)
+		local auto_format = require("basic_setting.settings").get_config("auto_format", "custom")
+		if auto_format then
+			vim.cmd("FormatWrite")
+		end
+	end,
+	-- command = ":FormatWrite",
 })

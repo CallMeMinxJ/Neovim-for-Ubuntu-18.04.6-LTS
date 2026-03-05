@@ -24,10 +24,12 @@
 #
 # Online reference: https://github.com/SirVer/ultisnips/blob/master/doc/UltiSnips.txt
 
-snippet info "Create comments info" b
-/**
- * @brief ${1:desc}
- */
+snippet info "Create comments info"
+$0/**
+$0 * @brief ${1:description}
+$0 *
+$0 * ${2:Detailed description.}
+$0 */
 endsnippet
 
 snippet line "Create comments line" b
