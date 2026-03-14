@@ -214,143 +214,21 @@ wk.add({
 			"<cmd>GitSignsDiffThis<CR>",
 			desc = "Show diff of current file",
 		},
-
-		-- Coc diagnostics and navigation
-		{ "[g", "<Plug>(coc-diagnostic-prev)", desc = "Previous diagnostic" },
-		{ "]g", "<Plug>(coc-diagnostic-next)", desc = "Next diagnostic" },
-		{ "gd", "<Plug>(coc-definition)", desc = "Go to definition" },
-		{
-			"gy",
-			"<Plug>(coc-type-definition)",
-			desc = "Go to type definition",
-		},
-		{ "gi", "<Plug>(coc-implementation)", desc = "Go to implementation" },
-		{ "gr", "<Plug>(coc-references)", desc = "Go to references" },
-		{ "K", "<CMD>lua _G.show_docs()<CR>", desc = "Show documentation" },
-
-		-- Coc text objects
-		{ "if", "<Plug>(coc-funcobj-i)", desc = "Function text object" },
-		{
-			"af",
-			"<Plug>(coc-funcobj-a)",
-			desc = "Function text object (all)",
-		},
-		{ "ic", "<Plug>(coc-classobj-i)", desc = "Class text object" },
-		{ "ac", "<Plug>(coc-classobj-a)", desc = "Class text object (all)" },
-
-		-- Coc code actions
-		{ "<leader>rn", "<Plug>(coc-rename)", desc = "Rename symbol" },
-		{ "<leader>FC", "<Plug>(coc-format)", desc = "Format all code" },
-		{
-			"<leader>a",
-			"<Plug>(coc-codeaction-selected)",
-			desc = "Apply code action (selected)",
-		},
-		{
-			"<leader>ac",
-			"<Plug>(coc-codeaction-cursor)",
-			desc = "Apply code action (cursor)",
-		},
-		{
-			"<leader>as",
-			"<Plug>(coc-codeaction-source)",
-			desc = "Apply code action (source)",
-		},
-		{
-			"<leader>re",
-			"<Plug>(coc-codeaction-refactor)",
-			desc = "Refactor code",
-		},
-		{
-			"<leader>r",
-			"<Plug>(coc-codeaction-refactor-selected)",
-			desc = "Refactor selected code",
-		},
-		{
-			"<leader>cl",
-			"<Plug>(coc-codelens-action)",
-			desc = "Run code lens action",
-		},
-
-		-- Coc lists
-		{
-			"<space>a",
-			":<C-u>CocList diagnostics<cr>",
-			desc = "Show diagnostics",
-		},
-		{
-			"<space>e",
-			":<C-u>CocList extensions<cr>",
-			desc = "Manage extensions",
-		},
-		{ "<space>c", ":<C-u>CocList commands<cr>", desc = "Show commands" },
-		{ "<space>o", ":<C-u>CocList outline<cr>", desc = "Show outline" },
-		{
-			"<space>s",
-			":<C-u>CocList -I symbols<cr>",
-			desc = "Search symbols",
-		},
-		{ "<space>j", ":<C-u>CocNext<cr>", desc = "Next item" },
-		{ "<space>k", ":<C-u>CocPrev<cr>", desc = "Previous item" },
-		{ "<space>p", ":<C-u>CocListResume<cr>", desc = "Resume CocList" },
 	},
 
 	-- Both insert and nomal mode keybindings
 	{
 		mode = { "n", "i" },
 		-- Multi-mode Coc mappings
-		{
-			"<C-f>",
-			'coc#float#has_scroll() ? coc#float#scroll(1) : "<C-f>"',
-			desc = "Scroll down in float window",
-			expr = true,
-		},
-		{
-			"<C-b>",
-			'coc#float#has_scroll() ? coc#float#scroll(0) : "<C-b>"',
-			desc = "Scroll up in float window",
-			expr = true,
-		},
-		{ "<C-s>", "<Plug>(coc-range-select)", desc = "Select range" },
 	},
 
 	-- Insert mode keybindings
 	{
 		mode = "i",
-		{
-			"<TAB>",
-			'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()',
-			desc = "Trigger completion",
-			expr = true,
-		},
-		{
-			"<S-TAB>",
-			'coc#pum#visible() ? coc#pum#prev(1) : "\\<C-h>"',
-			desc = "Navigate completion",
-			expr = true,
-		},
-		{
-			"<cr>",
-			'coc#pum#visible() ? coc#pum#confirm() : "\\<C-g>u\\<CR>\\<c-r>=coc#on_enter()\\<CR>"',
-			desc = "Accept completion",
-			expr = true, -- This is important
-		},
-		{
-			"<c-j>",
-			"<Plug>(coc-snippets-expand-jump)",
-			desc = "Trigger snippets",
-		},
-		{ "<c-space>", "coc#refresh()", desc = "Trigger completion refresh" },
 	},
 
 	-- Visual mode keybindings
 	{
 		mode = "v",
-		-- Coc selected code format
-		{
-			"<leader>f",
-			"<Plug>(coc-format-selected)",
-			desc = "Format selected code",
-		},
 	},
 })
