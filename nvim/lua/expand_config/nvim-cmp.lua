@@ -26,7 +26,7 @@ cmp.setup({
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 
 		-- Open completion menu manually
-		["<C-Space>"] = cmp.mapping.complete(),
+		["<C-Tab>"] = cmp.mapping.complete(),
 
 		-- Close completion menu
 		["<C-e>"] = cmp.mapping.abort(),
