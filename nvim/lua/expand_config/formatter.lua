@@ -28,7 +28,7 @@ local function clang_format_config()
 
 			-- Construct style string with dynamic formatting options
 			style_arg = string.format(
-				"--style={BasedOnStyle: Google, IndentWidth: %d, TabWidth: %d, UseTab: %s, ColumnLimit: 80, SortIncludes: true}",
+				"-style={BasedOnStyle: Google, IndentWidth: %d, TabWidth: %d, UseTab: %s, ColumnLimit: 80, SortIncludes: true}",
 				indent_width,
 				tabstop,
 				use_tab

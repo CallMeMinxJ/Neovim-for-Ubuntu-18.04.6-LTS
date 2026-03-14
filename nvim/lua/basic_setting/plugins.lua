@@ -28,7 +28,11 @@ packer.startup(function(use)
 	use({ plugins_dir .. "telescope.nvim" })
 	use({ plugins_dir .. "telescope-fzf-native.nvim", run = "make" })
 	use({ plugins_dir .. "bufferline.nvim" })
-	use({ plugins_dir .. "coc.nvim" })
+	use({ plugins_dir .. "nvim-lspconfig" })
+	use({ plugins_dir .. "cmp-nvim-lsp" })
+	use({ plugins_dir .. "nvim-cmp" })
+	use({ plugins_dir .. "mason.nvim" })
+	use({ plugins_dir .. "mason-lspconfig.nvim" })
 	use({ plugins_dir .. "nvim-treesitter" })
 	use({ plugins_dir .. "comment.nvim" })
 	use({ plugins_dir .. "indent-blankline.nvim" })
@@ -72,7 +76,10 @@ local expand_configs = {
 	-- "expand_config.nvim-tree",
 	"expand_config.telescope",
 	"expand_config.bufferline",
-	"expand_config.coc",
+	"expand_config.lspconfig",
+	"expand_config.nvim-cmp",
+	"expand_config.nvim-lsp-cmp",
+	"expand_config.mason",
 	"expand_config.nvim-treesitter",
 	"expand_config.comment",
 	"expand_config.indent-blankline",
