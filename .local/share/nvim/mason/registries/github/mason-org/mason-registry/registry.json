@@ -2096,7 +2096,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:github/clangd/clangd@21.1.8",
+      "id": "pkg:github/clangd/clangd@22.1.0",
       "asset": [
         {
           "target": [
@@ -11275,7 +11275,7 @@
       "Linter"
     ],
     "source": {
-      "id": "pkg:pypi/oelint-adv@9.5.0"
+      "id": "pkg:pypi/oelint-adv@9.5.1"
     },
     "bin": {
       "oelint-adv": "pypi:oelint-adv"
@@ -14255,7 +14255,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:github/rvben/rumdl@v0.1.48",
+      "id": "pkg:github/rvben/rumdl@v0.1.51",
       "asset": [
         {
           "target": "darwin_arm64",
@@ -17696,7 +17696,7 @@
       "lspconfig": "tombi"
     },
     "source": {
-      "id": "pkg:pypi/tombi@0.9.4"
+      "id": "pkg:pypi/tombi@0.9.5"
     },
     "bin": {
       "tombi": "pypi:tombi"
@@ -17714,7 +17714,7 @@
       "Compiler"
     ],
     "source": {
-      "id": "pkg:github/tree-sitter/tree-sitter@v0.26.6",
+      "id": "pkg:github/tree-sitter/tree-sitter@v0.26.7",
       "asset": [
         {
           "target": "darwin_x64",
@@ -17958,7 +17958,7 @@
       "LSP"
     ],
     "source": {
-      "id": "pkg:npm/@typescript/native-preview@7.0.0-dev.20260313.1"
+      "id": "pkg:npm/@typescript/native-preview@7.0.0-dev.20260314.1"
     },
     "bin": {
       "tsgo": "npm:tsgo"
@@ -19831,7 +19831,7 @@
       "message": "xo should now be installed locally in the project where it's used."
     },
     "source": {
-      "id": "pkg:npm/xo@1.2.3"
+      "id": "pkg:npm/xo@2.0.2"
     },
     "bin": {
       "xo": "npm:xo"

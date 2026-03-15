@@ -26,11 +26,12 @@ vim.lsp.config.lua_ls = {
 	capabilities = capabilities,
 	on_attach = on_attach,
 	settings = {
-		Lua =
+		Lua = {
 			runtime = { version = "LuaJIT" },
 			diagnostics = { globals = { "vim" } },
 			workspace = {
-				library = vim.api.nvim_get_runtime_file("", true),
+				preloadFileSize = 1000,
+				library = vim.api.nvim_get_runtime_file("", false),
 				checkThirdParty = false,
 			},
 			telemetry = { enable = false },

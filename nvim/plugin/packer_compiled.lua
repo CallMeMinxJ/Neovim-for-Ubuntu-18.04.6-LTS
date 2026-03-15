@@ -94,6 +94,11 @@ _G.packer_plugins = {
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/catppuccin",
     url = "/home/astor/.config/nvim/themes/catppuccin"
   },
+  ["cmp-luasnip"] = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/cmp-luasnip",
+    url = "/home/astor/.config/nvim/addons/cmp-luasnip"
+  },
   ["cmp-nvim-lsp"] = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp",
@@ -104,15 +109,15 @@ _G.packer_plugins = {
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/comment.nvim",
     url = "/home/astor/.config/nvim/addons/comment.nvim"
   },
+  ["conform.nvim"] = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/conform.nvim",
+    url = "/home/astor/.config/nvim/addons/conform.nvim"
+  },
   ["flash.nvim"] = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/flash.nvim",
     url = "/home/astor/.config/nvim/addons/flash.nvim"
-  },
-  ["formatter.nvim"] = {
-    loaded = true,
-    path = "/home/astor/.local/share/nvim/site/pack/packer/start/formatter.nvim",
-    url = "/home/astor/.config/nvim/addons/formatter.nvim"
   },
   ["gitsigns.nvim"] = {
     loaded = true,
@@ -143,6 +148,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/lualine.nvim",
     url = "/home/astor/.config/nvim/addons/lualine.nvim"
+  },
+  luasnip = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/luasnip",
+    url = "/home/astor/.config/nvim/addons/luasnip"
   },
   ["marks.nvim"] = {
     loaded = true,
@@ -253,6 +263,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/astor/.local/share/nvim/site/pack/packer/start/tokyonight",
     url = "/home/astor/.config/nvim/themes/tokyonight"
+  },
+  ["trouble.nvim"] = {
+    loaded = true,
+    path = "/home/astor/.local/share/nvim/site/pack/packer/start/trouble.nvim",
+    url = "/home/astor/.config/nvim/addons/trouble.nvim"
   },
   ["vim-startify"] = {
     loaded = true,

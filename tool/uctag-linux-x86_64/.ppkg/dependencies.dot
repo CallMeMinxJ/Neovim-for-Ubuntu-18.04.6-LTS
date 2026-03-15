@@ -1,5 +1,0 @@
-digraph G {
-
-"uctags" -> { "libjansson" "libyaml" "libxml2" "libiconv" }
-"libxml2" -> { "libiconv" "libz" }
-}

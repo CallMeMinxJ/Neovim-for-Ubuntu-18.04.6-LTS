@@ -1,4 +1,0 @@
-d|bin
-f|bin/optscript
-f|bin/ctags
-f|bin/readtags

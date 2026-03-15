@@ -43,12 +43,16 @@ packer.startup(function(use)
 	use({ plugins_dir .. "vim-startify" })
 	use({ plugins_dir .. "marks.nvim" })
 	use({ plugins_dir .. "gitsigns.nvim" })
-	use({ plugins_dir .. "formatter.nvim" })
+	-- use({ plugins_dir .. "formatter.nvim" })
 	use({ plugins_dir .. "nvim-treesitter-context" })
 	use({ plugins_dir .. "outline.nvim" })
 	use({ plugins_dir .. "flash.nvim" })
 	use({ plugins_dir .. "nui.nvim" })
 	use({ plugins_dir .. "neo-tree.nvim" })
+	use({ plugins_dir .. "luasnip" })
+	use({ plugins_dir .. "cmp-luasnip" })
+	use({ plugins_dir .. "conform.nvim" })
+	use({ plugins_dir .. "trouble.nvim" })
 
 	-- register local theme from ./colors/<name>
 	use({ colors_dir .. "catppuccin", as = "catppuccin" })
@@ -86,16 +90,20 @@ local expand_configs = {
 	"expand_config.neoscroll",
 	"expand_config.which-key",
 	"expand_config.neogen",
+	"expand_config.neo-tree",
 	"expand_config.header",
 	"expand_config.startify",
 	"expand_config.marks",
 	"expand_config.gitsigns",
-	"expand_config.formatter",
+	-- "expand_config.formatter",
 	"expand_config.treesitter-context",
 	"expand_config.outline",
 	"expand_config.flash",
 	"expand_config.auto_fold",
 	"expand_config.neo-tree",
+	"expand_config.luasnip",
+	"expand_config.conform",
+	"expand_config.trouble",
 
 	-- expand lua scripts
 	"expand_config.tab-mode",

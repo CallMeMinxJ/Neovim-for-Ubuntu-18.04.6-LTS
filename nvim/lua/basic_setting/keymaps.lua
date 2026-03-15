@@ -31,7 +31,7 @@ wk.add({
 		-- Auto format
 		{
 			"<leader>fmt",
-			"<cmd>AutoFormatToggle<CR>",
+			"<cmd>FormatToggle<CR>",
 			desc = "Switch auto format mode",
 		},
 
@@ -155,6 +155,40 @@ wk.add({
 			desc = "Open outline",
 		},
 
+		-- Trouble
+		{ "<leader>x", group = "troube" },
+		{
+			"<leader>xx",
+			"<cmd>Trouble diagnostics toggle<cr>",
+			desc = "Diagnostics (document)",
+		},
+		{
+			"<leader>xw",
+			"<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+			desc = "Diagnostics (workspace)",
+		},
+		{
+			"<leader>xs",
+			"<cmd>Trouble symbols toggle<cr>",
+			desc = "Symbols (document)",
+		},
+		{
+			"<leader>xS",
+			"<cmd>Trouble lsp toggle focus=false<cr>",
+			desc = "LSP references/definitions",
+		},
+		{
+			"<leader>xl",
+			"<cmd>Trouble loclist toggle<cr>",
+			desc = "Location list",
+		},
+		{
+			"<leader>xq",
+			"<cmd>Trouble qflist toggle<cr>",
+			desc = "Quickfix list",
+		},
+		{ "<leader>xc", "<cmd>Trouble close<cr>", desc = "Close Trouble" },
+
 		-- Telescope search files and string
 		{ "<leader>f", group = "telescope" },
 		-- Telescope file operations
@@ -177,7 +211,7 @@ wk.add({
 		{ "<C-j>", "<cmd>Scroll 5<CR>", desc = "scroll down" },
 
 		-- Fommatter keybindings
-		{ "<leader>FF", ":Format<CR>", desc = "format code" },
+		{ "<leader>FF", "<cmd>Format<CR>", desc = "format code" },
 
 		-- Theme change
 		{ "<leader>tn", "<cmd>ThemeNext<CR>", desc = "Theme next" },

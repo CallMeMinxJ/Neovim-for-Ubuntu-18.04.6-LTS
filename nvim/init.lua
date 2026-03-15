@@ -1,18 +1,18 @@
 -- open osc52 clipboard
 vim.g.clipboard = {
-    name = "OSC52",
-    copy = {
-        ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-        ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-    },
-    paste = {
-        ["+"] = function()
-            return vim.fn.getreg('"')
-        end,
-        ["*"] = function()
-            return vim.fn.getreg('"')
-        end,
-    },
+	name = "OSC52",
+	copy = {
+		["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+		["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+	},
+	paste = {
+		["+"] = function()
+			return vim.fn.getreg('"')
+		end,
+		["*"] = function()
+			return vim.fn.getreg('"')
+		end,
+	},
 }
 
 -- init.lua Main Enterement
@@ -28,4 +28,3 @@ require("basic_setting.settings")
 
 -- Keymaps setting
 require("basic_setting.keymaps")
-

@@ -2,22 +2,22 @@
 -- Purpose: Configure nvim-cmp (completion engine) and integrate with LuaSnip.
 
 local cmp = require("cmp")
--- local luasnip = require("luasnip")
---
--- -- 1. LuaSnip setup (if not already configured elsewhere)
--- require("luasnip").setup({
--- 	history = true,
--- 	updateevents = "TextChanged,TextChangedI",
--- })
+local luasnip = require("luasnip")
+
+-- 1. LuaSnip setup (if not already configured elsewhere)
+require("luasnip").setup({
+	history = true,
+	updateevents = "TextChanged,TextChangedI",
+})
 
 -- 2. nvim-cmp configuration
 cmp.setup({
 	-- How snippets are expanded (using LuaSnip)
-	-- snippet = {
-	-- 	expand = function(args)
-	-- 		luasnip.lsp_expand(args.body)
-	-- 	end,
-	-- },
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
 
 	-- Key mappings
 	mapping = cmp.mapping.preset.insert({
