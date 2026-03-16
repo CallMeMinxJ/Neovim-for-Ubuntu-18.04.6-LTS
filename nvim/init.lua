@@ -17,11 +17,11 @@ vim.g.clipboard = {
 
 -- init.lua Main Enterement
 
--- Theme config
-require("basic_setting.theme")
-
 -- Plugins config
 require("basic_setting.plugins")
+
+-- Theme config
+require("basic_setting.theme")
 
 -- Basic config
 require("basic_setting.settings")
