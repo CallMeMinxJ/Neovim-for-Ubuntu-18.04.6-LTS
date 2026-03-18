@@ -57,4 +57,11 @@ extern "C" {{
 			}
 		)
 	),
+
+	-- string function comments result
+	s(
+		"rst",
+			fmt("0 for success, others for fail", {})
+	),
 }
+
