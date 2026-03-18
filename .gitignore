@@ -6,6 +6,7 @@ tool/lua-server/log/
 .cache/
 .local/share/nvim/*
 !.local/share/nvim/mason
+!.local/share/nvim/mason/fixlink.sh
 nvim/nvim-settings.json
 nvim/plugin/packer_compiled.lua
 nvim/addons/nvim-treesitter/parser

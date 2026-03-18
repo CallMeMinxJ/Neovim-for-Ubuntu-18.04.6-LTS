@@ -26,7 +26,7 @@ cmp.setup({
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
 
 		-- Open completion menu manually
-		["<C-Tab>"] = cmp.mapping.complete(),
+		["<C-Space>"] = cmp.mapping.complete(),
 
 		-- Close completion menu
 		["<C-e>"] = cmp.mapping.abort(),
@@ -34,7 +34,6 @@ cmp.setup({
 		-- Accept the selected item (if none selected, accept the first)
 		["<CR>"] = cmp.mapping.confirm({ select = true }),
 
-		-- Tab navigation: if menu visible → next item; else try to expand/jump in snippet
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
@@ -43,9 +42,8 @@ cmp.setup({
 			else
 				fallback()
 			end
-		end, { "i", "s" }),
+		end, { "i", "s" }),  -- i=插入模式, s=选择模式
 
-		-- Shift-Tab for previous item or jump back in snippet
 		["<S-Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_prev_item()
@@ -77,6 +75,10 @@ cmp.setup({
 			})[entry.source.name]
 			return vim_item
 		end,
+	},
+
+	experimental = {
+		ghost_text = true,
 	},
 })
 
