@@ -1,7 +1,7 @@
 -- Bubbles config for lualine
 -- Author: lokesh-krishna
 -- MIT license, see LICENSE for more details.
-
+local navic = require("nvim-navic")
 -- stylua: ignore
 local colors = {
     blue   = '#80a0ff',
@@ -72,4 +72,16 @@ require('lualine').setup {
     },
     tabline = {},
     extensions = {},
+    winbar = {
+        lualine_c = {
+            {
+              function()
+                  return navic.get_location()
+              end,
+              cond = function()
+                  return navic.is_available()
+              end
+            },
+        }
+    }
 }

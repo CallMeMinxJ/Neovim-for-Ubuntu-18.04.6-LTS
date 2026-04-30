@@ -3,6 +3,8 @@
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+local navic = require("nvim-navic")
+
 local on_attach = function(client, bufnr)
 	vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 	local opts = { buffer = bufnr, noremap = true, silent = true }
@@ -18,6 +20,9 @@ local on_attach = function(client, bufnr)
 		vim.keymap.set("n", "<leader>f", function()
 			vim.lsp.buf.format({ async = true })
 		end, opts)
+	end
+	if client.server_capabilities.documentSymbolProvider then
+		navic.attach(client, bufnr)
 	end
 end
 

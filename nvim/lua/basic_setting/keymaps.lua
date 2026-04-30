@@ -217,7 +217,7 @@ wk.add({
 		{ "<leader>tn", "<cmd>ThemeNext<CR>", desc = "Theme next" },
 		{ "<leader>tm", "<cmd>ThemeMode<CR>", desc = "Theme mode switch" },
 
-		{ "<leader>g", group = "gitsigns" },
+		{ "<leader>g",  group = "gitsigns" },
 		{
 			"<leader>gn",
 			"<cmd>GitSignsNextHunk<CR>",
@@ -248,7 +248,17 @@ wk.add({
 			"<cmd>GitSignsDiffThis<CR>",
 			desc = "Show diff of current file",
 		},
-	},
+		{
+			"<leader>ga",
+			"<cmd>GitSignsStageHunk<CR>",
+			desc = "Add this hunk",
+		},
+		{
+			"<leader>gu",
+			"<cmd>GitSignsUndoStageHunk<CR>",
+			desc = "Undo add this hunk",
+		},
+,
 
 	-- Both insert and nomal mode keybindings
 	{
