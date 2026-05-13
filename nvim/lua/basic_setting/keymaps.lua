@@ -258,7 +258,7 @@ wk.add({
 			"<cmd>GitSignsUndoStageHunk<CR>",
 			desc = "Undo add this hunk",
 		},
-,
+	},
 
 	-- Both insert and nomal mode keybindings
 	{

@@ -56,6 +56,7 @@ packer.startup(function(use)
 	use({ plugins_dir .. "tiny-inline-diagnostic.nvim" })
 	use({ plugins_dir .. "nvim-autopairs" })
 	use({ plugins_dir .. "nvim-navic" })
+	use({ plugins_dir .. "markview.nvim" })
 
 	-- register local theme from ./colors/<name>
 	use({ colors_dir .. "catppuccin", as = "catppuccin" })
@@ -110,6 +111,7 @@ local expand_configs = {
 	"expand_config.tiny-inline-diagnostic",
 	"expand_config.autopairs",
 	"expand_config.navic",
+	"expand_config.markview",
 
 	-- expand lua scripts
 	"expand_config.tab-mode",
