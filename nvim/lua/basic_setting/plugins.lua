@@ -71,6 +71,7 @@ packer.startup(function(use)
 	use({ colors_dir .. "vim-open-color", as = "open-color" })
 	use({ colors_dir .. "papercolor-theme-slim", as = "PaperColorSlim" })
 	use({ colors_dir .. "noctis-nvim", as = "noctis" })
+	use({ colors_dir .. "everforest", as = "everforest" })
 
 	-- Example: if a local plugin requires config, you can do:
 	-- use { plugins_dir .. 'lualine.nvim', config = function() require('lualine').setup{} end }

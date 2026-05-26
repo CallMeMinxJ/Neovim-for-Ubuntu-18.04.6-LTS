@@ -1,0 +1,14 @@
+# Vim
+doc/tags
+after/syntax
+
+# System
+.DS_Store
+
+# Git Related
+.idea/
+.vscode/
+out/
+
+# Outputs
+jetbrains/jetbrains.jar
