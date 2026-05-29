@@ -202,6 +202,10 @@ wk.add({
 		{ "<leader>ft", "<cmd>FindSymbol<CR>", desc = "Search current word" },
 		-- Telescope search symbol
 		{ "<leader>fT", "<cmd>SearchTags<CR>", desc = "Search current word" },
+		-- Telescope search buffer
+		{ "<leader>fb", "<cmd>:Telescope buffers<CR>",  desc = "Search buffers" },
+		-- Telescope search used file
+		{ "<leader>fo", "<cmd>:Telescope oldfiles<CR>", desc = "Search oled files" },
 
 		-- Flash search words
 		{ "s", "<cmd>FlashJump<CR>", desc = "Search word" },
