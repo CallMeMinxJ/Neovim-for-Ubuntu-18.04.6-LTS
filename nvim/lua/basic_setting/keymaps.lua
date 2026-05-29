@@ -220,6 +220,7 @@ wk.add({
 		-- Theme change
 		{ "<leader>tn", "<cmd>ThemeNext<CR>", desc = "Theme next" },
 		{ "<leader>tm", "<cmd>ThemeMode<CR>", desc = "Theme mode switch" },
+		{ "<leader>tf", "<cmd>ThemeChoose<CR>", desc = "Theme mode switch" },
 
 		{ "<leader>g",  group = "gitsigns" },
 		{
