@@ -15,16 +15,31 @@ vim.g.clipboard = {
 	},
 }
 
--- init.lua Main Enterement
+-- init.lua Main Entry
 
--- Plugins config
-require("basic_setting.plugins")
+-- Bootstrap lazy.nvim (offline, from local directory)
+local lazypath = vim.fn.stdpath("config") .. "/addons/lazy.nvim"
+vim.opt.rtp:prepend(lazypath)
 
--- Theme config
+-- Load plugins via lazy.nvim
+require("basic_setting.lazy_plugins")
+
+-- Load theme color configs (must run before colorscheme is applied)
+local color_configs = {
+	"color_config.catppuccin",
+	"color_config.gruvbox",
+	"color_config.tokyonight",
+	"color_config.rosepine",
+	"color_config.kanagawa",
+}
+for _, name in ipairs(color_configs) do
+	pcall(require, name)
+end
+
+-- Theme config (applies colorscheme, needs settings)
+require("basic_setting.settings")
 require("basic_setting.theme")
 
--- Basic config
-require("basic_setting.settings")
-
--- Keymaps setting
-require("basic_setting.keymaps")
+-- Utility modules
+require("expand_config.auto_fold")
+require("expand_config.tab-mode")

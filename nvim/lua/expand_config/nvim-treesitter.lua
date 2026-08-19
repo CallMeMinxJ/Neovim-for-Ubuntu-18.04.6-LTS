@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup({
-	ensure_installed = { "bash", "lua", "python", "cpp", "json" }, -- 支持的语言
+	ensure_installed = {},
 	sync_install = false, -- 是否同步安装 parser
 	auto_install = false, -- 自动安装缺失的 parser
 	highlight = {
