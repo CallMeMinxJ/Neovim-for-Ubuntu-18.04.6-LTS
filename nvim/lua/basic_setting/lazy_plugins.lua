@@ -230,17 +230,6 @@ require("lazy").setup({
       require("expand_config.conform")
     end,
   },
-  {
-    dir = plugins_dir .. "mason.nvim",
-    cmd = "Mason",
-    config = function()
-      require("expand_config.mason")
-    end,
-  },
-  {
-    dir = plugins_dir .. "mason-lspconfig.nvim",
-    event = "VeryLazy",
-  },
 
   -- ============================================================
   -- Filetype-triggered
