@@ -1,4 +1,5 @@
 *:Zone.Identifier
+**/__pycache__/
 **/*.log
 **/log/**
 tool/lua-server/log/

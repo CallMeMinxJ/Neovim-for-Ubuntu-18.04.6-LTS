@@ -119,7 +119,69 @@ link_tool() {
 }
 
 # -----------------------------------------------------------------------------
-# Step 1: Environment Validation
+# Step 1: Fix Permissions (git on Windows loses the executable bit)
+# -----------------------------------------------------------------------------
+fix_permissions() {
+    log_info "Fixing executable permissions..."
+
+    local dirs=(
+        "$NVIM_DIR/bin"
+        "$TOOL_DIR/lsp"
+        "$TOOL_DIR/lsp/lua-language-server/bin"
+        "$TOOL_DIR/fmt"
+        "$TOOL_DIR/fzf-0.67.0"
+        "$TOOL_DIR/ripgrep-15.1.0"
+        "$TOOL_DIR/node-v16.20.2-linux-x64/bin"
+        "$TOOL_DIR/python-3.10/bin"
+    )
+
+    local count=0
+    for dir in "${dirs[@]}"; do
+        if [[ -d "$dir" ]]; then
+            while IFS= read -r -d '' f; do
+                if [[ ! -x "$f" ]] && file "$f" 2>/dev/null | grep -qE 'ELF|script'; then
+                    chmod +x "$f"
+                    ((count++))
+                fi
+            done < <(find "$dir" -maxdepth 1 -type f -print0 2>/dev/null)
+        fi
+    done
+
+    if [[ $count -gt 0 ]]; then
+        log_success "Fixed permissions on $count files"
+    else
+        log_success "Permissions OK"
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Step 2: Clean up old nvim cache (avoid conflicts with previous nvim installs)
+# -----------------------------------------------------------------------------
+cleanup_cache() {
+    log_info "Cleaning up old nvim cache..."
+
+    local dirs=(
+        "$HOME/.cache/nvim"
+        "$HOME/.local/state/nvim"
+        "$HOME/.local/share/nvim"
+    )
+
+    local cleaned=0
+    for dir in "${dirs[@]}"; do
+        if [[ -d "$dir" ]] || [[ -L "$dir" ]]; then
+            rm -rf "$dir"
+            log_success "Removed: $dir"
+            ((cleaned++))
+        fi
+    done
+
+    if [[ $cleaned -eq 0 ]]; then
+        log_success "No old cache found"
+    fi
+}
+
+# -----------------------------------------------------------------------------
+# Step 3: Environment Validation
 # -----------------------------------------------------------------------------
 validate_environment() {
     log_info "Validating environment..."
@@ -195,7 +257,8 @@ setup_tool_links() {
     done
 
     # --- Neovim ---
-    if [[ -x "$NVIM_DIR/bin/nvim" ]]; then
+    if [[ -f "$NVIM_DIR/bin/nvim" ]]; then
+        [[ ! -x "$NVIM_DIR/bin/nvim" ]] && chmod +x "$NVIM_DIR/bin/nvim"
         create_symlink "$NVIM_DIR/bin/nvim" "$BIN_DIR/nvim" "Neovim"
     else
         log_error "Neovim not found: $NVIM_DIR/bin/nvim"
@@ -260,13 +323,15 @@ setup_python_tools() {
     log_info "Setting up Python tools..."
 
     local python_dir="$TOOL_DIR/python-3.10"
-    local python_bin="$python_dir/bin/python3"
+    local python_bin="$python_dir/bin/python3.10"
 
-    if [[ ! -x "$python_bin" ]]; then
+    if [[ ! -f "$python_bin" ]]; then
         log_warning "Portable Python not found at $python_bin"
         log_warning "  Run tool/download.sh on a machine with internet to download it"
         return 0
     fi
+
+    [[ ! -x "$python_bin" ]] && chmod +x "$python_bin"
 
     # Python symlinks
     create_symlink "$python_bin" "$BIN_DIR/python" "Python 3.10"
@@ -406,6 +471,8 @@ main() {
     echo "=== Setup started $(date) ===" >>"$LOG_FILE"
 
     local steps=(
+        fix_permissions
+        cleanup_cache
         validate_environment
         setup_config_symlinks
         setup_parser_symlink
