@@ -26,6 +26,7 @@ require("basic_setting.lazy_plugins")
 
 -- Load theme color configs (must run before colorscheme is applied)
 local color_configs = {
+	"color_config.dracular_soft",
 	"color_config.catppuccin",
 	"color_config.gruvbox",
 	"color_config.tokyonight",

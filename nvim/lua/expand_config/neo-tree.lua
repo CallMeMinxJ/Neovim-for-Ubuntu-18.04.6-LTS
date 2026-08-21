@@ -44,6 +44,7 @@ require("neo-tree").setup({
 	window = {
 		position = "left", -- Default position
 		width = 30, -- Default width for sidebar
+		auto_expand_width = false, -- Prevent auto-expand when only window
 		popup = {
 			-- Floating window settings
 			size = {
