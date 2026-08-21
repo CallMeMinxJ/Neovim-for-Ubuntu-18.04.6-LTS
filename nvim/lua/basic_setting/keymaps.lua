@@ -52,7 +52,16 @@ wk.add({
 		{ "<leader>b<", "<Cmd>BufferLineMovePrev<CR>", desc = "Move left" },
 		-- Pick & Close
 		{ "<leader>bb", "<Cmd>BufferLinePick<CR>", desc = "Pick buffer" },
-		{ "<leader>bd", "<Cmd>bdelete<CR>", desc = "Close current" },
+		{ "<leader>bd", function()
+			local old_buf = vim.api.nvim_get_current_buf()
+			vim.cmd("bnext")
+			local new_buf = vim.api.nvim_get_current_buf()
+			if new_buf ~= old_buf then
+				vim.cmd("bdelete! " .. old_buf)
+			else
+				vim.cmd("qa")
+			end
+		end, desc = "Close buffer" },
 		{
 			"<leader>bo",
 			"<Cmd>BufferLineCloseOthers<CR>",

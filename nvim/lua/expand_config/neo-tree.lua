@@ -45,6 +45,13 @@ require("neo-tree").setup({
 		position = "left", -- Default position
 		width = 30, -- Default width for sidebar
 		auto_expand_width = false, -- Prevent auto-expand when only window
+		mappings = {
+			["e"] = function()
+				local win = vim.api.nvim_get_current_win()
+				local w = vim.api.nvim_win_get_width(win)
+				vim.api.nvim_win_set_width(win, w == 30 and 80 or 30)
+			end,
+		},
 		popup = {
 			-- Floating window settings
 			size = {
