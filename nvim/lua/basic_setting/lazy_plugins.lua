@@ -62,7 +62,7 @@ require("lazy").setup({
 	-- ============================================================
 	{
 		dir = plugins_dir .. "nvim-lspconfig",
-		event = { "BufReadPost", "BufNewFile" },
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"cmp-nvim-lsp",
 			"nvim-navic",
@@ -305,3 +305,4 @@ require("lazy").setup({
 		enabled = false,
 	},
 })
+
