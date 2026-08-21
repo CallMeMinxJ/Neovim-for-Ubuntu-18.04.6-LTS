@@ -1,9 +1,8 @@
 -- =============================================================================
 -- Bufferline.nvim Configuration
--- A snazzy buffer line (tab integration) for Neovim
+-- Modern, clean buffer line with dark theme compatibility
 -- =============================================================================
 
--- Required: Enable true colors support for proper rendering
 vim.opt.termguicolors = true
 
 local bufferline = require("bufferline")
@@ -20,15 +19,12 @@ end
 
 -- Custom filter: hide help and quickfix buffers from bufferline
 local function custom_filter(buf_number, buf_numbers)
-    -- Filter out help buffers
     if vim.bo[buf_number].filetype == "help" then
         return false
     end
-    -- Filter out quickfix buffers
     if vim.bo[buf_number].buftype == "quickfix" then
         return false
     end
-    -- Filter out specific file patterns (example: log files)
     if vim.fn.bufname(buf_number):match("%.log$") then
         return false
     end
@@ -53,19 +49,12 @@ end
 
 bufferline.setup({
     options = {
-        -- Mode: "buffers" (default) or "tabs"
         mode = "buffers",
-
-        -- Style preset: default, minimal, no_bold, no_italic, or combined
         style_preset = bufferline.style_preset.default,
-
-        -- Allow colorscheme to override highlights
         themable = true,
 
-        -- Number display: "none" | "ordinal" | "buffer_id" | "both" | function
         numbers = buffer_numbers,
 
-        -- Mouse actions
         close_command = "bdelete! %d",
         right_mouse_command = "bdelete! %d",
         left_mouse_command = "buffer %d",
@@ -74,32 +63,32 @@ bufferline.setup({
         -- Active buffer indicator
         indicator = {
             icon = "▎",
-            style = "icon", -- "icon" | "underline" | "none"
+            style = "icon",
         },
 
-        -- Icons configuration
-        buffer_close_icon = "󰅗", -- Close icon for each buffer
+        -- Icons
+        buffer_close_icon = "󰅖",
         modified_icon = "●",
-        close_icon = "x", -- Global close icon
+        close_icon = "󰅖",
         left_trunc_marker = "",
         right_trunc_marker = "",
 
         -- Name formatting
-        max_name_length = 18,
+        max_name_length = 22,
         max_prefix_length = 15,
         truncate_names = true,
-        tab_size = 18,
+        tab_size = 0, -- auto-size
 
-        -- LSP Diagnostics integration
+        -- LSP Diagnostics
         diagnostics = "nvim_lsp",
         diagnostics_update_in_insert = false,
         diagnostics_update_on_event = true,
         diagnostics_indicator = diagnostics_indicator,
 
-        -- Custom filter for hiding specific buffers
+        -- Filter
         custom_filter = custom_filter,
 
-        -- Sidebar offsets (file explorers)
+        -- Sidebar offsets
         offsets = {
             {
                 filetype = "NvimTree",
@@ -127,10 +116,10 @@ bufferline.setup({
             },
         },
 
-        -- Appearance options
+        -- Appearance
         color_icons = true,
         show_buffer_icons = true,
-        show_buffer_close_icons = true, -- Enable close icons on hover
+        show_buffer_close_icons = true,
         show_close_icon = true,
         show_tab_indicators = true,
         show_duplicate_prefix = true,
@@ -138,15 +127,15 @@ bufferline.setup({
         persist_buffer_sort = true,
         move_wraps_at_ends = false,
 
-        -- Separator style: "slant" | "slope" | "thick" | "thin" | "none" | { "any", "any" }
-        separator_style = "slant",
+        -- Thin separator: 1px line between tabs, no white gaps
+        separator_style = "thin",
 
         -- Tab sizing
         enforce_regular_tabs = false,
         always_show_bufferline = true,
         auto_toggle_bufferline = true,
 
-        -- Hover events: show close icon on hover
+        -- Hover shows close button
         hover = {
             enabled = true,
             delay = 200,
@@ -154,9 +143,9 @@ bufferline.setup({
         },
 
         -- Sorting
-        sort_by = "insert_after_current", -- "insert_after_current" | "insert_at_end" | "id" | "extension" | "relative_directory" | "directory" | "tabs"
+        sort_by = "insert_after_current",
 
-        -- Buffer groups with pin icon
+        -- Buffer groups
         groups = {
             items = {},
         },
@@ -168,13 +157,24 @@ bufferline.setup({
     },
 
     -- =============================================================================
-    -- Highlight Configuration (Auto-derived from colorscheme)
+    -- Highlights: let the theme handle everything (themable = true)
+    -- Only override separator to avoid white gaps
     -- =============================================================================
     highlights = {
+        -- Blend separators into the bar background, preventing white gaps
+        separator = {
+            fg = { attribute = "bg", highlight = "TabLine" },
+        },
+        separator_selected = {
+            fg = { attribute = "bg", highlight = "TabLine" },
+        },
+        separator_visible = {
+            fg = { attribute = "bg", highlight = "TabLine" },
+        },
+        -- Active tab text: bold, no italic
         buffer_selected = {
             bold = true,
-            italic = true,
+            italic = false,
         },
     },
 })
-
